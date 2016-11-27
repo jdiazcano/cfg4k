@@ -17,16 +17,18 @@ class DefaultConfigProvider(
         return Proxy.newProxyInstance(clazz.classLoader, arrayOf(clazz), handler) as T
     }
 
-    private val parsers: Map<Class<out Any>, Parser<Any>>
+    private val javaParsers: Map<Class<out Any>, Parser<Any>>
 
     init {
-        parsers = mapOf(
+        javaParsers = mapOf(
                 Int::class.java to IntParser,
+                Integer::class.java to IntParser,
                 Long::class.java to LongParser,
                 Double::class.java to DoubleParser,
                 Short::class.java to ShortParser,
                 Float::class.java to FloatParser,
-                Double::class.java to DoubleParser
+                Double::class.java to DoubleParser,
+                Byte::class.java to ByteParser
         )
     }
 
@@ -35,6 +37,6 @@ class DefaultConfigProvider(
     }
 
     private fun <T> getParser(type: Class<out T>): Parser<T> {
-        return parsers[type] as Parser<T>
+        return javaParsers[type] as Parser<T>
     }
 }

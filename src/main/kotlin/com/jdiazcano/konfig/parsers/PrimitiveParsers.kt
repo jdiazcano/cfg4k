@@ -23,3 +23,7 @@ object FloatParser: Parser<Float> {
 object DoubleParser: Parser<Double> {
     override fun parse(value: String) = value.toDouble()
 }
+
+object ByteParser: Parser<Byte> {
+    override fun parse(value: String) = value.toByte()
+}
