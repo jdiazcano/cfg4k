@@ -1,0 +1,44 @@
+group 'com.jdiazcano'
+version '0.1-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.0.5'
+
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots'
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M2'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+sourceCompatibility = 1.6
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+    maven {
+        url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots'
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    compile 'org.jetbrains.spek:spek-api:1.0.89'
+
+    testCompile 'org.junit.platform:junit-platform-runner:1.0.0-M2'
+    testCompile 'com.winterbe:expekt:0.5.0'
+    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.0.89'
+}
+
