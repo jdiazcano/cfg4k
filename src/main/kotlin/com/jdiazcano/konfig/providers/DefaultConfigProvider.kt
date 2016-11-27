@@ -5,6 +5,7 @@ import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.binding.Binder
 import com.jdiazcano.konfig.binding.BindingInvocationHandler
 import com.jdiazcano.konfig.parsers.*
+import com.jdiazcano.konfig.utils.ParserClassNotFound
 import java.lang.reflect.Proxy
 
 @Suppress("UNCHECKED_CAST")
@@ -34,7 +35,15 @@ class DefaultConfigProvider(
     }
 
     override fun <T> getProperty(name: String, type: Class<out T>): T {
-        return getParser(type).parse(configLoader.get(name))
+        if (javaParsers.containsKey(type)) {
+            return getParser(type).parse(configLoader.get(name))
+        } else {
+            throw ParserClassNotFound("Parser for class ${type.name} was not found")
+        }
+    }
+
+    override fun canParse(type: Class<out Any>?): Boolean {
+        return javaParsers.containsKey(type)
     }
 
     private fun <T> getParser(type: Class<out T>): Parser<T> {

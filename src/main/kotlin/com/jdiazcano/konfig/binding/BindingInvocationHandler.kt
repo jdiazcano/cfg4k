@@ -21,7 +21,12 @@ class BindingInvocationHandler(
             return method.invoke(this, args)
         }
 
-        return provider.getProperty(prefix(prefix, method.name), method.returnType)
+        if (provider.canParse(method.returnType)) {
+            return provider.getProperty(prefix(prefix, method.name), method.returnType)
+        } else {
+            return provider.bind(prefix(prefix, method.name), method.returnType)
+        }
+
     }
 
     fun prefix(before: String, after: String): String {

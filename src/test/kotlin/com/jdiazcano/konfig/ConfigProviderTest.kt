@@ -53,7 +53,7 @@ class ConfigProviderTest: Spek({
     }
 })
 
-open interface TestBinder {
+interface TestBinder {
     fun integerProperty(): Int
     fun a(): String
     fun c(): String
@@ -63,3 +63,4 @@ open interface TestBinder {
     fun floatProperty(): Float
     fun byteProperty(): Byte
 }
+
