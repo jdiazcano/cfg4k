@@ -38,5 +38,28 @@ class ConfigProviderTest: Spek({
         it("byte properties") {
             provider.getProperty("byteProperty", Byte::class.java).should.be.equal(2)
         }
+
+        it("binding test") {
+            val testBinder = provider.bind("", TestBinder::class.java)
+            testBinder.integerProperty().should.be.equal(1)
+            testBinder.longProperty().should.be.equal(2)
+            testBinder.shortProperty().should.be.equal(1)
+            testBinder.floatProperty().should.be.equal(2.1F)
+            testBinder.doubleProperty().should.be.equal(1.1)
+            testBinder.byteProperty().should.be.equal(2)
+            testBinder.a().should.be.equal("b")
+            testBinder.c().should.be.equal("d")
+        }
     }
 })
+
+open interface TestBinder {
+    fun integerProperty(): Int
+    fun a(): String
+    fun c(): String
+    fun longProperty(): Long
+    fun shortProperty(): Short
+    fun doubleProperty(): Double
+    fun floatProperty(): Float
+    fun byteProperty(): Byte
+}

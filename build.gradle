@@ -7,9 +7,8 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-        maven {
-            url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots'
-        }
+        maven { url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots' }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -27,9 +26,8 @@ repositories {
     mavenCentral()
     mavenLocal()
     jcenter()
-    maven {
-        url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots'
-    }
+    maven { url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots' }
+    maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
 }
 
 dependencies {

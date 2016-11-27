@@ -21,13 +21,17 @@ class BindingInvocationHandler(
             return method.invoke(this, args)
         }
 
-        binders.forEach {
-            if (it.canBind(method)) {
-                return it.bind(method, prefix, provider)
-            }
-        }
+        return provider.getProperty(prefix(prefix, method.name), method.returnType)
+    }
 
-        throw IllegalArgumentException("Can't bind/resolve the property ${method.name}")
+    fun prefix(before: String, after: String): String {
+        return buildString {
+            append(before)
+            if (before.isNotEmpty()) {
+                append('.')
+            }
+            append(after)
+        }
     }
 
 }

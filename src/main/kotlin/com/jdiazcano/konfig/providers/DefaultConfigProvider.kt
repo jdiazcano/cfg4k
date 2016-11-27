@@ -28,7 +28,8 @@ class DefaultConfigProvider(
                 Short::class.java to ShortParser,
                 Float::class.java to FloatParser,
                 Double::class.java to DoubleParser,
-                Byte::class.java to ByteParser
+                Byte::class.java to ByteParser,
+                String::class.java to StringParser
         )
     }
 

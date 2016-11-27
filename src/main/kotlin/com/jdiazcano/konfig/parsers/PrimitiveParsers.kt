@@ -27,3 +27,8 @@ object DoubleParser: Parser<Double> {
 object ByteParser: Parser<Byte> {
     override fun parse(value: String) = value.toByte()
 }
+
+object StringParser: Parser<String> {
+    override fun parse(value: String): String = value
+
+}
