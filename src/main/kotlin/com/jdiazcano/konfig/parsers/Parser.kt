@@ -3,6 +3,11 @@ package com.jdiazcano.konfig.parsers
 /**
  * Created by javierdiaz on 26/11/2016.
  */
-interface Parser<out T> {
-    fun parse(value: String): T
+interface Parser<T> {
+    fun parse(value: String): T {
+        TODO("Not yet implemented or not needed")
+    }
+    fun parse(value: String, clazz: Class<T>): T {
+        TODO("Not yet implemented or not needed")
+    }
 }

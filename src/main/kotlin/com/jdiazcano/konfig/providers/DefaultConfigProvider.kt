@@ -2,7 +2,6 @@ package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.binding.Binder
 import com.jdiazcano.konfig.binding.BindingInvocationHandler
 import com.jdiazcano.konfig.parsers.*
 import com.jdiazcano.konfig.utils.ParserClassNotFound
@@ -10,18 +9,18 @@ import java.lang.reflect.Proxy
 
 @Suppress("UNCHECKED_CAST")
 class DefaultConfigProvider(
-        val configLoader: ConfigLoader,
-        val binders: List<Binder> = listOf()
+        val configLoader: ConfigLoader
 ): ConfigProvider {
-    override fun <T> bind(prefix: String, clazz: Class<out T>): T {
-        val handler = BindingInvocationHandler(this, prefix, binders)
+    override fun <T> bind(prefix: String, clazz: Class<T>): T {
+        val handler = BindingInvocationHandler(this, prefix)
         return Proxy.newProxyInstance(clazz.classLoader, arrayOf(clazz), handler) as T
     }
 
-    private val javaParsers: Map<Class<out Any>, Parser<Any>>
+    private val parsers: Map<Class<out Any>, Parser<out Any>>
+    private val classedParsers: Map<Class<out Any>, Parser<out Any>>
 
     init {
-        javaParsers = mapOf(
+        parsers = mapOf(
                 Int::class.java to IntParser,
                 Integer::class.java to IntParser,
                 Long::class.java to LongParser,
@@ -32,21 +31,28 @@ class DefaultConfigProvider(
                 Byte::class.java to ByteParser,
                 String::class.java to StringParser
         )
+
+        classedParsers = mapOf(
+                Enum::class.java to EnumParser<Nothing>()
+        )
     }
 
-    override fun <T> getProperty(name: String, type: Class<out T>): T {
-        if (javaParsers.containsKey(type)) {
+    override fun <T> getProperty(name: String, type: Class<T>): T {
+        if (classedParsers.contains(type.superclass)) {
+            val parser = classedParsers[type.superclass!!] as Parser<T>
+            return parser.parse(configLoader.get(name), type)
+        } else if (parsers.containsKey(type)) {
             return getParser(type).parse(configLoader.get(name))
         } else {
             throw ParserClassNotFound("Parser for class ${type.name} was not found")
         }
     }
 
-    override fun canParse(type: Class<out Any>?): Boolean {
-        return javaParsers.containsKey(type)
+    override fun canParse(type: Class<out Any>): Boolean {
+        return parsers.containsKey(type) || classedParsers.containsKey(type.superclass!!)
     }
 
-    private fun <T> getParser(type: Class<out T>): Parser<T> {
-        return javaParsers[type] as Parser<T>
+    private fun <T> getParser(type: Class<T>): Parser<T> {
+        return parsers[type] as Parser<T>
     }
 }

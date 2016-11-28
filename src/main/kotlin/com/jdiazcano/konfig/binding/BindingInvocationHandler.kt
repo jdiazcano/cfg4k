@@ -6,8 +6,7 @@ import java.lang.reflect.Method
 
 class BindingInvocationHandler(
         val provider: ConfigProvider,
-        val prefix: String,
-        val binders: List<Binder>
+        val prefix: String
 ): InvocationHandler {
 
     val objectMethods: List<String>
