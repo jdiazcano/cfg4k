@@ -1,8 +1,10 @@
 package com.jdiazcano.konfig.binding
 
 import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import java.lang.reflect.Type
 
 class BindingInvocationHandler(
         val provider: ConfigProvider,
@@ -20,8 +22,11 @@ class BindingInvocationHandler(
             return method.invoke(this, args)
         }
 
+        val type = method.genericReturnType
         if (provider.canParse(method.returnType)) {
-            return provider.getProperty(prefix(prefix, method.name), method.returnType)
+            return provider.getProperty(prefix(prefix, method.name), object : Typable {
+                override fun getType(): Type = type
+            })
         } else {
             return provider.bind(prefix(prefix, method.name), method.returnType)
         }

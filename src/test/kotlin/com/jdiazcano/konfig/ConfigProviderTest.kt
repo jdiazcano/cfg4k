@@ -49,6 +49,8 @@ class ConfigProviderTest: Spek({
             testBinder.byteProperty().should.be.equal(2)
             testBinder.a().should.be.equal("b")
             testBinder.c().should.be.equal("d")
+            testBinder.list().should.be.equal(listOf(1, 2, 3))
+            testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
         }
     }
 })
@@ -62,5 +64,7 @@ interface TestBinder {
     fun doubleProperty(): Double
     fun floatProperty(): Float
     fun byteProperty(): Byte
+    fun list(): List<Int>
+    fun floatList(): List<Float>
 }
 
