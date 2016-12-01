@@ -19,6 +19,16 @@ class EnumBindingTest: Spek({
             val testBinder = provider.bind("", BindedEnum::class.java)
             testBinder.thisWillBeEnum().should.be.equal(TestEnum.TEST)
         }
+
+        it("prefixed binding test") {
+            val testBinder = provider.bind("prefixed", PrefixedBindedEnum::class.java)
+            testBinder.enumtest().should.be.equal(TestEnum.TEST2)
+        }
+
+        it("multiple prefix enum binding") {
+            val testBinder = provider.bind("another.prefixed.double", PrefixedBindedEnum::class.java)
+            testBinder.enumtest().should.be.equal(TestEnum.TEST1)
+        }
     }
 })
 
@@ -28,5 +38,9 @@ enum class TestEnum {
 
 interface BindedEnum {
     fun thisWillBeEnum(): TestEnum
+}
+
+interface PrefixedBindedEnum {
+    fun enumtest(): TestEnum
 }
 

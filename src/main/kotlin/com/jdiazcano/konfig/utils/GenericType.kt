@@ -3,8 +3,8 @@ package com.jdiazcano.konfig.utils
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class GenericType<T> : Typable {
-    private val type: Class<T>
+abstract class GenericType<T> : Typable {
+    private val type: Type
 
     init {
         if (GenericType::class.java != javaClass.superclass) {
@@ -14,7 +14,7 @@ class GenericType<T> : Typable {
         val parameterizedType = javaClass.genericSuperclass
 
         if (parameterizedType is ParameterizedType) {
-            type = parameterizedType.actualTypeArguments[0] as Class<T>
+            type = parameterizedType.actualTypeArguments[0]
         } else {
             throw IllegalArgumentException("Class must be parameterized")
         }
@@ -31,3 +31,5 @@ class GenericType<T> : Typable {
 interface Typable {
     fun getType(): Type
 }
+
+inline fun <reified T> typeOf() = object : GenericType<T>() {}

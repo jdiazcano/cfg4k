@@ -1,9 +1,7 @@
 package com.jdiazcano.konfig.utils
 
+import java.lang.reflect.*
 import java.lang.reflect.Array
-import java.lang.reflect.GenericArrayType
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
 import java.util.*
 
 internal class TargetType(private val targetType: Type) {
@@ -18,16 +16,13 @@ internal class TargetType(private val targetType: Type) {
             return false
         }
 
-    fun targetType(): Type {
-        return targetType
-    }
+    fun targetType() = targetType
 
     fun rawTargetType(): Class<*> {
         if (rawTargetType == null) {
             rawTargetType = extractRawTargetType()
         }
         return rawTargetType!!
-
     }
 
     private fun extractRawTargetType(): Class<*> {
@@ -81,6 +76,14 @@ internal class TargetType(private val targetType: Type) {
                     continue
                 }
             }
+
+            if (typeArgument is WildcardType) {
+                val rawType = typeArgument.upperBounds[0]
+                if (rawType is Class<*>) {
+                    result.add(rawType)
+                    continue
+                }
+            }
             var message = "That type contains illegal type argument: '%s' [%s]"
             message = String.format(message, typeArgument, typeArgument.javaClass)
             throw UnsupportedOperationException(message)
@@ -88,8 +91,6 @@ internal class TargetType(private val targetType: Type) {
         return result
     }
 
-    override fun toString(): String {
-        return targetType.toString()
-    }
+    override fun toString() = targetType.toString()
 
 }
