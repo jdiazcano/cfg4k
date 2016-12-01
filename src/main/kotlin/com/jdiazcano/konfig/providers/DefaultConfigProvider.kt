@@ -30,6 +30,7 @@ class DefaultConfigProvider(
                 Double::class.java to DoubleParser,
                 Byte::class.java to ByteParser,
                 String::class.java to StringParser,
+                Boolean::class.java to BooleanParser,
                 java.lang.Integer::class.java to IntParser,
                 java.lang.Long::class.java to LongParser,
                 java.lang.Double::class.java to DoubleParser,
@@ -37,7 +38,8 @@ class DefaultConfigProvider(
                 java.lang.Float::class.java to FloatParser,
                 java.lang.Double::class.java to DoubleParser,
                 java.lang.Byte::class.java to ByteParser,
-                java.lang.String::class.java to StringParser
+                java.lang.String::class.java to StringParser,
+                java.lang.Boolean::class.java to BooleanParser
         )
 
         classedParsers = mapOf(
@@ -45,7 +47,8 @@ class DefaultConfigProvider(
         )
 
         parseredParsers = mapOf(
-                List::class.java to ArrayParser<Nothing>()
+                List::class.java to ListParser<Nothing>(),
+                Set::class.java to SetParser<Nothing>()
         )
     }
 

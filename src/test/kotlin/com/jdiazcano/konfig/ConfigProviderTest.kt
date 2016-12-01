@@ -39,8 +39,13 @@ class ConfigProviderTest: Spek({
             provider.getProperty("byteProperty", Byte::class.java).should.be.equal(2)
         }
 
+        it("boolean properties") {
+            provider.getProperty("booleanProperty", Boolean::class.java).should.be.`true`
+        }
+
         it("binding test") {
             val testBinder = provider.bind("", TestBinder::class.java)
+            testBinder.booleanProperty().should.be.`true`
             testBinder.integerProperty().should.be.equal(1)
             testBinder.longProperty().should.be.equal(2)
             testBinder.shortProperty().should.be.equal(1)
@@ -59,6 +64,7 @@ interface TestBinder {
     fun integerProperty(): Int
     fun a(): String
     fun c(): String
+    fun booleanProperty(): Boolean
     fun longProperty(): Long
     fun shortProperty(): Short
     fun doubleProperty(): Double
