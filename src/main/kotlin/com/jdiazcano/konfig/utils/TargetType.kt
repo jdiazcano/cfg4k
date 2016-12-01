@@ -9,12 +9,7 @@ internal class TargetType(private val targetType: Type) {
     private var parameterizedClassArguments: List<Class<*>>? = null
 
     val isTargetTypeParameterized: Boolean
-        get() {
-            if (targetType is ParameterizedType) {
-                return true
-            }
-            return false
-        }
+        get() = targetType is ParameterizedType
 
     fun targetType() = targetType
 
@@ -65,28 +60,28 @@ internal class TargetType(private val targetType: Type) {
         val pt = targetType as ParameterizedType
         val result = ArrayList<Class<*>>()
         for (typeArgument in pt.actualTypeArguments) {
-            if (typeArgument is Class<*>) {
-                result.add(typeArgument)
-                continue
-            }
-            if (typeArgument is ParameterizedType) {
-                val rawType = typeArgument.rawType
-                if (rawType is Class<*>) {
-                    result.add(rawType)
-                    continue
-                }
-            }
+            when (typeArgument) {
+                is Class<*> -> result.add(typeArgument)
 
-            if (typeArgument is WildcardType) {
-                val rawType = typeArgument.upperBounds[0]
-                if (rawType is Class<*>) {
-                    result.add(rawType)
-                    continue
+                is ParameterizedType -> {
+                    val rawType = typeArgument.rawType
+                    if (rawType is Class<*>) {
+                        result.add(rawType)
+                    }
+                }
+
+                is WildcardType -> {
+                    val rawType = typeArgument.upperBounds[0]
+                    if (rawType is Class<*>) {
+                        result.add(rawType)
+                    }
+                }
+
+                else -> {
+                    throw UnsupportedOperationException(
+                            "That type contains illegal type argument: '$typeArgument' [${typeArgument.javaClass}]")
                 }
             }
-            var message = "That type contains illegal type argument: '%s' [%s]"
-            message = String.format(message, typeArgument, typeArgument.javaClass)
-            throw UnsupportedOperationException(message)
         }
         return result
     }
