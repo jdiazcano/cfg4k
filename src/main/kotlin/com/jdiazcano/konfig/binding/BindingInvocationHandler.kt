@@ -42,5 +42,8 @@ class BindingInvocationHandler(
             append(after)
         }
     }
+}
 
+interface Binder {
+    fun getInvocationHandler(prefix: String): BindingInvocationHandler
 }

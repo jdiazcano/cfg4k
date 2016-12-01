@@ -2,6 +2,7 @@ package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.binding.Binder
 import com.jdiazcano.konfig.binding.BindingInvocationHandler
 import com.jdiazcano.konfig.parsers.*
 import com.jdiazcano.konfig.utils.ParserClassNotFound
@@ -13,7 +14,7 @@ import kotlin.reflect.KClass
 @Suppress("UNCHECKED_CAST")
 class DefaultConfigProvider(
         val configLoader: ConfigLoader
-): ConfigProvider {
+): ConfigProvider, Binder {
 
     private val parsers: Map<Class<out Any>, Parser<out Any>>
     private val classedParsers: Map<Class<out Any>, Parser<out Any>>
@@ -77,9 +78,11 @@ class DefaultConfigProvider(
     }
 
     override fun <T> bind(prefix: String, type: Class<T>): T {
-        val handler = BindingInvocationHandler(this, prefix)
+        val handler = getInvocationHandler(prefix)
         return Proxy.newProxyInstance(type.classLoader, arrayOf(type), handler) as T
     }
+
+    override fun getInvocationHandler(prefix: String) = BindingInvocationHandler(this, prefix)
 
     override fun canParse(type: Class<out Any>): Boolean {
         return type in parsers || type in parseredParsers || (type.superclass != null && type.superclass in classedParsers)
