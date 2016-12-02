@@ -3,12 +3,12 @@ package com.jdiazcano.konfig.loaders
 import com.jdiazcano.konfig.ConfigLoader
 
 class PropertyConfigLoader(
-        file: List<String>
+        lines: List<String>
 ): ConfigLoader {
     val properties: MutableMap<String, String> = mutableMapOf()
 
     init {
-        file.forEach { line ->
+        lines.forEach { line ->
             val splitted = line.split('=')
             properties[splitted[0]] = splitted[1]
         }
