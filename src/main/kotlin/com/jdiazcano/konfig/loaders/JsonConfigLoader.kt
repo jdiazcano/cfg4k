@@ -2,26 +2,29 @@ package com.jdiazcano.konfig.loaders
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.beust.klaxon.obj
-import com.beust.klaxon.string
 import com.jdiazcano.konfig.ConfigLoader
+import com.jdiazcano.konfig.binding.prefix
 import java.io.InputStream
 
 class JsonConfigLoader(
         inputStream: InputStream
 ): ConfigLoader {
     val parser = Parser()
-    val json = parser.parse(inputStream) as JsonObject
+    val properties = mutableMapOf<String, String>()
 
-    override fun get(key: String): String {
-        if (key.contains('.')) {
-            var tempJson: JsonObject? = null
-            val splitKey = key.split('.')
-            splitKey.dropLast(1).forEach { tempJson = json.obj(it) }
-            return tempJson!!.string(splitKey.last())?: ""
-        } else {
-            return json.string(key)?: ""
-        }
+    init {
+        val json = parser.parse(inputStream) as JsonObject
+        reduce(json)
     }
 
+    override fun get(key: String) = properties[key]?: ""
+
+    fun reduce(json: JsonObject, prefix: String = "") {
+        json.forEach { key, value ->
+            when (value) {
+                is JsonObject -> reduce(value, prefix(prefix, key))
+                else -> properties[prefix(prefix, key)] = value.toString()
+            }
+        }
+    }
 }

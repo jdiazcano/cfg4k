@@ -33,14 +33,15 @@ class BindingInvocationHandler(
 
     }
 
-    fun prefix(before: String, after: String): String {
-        return buildString {
-            append(before)
-            if (before.isNotEmpty()) {
-                append('.')
-            }
-            append(after)
+}
+
+fun prefix(before: String, after: String): String {
+    return buildString {
+        append(before)
+        if (before.isNotEmpty()) {
+            append('.')
         }
+        append(after)
     }
 }
 
