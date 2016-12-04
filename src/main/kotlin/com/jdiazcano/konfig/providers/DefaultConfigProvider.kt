@@ -16,12 +16,12 @@ class DefaultConfigProvider(
         val configLoader: ConfigLoader
 ): ConfigProvider, Binder {
 
-    private val parsers: Map<Class<out Any>, Parser<out Any>>
-    private val classedParsers: Map<Class<out Any>, Parser<out Any>>
-    private val parseredParsers: Map<Class<out Any>, Parser<out Any>>
+    private val parsers: MutableMap<Class<out Any>, Parser<out Any>>
+    private val classedParsers: MutableMap<Class<out Any>, Parser<out Any>>
+    private val parseredParsers: MutableMap<Class<out Any>, Parser<out Any>>
 
     init {
-        parsers = mapOf(
+        parsers = mutableMapOf(
                 Int::class.java to IntParser,
                 Long::class.java to LongParser,
                 Double::class.java to DoubleParser,
@@ -42,11 +42,11 @@ class DefaultConfigProvider(
                 java.lang.Boolean::class.java to BooleanParser
         )
 
-        classedParsers = mapOf(
+        classedParsers = mutableMapOf(
                 Enum::class.java to EnumParser<Nothing>()
         )
 
-        parseredParsers = mapOf(
+        parseredParsers = mutableMapOf(
                 List::class.java to ListParser<Nothing>(),
                 Set::class.java to SetParser<Nothing>()
         )
@@ -105,7 +105,15 @@ class DefaultConfigProvider(
         }
     }
 
-    fun getProperty(s: String, reify: KClass<List<Int>>): List<Int> {
-        return getProperty(s, reify.java)
+    fun addParser(type: Class<out Any>, parser: Parser<out Any>) {
+        parsers.putIfAbsent(type, parser)
+    }
+
+    fun addClassedParser(type: Class<out Any>, parser: Parser<out Any>) {
+        classedParsers.putIfAbsent(type, parser)
+    }
+
+    fun addParseredParser(type: Class<out Any>, parser: Parser<out Any>) {
+        parseredParsers.putIfAbsent(type, parser)
     }
 }

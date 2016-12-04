@@ -29,6 +29,6 @@ object ByteParser: Parser<Byte> {
 }
 
 object StringParser: Parser<String> {
-    override fun parse(value: String): String = value
+    override fun parse(value: String) = value
 
 }
