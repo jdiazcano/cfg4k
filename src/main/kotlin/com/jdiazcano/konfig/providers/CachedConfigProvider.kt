@@ -41,4 +41,8 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
 
     override fun canParse(type: Class<out Any>) = configProvider.canParse(type)
 
+    override fun reload() {
+        cache.clear()
+        configProvider.reload()
+    }
 }

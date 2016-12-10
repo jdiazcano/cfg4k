@@ -53,7 +53,7 @@ class DefaultConfigProvider(
                 Set::class.java to SetParser<Nothing>()
         )
 
-        reloadStrategy?.register(configLoader)
+        reloadStrategy?.register(this)
     }
 
     override fun <T: Any> getProperty(name: String, type: Class<T>): T {
@@ -121,5 +121,7 @@ class DefaultConfigProvider(
         parseredParsers.putIfAbsent(type, parser)
     }
 
-    fun cancelReload() = reloadStrategy?.deregister(configLoader)
+    fun cancelReload() = reloadStrategy?.deregister(this)
+
+    override fun reload() = configLoader.reload()
 }

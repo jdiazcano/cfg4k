@@ -1,9 +1,9 @@
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.ConfigLoader
+import com.jdiazcano.konfig.ConfigProvider
 
 interface ReloadStrategy {
-    fun register(configLoader: ConfigLoader)
+    fun register(configProvider: ConfigProvider)
 
-    fun deregister(configLoader: ConfigLoader)
+    fun deregister(configProvider: ConfigProvider)
 }
