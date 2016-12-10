@@ -15,14 +15,6 @@ class TimedReloadStrategyTest : Spek({
 {
   "a": "%reload1",
   "c": "%reload2",
-  "integerProperty": 1,
-  "longProperty": 2,
-  "shortProperty": 1,
-  "doubleProperty": 1.1,
-  "floatProperty": 2.1,
-  "byteProperty": 2,
-  "list": "1,2,3",
-  "booleanProperty": true,
   "nested": {
     "a": "reloaded nestedb"
   }
@@ -42,6 +34,7 @@ class TimedReloadStrategyTest : Spek({
                 provider.getProperty("a", String::class.java).should.be.equal("b$i")
                 provider.getProperty("c", String::class.java).should.be.equal("d$i")
             }
+            file.delete()
         }
     }
 
