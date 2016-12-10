@@ -4,25 +4,43 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.binding.prefix
-import java.io.InputStream
+import java.net.URL
 
-class JsonConfigLoader(
-        inputStream: InputStream
+open class JsonConfigLoader(
+        protected val url: URL
 ): ConfigLoader {
-    val parser = Parser()
-    val properties = mutableMapOf<String, String>()
+
+    protected val parser = Parser()
+    protected val properties = mutableMapOf<String, String>()
 
     init {
-        val json = parser.parse(inputStream) as JsonObject
-        reduce(json)
+        loadProperties()
+    }
+
+    override fun reload() {
+        loadProperties()
+    }
+
+    protected fun loadProperties() {
+        val stream = url.openStream()
+        val json = parser.parse(stream) as JsonObject
+        properties.clear()
+        properties.putAll(reduce(json))
+        stream.close()
     }
 
     override fun get(key: String) = properties[key]?: ""
 
-    fun reduce(json: JsonObject, prefix: String = "") {
+    private fun reduce(json: JsonObject, prefix: String = ""): MutableMap<String, String> {
+        val properties = mutableMapOf<String, String>()
+        reduceInternal(properties, json, prefix)
+        return properties
+    }
+
+    private fun reduceInternal(properties: MutableMap<String, String>, json: JsonObject, prefix: String = "") {
         json.forEach { key, value ->
             when (value) {
-                is JsonObject -> reduce(value, prefix(prefix, key))
+                is JsonObject -> reduceInternal(properties, value, prefix(prefix, key))
                 else -> properties[prefix(prefix, key)] = value.toString()
             }
         }

@@ -4,6 +4,7 @@ import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.binding.Binder
 import com.jdiazcano.konfig.binding.BindingInvocationHandler
+import com.jdiazcano.konfig.loaders.ReloadStrategy
 import com.jdiazcano.konfig.parsers.*
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.TargetType
@@ -13,7 +14,8 @@ import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 class DefaultConfigProvider(
-        val configLoader: ConfigLoader
+        val configLoader: ConfigLoader,
+        val reloadStrategy: ReloadStrategy? = null
 ): ConfigProvider, Binder {
 
     private val parsers: MutableMap<Class<out Any>, Parser<out Any>>
@@ -50,9 +52,11 @@ class DefaultConfigProvider(
                 List::class.java to ListParser<Nothing>(),
                 Set::class.java to SetParser<Nothing>()
         )
+
+        reloadStrategy?.register(configLoader)
     }
 
-    override fun <T> getProperty(name: String, type: Class<T>): T {
+    override fun <T: Any> getProperty(name: String, type: Class<T>): T {
         if (type in parseredParsers) {
             val parser = parseredParsers[type] as Parser<T>
             return parser.parse(configLoader.get(name), findParser(type))
@@ -66,7 +70,7 @@ class DefaultConfigProvider(
         }
     }
 
-    override fun <T> getProperty(name: String, type: Typable): T {
+    override fun <T: Any> getProperty(name: String, type: Typable): T {
         val rawType = TargetType(type.getType()).rawTargetType()
         if (rawType in parseredParsers) {
             val parser = parseredParsers[rawType] as Parser<T>
@@ -80,7 +84,7 @@ class DefaultConfigProvider(
         throw ParserClassNotFound("Parser for class $type was not found")
     }
 
-    override fun <T> bind(prefix: String, type: Class<T>): T {
+    override fun <T: Any> bind(prefix: String, type: Class<T>): T {
         val handler = getInvocationHandler(prefix)
         return Proxy.newProxyInstance(type.classLoader, arrayOf(type), handler) as T
     }
@@ -116,4 +120,6 @@ class DefaultConfigProvider(
     fun addParseredParser(type: Class<out Any>, parser: Parser<out Any>) {
         parseredParsers.putIfAbsent(type, parser)
     }
+
+    fun cancelReload() = reloadStrategy?.deregister(configLoader)
 }

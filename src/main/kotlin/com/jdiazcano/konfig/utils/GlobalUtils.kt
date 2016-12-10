@@ -1,10 +1,10 @@
 package com.jdiazcano.konfig.utils
 
-import java.io.InputStream
+import java.net.URL
 import java.util.*
 
-fun InputStream.asLines(): MutableList<String> {
-    val scanner = Scanner(this, "UTF-8")
+fun URL.asLines(): MutableList<String> {
+    val scanner = Scanner(openStream(), "UTF-8")
     val strings = mutableListOf<String>().apply {
         while (scanner.hasNextLine()) {
             add(scanner.nextLine())

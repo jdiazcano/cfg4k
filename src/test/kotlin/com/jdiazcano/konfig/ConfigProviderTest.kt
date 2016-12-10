@@ -13,8 +13,8 @@ class ConfigProviderTest: Spek({
 
     describe("a property config loader") {
         val loaders = listOf(
-                PropertyConfigLoader(javaClass.classLoader.getResourceAsStream("test.properties").asLines()),
-                JsonConfigLoader(javaClass.classLoader.getResourceAsStream("test.json"))
+                PropertyConfigLoader(javaClass.classLoader.getResource("test.properties").asLines()),
+                JsonConfigLoader(javaClass.classLoader.getResource("test.json"))
         )
         loaders.forEach { loader ->
             val provider = DefaultConfigProvider(loader)

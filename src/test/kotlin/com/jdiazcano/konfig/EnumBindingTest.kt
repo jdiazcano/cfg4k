@@ -12,7 +12,7 @@ class EnumBindingTest: Spek({
 
     describe("a property config loader") {
         val loader = PropertyConfigLoader(
-                javaClass.classLoader.getResourceAsStream("enumtest.properties").asLines())
+                javaClass.classLoader.getResource("enumtest.properties").asLines())
         val provider = DefaultConfigProvider(loader)
 
         it("binding test") {

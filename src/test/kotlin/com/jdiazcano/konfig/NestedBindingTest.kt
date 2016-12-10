@@ -11,7 +11,7 @@ import org.jetbrains.spek.api.dsl.it
 class NestedBindingTest: Spek({
     describe("nested properties") {
         val loader = PropertyConfigLoader(
-                javaClass.classLoader.getResourceAsStream("nestedtest.properties").asLines())
+                javaClass.classLoader.getResource("nestedtest.properties").asLines())
         val provider = DefaultConfigProvider(loader)
         it("this is testing a normal nested property, when calling nested then it shall return a binding for it") {
             val bind = provider.bind("", NestedBinder::class.java)
@@ -22,7 +22,7 @@ class NestedBindingTest: Spek({
 
     describe("super nested properties") {
         val loader = PropertyConfigLoader(
-                javaClass.classLoader.getResourceAsStream("supernestedtest.properties").asLines())
+                javaClass.classLoader.getResource("supernestedtest.properties").asLines())
         val provider = DefaultConfigProvider(loader)
         it("deeply nested property") {
             val bind = provider.bind("", SuperNested::class.java)

@@ -1,5 +1,7 @@
 package com.jdiazcano.konfig
 
-interface ConfigLoader {
+import com.jdiazcano.konfig.utils.Reloadable
+
+interface ConfigLoader : Reloadable {
     fun get(key: String): String
 }

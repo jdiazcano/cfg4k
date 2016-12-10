@@ -13,7 +13,7 @@ class ListProviderTest: Spek({
 
     describe("a property config loader") {
         val loader = PropertyConfigLoader(
-                javaClass.classLoader.getResourceAsStream("listtest.properties").asLines())
+                javaClass.classLoader.getResource("listtest.properties").asLines())
         val provider = DefaultConfigProvider(loader)
 
         it("Simple property test") {
