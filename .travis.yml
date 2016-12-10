@@ -7,7 +7,7 @@ notifications:
     on_success: never
     on_failure: change
 
-script: ./gradlew install
+script: ./gradlew build
 
 #Caches
 before_cache:
