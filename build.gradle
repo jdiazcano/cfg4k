@@ -66,7 +66,7 @@ project.afterEvaluate {
     }
 
     project.task(type: JacocoReport, "junitPlatformJacocoReport", {
-        sourceDirectories = files("./src/main/kotlin")
+        sourceDirectories = files("src/main/kotlin")
         classDirectories = files("$buildDir/classes/main")
         reports {
             xml.enabled = true
@@ -76,4 +76,8 @@ project.afterEvaluate {
         }
         executionData junitPlatformTestTask
     })
+}
+
+coveralls {
+    sourceDirs += ['src/main/kotlin']
 }
