@@ -1,7 +1,5 @@
-package com.jdiazcano.konfig
+package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.loaders.JsonConfigLoader
-import com.jdiazcano.konfig.loaders.TimedReloadStrategy
 import com.jdiazcano.konfig.providers.DefaultConfigProvider
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
