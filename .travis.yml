@@ -19,4 +19,4 @@ cache:
     - $HOME/.gradle/wrapper/
 
 after_success:
-  - ./gradlew jacocoRootReport coveralls
+  - ./gradlew junitPlatformTest junitPlatformJacocoReport coveralls
