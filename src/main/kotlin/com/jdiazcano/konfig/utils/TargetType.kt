@@ -11,8 +11,6 @@ internal class TargetType(private val targetType: Type) {
     val isTargetTypeParameterized: Boolean
         get() = targetType is ParameterizedType
 
-    fun targetType() = targetType
-
     fun rawTargetType(): Class<*> {
         if (rawTargetType == null) {
             rawTargetType = extractRawTargetType()

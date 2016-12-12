@@ -24,6 +24,7 @@ class ListProviderTest: Spek({
         it("prefixed binding test") {
             val testBinder = provider.bind("prefixed", Binded::class.java)
             testBinder.list().should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
+            testBinder.set().should.be.equal(setOf(1, 2, 3, 4, 5, 6, 7))
         }
 
     }
@@ -31,4 +32,5 @@ class ListProviderTest: Spek({
 
 interface Binded {
     fun list(): List<Int>
+    fun set(): Set<Int>
 }

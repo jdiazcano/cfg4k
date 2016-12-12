@@ -10,6 +10,6 @@ class ListParser<T : List<Any>>: Parser<T> {
 
 class SetParser<T : Set<Any>>: Parser<T> {
     override fun parse(value: String, parser: Parser<*>): T {
-        return value.split(',').toSet().map { parser.parse(it.trim()) } as T
+        return value.split(',').map { parser.parse(it.trim()) }.toSet() as T
     }
 }

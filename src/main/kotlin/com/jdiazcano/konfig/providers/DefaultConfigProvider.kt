@@ -10,12 +10,11 @@ import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Proxy
-import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 class DefaultConfigProvider(
-        val configLoader: ConfigLoader,
-        val reloadStrategy: ReloadStrategy? = null
+        private val configLoader: ConfigLoader,
+        private val reloadStrategy: ReloadStrategy? = null
 ): ConfigProvider, Binder {
 
     private val parsers: MutableMap<Class<out Any>, Parser<out Any>>
