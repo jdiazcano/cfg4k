@@ -7,11 +7,11 @@ import java.lang.reflect.Method
 import java.lang.reflect.Type
 
 class BindingInvocationHandler(
-        val provider: ConfigProvider,
-        val prefix: String
+        private val provider: ConfigProvider,
+        private val prefix: String
 ): InvocationHandler {
 
-    val objectMethods: List<String>
+    private val objectMethods: List<String>
 
     init {
         objectMethods = Object::class.java.declaredMethods.map { it.name }

@@ -22,11 +22,11 @@ open class JsonConfigLoader(
     }
 
     protected fun loadProperties() {
-        val stream = url.openStream()
-        val json = parser.parse(stream) as JsonObject
-        properties.clear()
-        properties.putAll(reduce(json))
-        stream.close()
+        url.openStream().use {
+            val json = parser.parse(it) as JsonObject
+            properties.clear()
+            properties.putAll(reduce(json))
+        }
     }
 
     override fun get(key: String) = properties[key]?: ""
