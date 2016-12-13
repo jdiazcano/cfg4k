@@ -4,7 +4,6 @@ import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.CachedConfigProvider
 import com.jdiazcano.konfig.providers.DefaultConfigProvider
-import com.jdiazcano.konfig.utils.asLines
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -14,7 +13,7 @@ class ConfigProviderTest: Spek({
 
     describe("a property config loader") {
         val loaders = listOf(
-                PropertyConfigLoader(javaClass.classLoader.getResource("test.properties").asLines()),
+                PropertyConfigLoader(javaClass.classLoader.getResource("test.properties")),
                 JsonConfigLoader(javaClass.classLoader.getResource("test.json"))
         )
         loaders.forEach { loader ->

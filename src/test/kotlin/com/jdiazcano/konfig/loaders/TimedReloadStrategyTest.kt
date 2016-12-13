@@ -26,11 +26,18 @@ class TimedReloadStrategyTest : Spek({
         it("properties should be equals") {
             provider.getProperty("a", String::class.java).should.be.equal("b")
             provider.getProperty("c", String::class.java).should.be.equal("d")
+            var lastReload = 1
+            val lastIteration = 7
             for (i in 1..10) {
-                file.writeText(text.replace("%reload1", "b$i").replace("%reload2", "d$i"))
+                if (i > lastIteration) {
+                    provider.cancelReload()
+                    lastReload = lastIteration // This is the last reload iteration (8-1)
+                }
+                file.writeText(text.replace("%reload1", "b$i").replace("%reload2", "d$lastReload"))
                 Thread.sleep(1000)
-                provider.getProperty("a", String::class.java).should.be.equal("b$i")
-                provider.getProperty("c", String::class.java).should.be.equal("d$i")
+                provider.getProperty("a", String::class.java).should.be.equal("b$lastReload")
+                provider.getProperty("c", String::class.java).should.be.equal("d$lastReload")
+                lastReload++
             }
             file.delete()
         }

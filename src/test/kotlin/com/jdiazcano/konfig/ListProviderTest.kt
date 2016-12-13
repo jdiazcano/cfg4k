@@ -2,7 +2,6 @@ package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.DefaultConfigProvider
-import com.jdiazcano.konfig.utils.asLines
 import com.jdiazcano.konfig.utils.typeOf
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -12,8 +11,7 @@ import org.jetbrains.spek.api.dsl.it
 class ListProviderTest: Spek({
 
     describe("a property config loader") {
-        val loader = PropertyConfigLoader(
-                javaClass.classLoader.getResource("listtest.properties").asLines())
+        val loader = PropertyConfigLoader(javaClass.classLoader.getResource("listtest.properties"))
         val provider = DefaultConfigProvider(loader)
 
         it("Simple property test") {
