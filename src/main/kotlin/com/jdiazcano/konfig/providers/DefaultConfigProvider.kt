@@ -58,7 +58,7 @@ class DefaultConfigProvider(
     override fun <T: Any> getProperty(name: String, type: Class<T>): T {
         if (type in parseredParsers) {
             val parser = parseredParsers[type] as Parser<T>
-            return parser.parse(configLoader.get(name), findParser(type))
+            return parser.parse(configLoader.get(name), type.superclass, findParser(type))
         } else if (type in classedParsers) {
             val parser = classedParsers[type] as Parser<T>
             return parser.parse(configLoader.get(name), type)
@@ -73,7 +73,8 @@ class DefaultConfigProvider(
         val rawType = TargetType(type.getType()).rawTargetType()
         if (rawType in parseredParsers) {
             val parser = parseredParsers[rawType] as Parser<T>
-            return parser.parse(configLoader.get(name), findParser(TargetType(type.getType()).getParameterizedClassArguments()[0]) as Parser<T>)
+            val superType = TargetType(type.getType()).getParameterizedClassArguments()[0]
+            return parser.parse(configLoader.get(name), superType, findParser(superType) as Parser<T>)
         } else if (rawType.superclass in classedParsers) {
             val parser = classedParsers[rawType.superclass!!] as Parser<T>
             return parser.parse(configLoader.get(name), rawType as Class<T>)
