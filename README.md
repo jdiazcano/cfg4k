@@ -9,4 +9,4 @@ Features
 * Huge flexibility, custom sources
 * Easy to use
 
-Right now is under development and it will achieve the 100% test coverage because a library must be reliable and having a huge test coverage helps to the reliability of a library
+Example:
