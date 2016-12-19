@@ -1,11 +1,16 @@
 package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.utils.Typable
 
 @Suppress("UNCHECKED_CAST")
 class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider {
     private val cache = mutableMapOf<String, Any>()
+
+    init {
+        addReloadListener { cache.clear() }
+    }
 
     override fun <T : Any> getProperty(name: String, type: Class<T>): T {
         if (cache.containsKey(name)) {
@@ -41,8 +46,13 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
 
     override fun canParse(type: Class<out Any>) = configProvider.canParse(type)
 
-    override fun reload() {
-        cache.clear()
-        configProvider.reload()
-    }
+    override fun reload() = configProvider.reload()
+
+    override fun addParser(type: Class<out Any>, parser: Parser<Any>) = configProvider.addParser(type, parser)
+    override fun addClassedParser(type: Class<out Any>, parser: Parser<Any>) = configProvider.addClassedParser(type, parser)
+    override fun addParseredParser(type: Class<out Any>, parser: Parser<Any>) = configProvider.addParseredParser(type, parser)
+
+    override fun cancelReload() = configProvider.cancelReload()
+
+    override fun addReloadListener(listener: () -> Unit) = configProvider.addReloadListener(listener)
 }

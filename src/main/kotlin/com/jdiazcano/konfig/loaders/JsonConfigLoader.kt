@@ -7,7 +7,7 @@ import com.jdiazcano.konfig.binding.prefix
 import java.net.URL
 
 open class JsonConfigLoader(
-        protected val url: URL
+        private val url: URL
 ): ConfigLoader {
 
     protected val parser = Parser()

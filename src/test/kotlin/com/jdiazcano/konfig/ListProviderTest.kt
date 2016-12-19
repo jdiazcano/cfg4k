@@ -29,12 +29,3 @@ class ListProviderTest: Spek({
     }
 })
 
-interface Binded {
-    fun list(): List<Int>
-    fun set(): Set<Int>
-    fun enumerito(): List<Enumerito>
-}
-
-enum class Enumerito {
-    A, B, C
-}

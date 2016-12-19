@@ -28,13 +28,3 @@ class NestedBindingTest: Spek({
         }
     }
 })
-
-interface NestedBinder {
-    fun nested(): TestBinder
-    fun normal(): Int
-}
-
-interface SuperNested {
-    fun supernested(): NestedBinder
-    fun normal(): Int
-}

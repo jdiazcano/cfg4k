@@ -30,15 +30,3 @@ class EnumBindingTest: Spek({
     }
 })
 
-enum class TestEnum {
-    TEST, TEST1, TEST2
-}
-
-interface BindedEnum {
-    fun thisWillBeEnum(): TestEnum
-}
-
-interface PrefixedBindedEnum {
-    fun enumtest(): TestEnum
-}
-

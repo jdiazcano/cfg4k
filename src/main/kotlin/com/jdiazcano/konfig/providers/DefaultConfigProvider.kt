@@ -12,14 +12,15 @@ import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Proxy
 
 @Suppress("UNCHECKED_CAST")
-class DefaultConfigProvider(
+open class DefaultConfigProvider(
         private val configLoader: ConfigLoader,
         private val reloadStrategy: ReloadStrategy? = null
 ): ConfigProvider, Binder {
 
-    private val parsers: MutableMap<Class<out Any>, Parser<out Any>>
-    private val classedParsers: MutableMap<Class<out Any>, Parser<out Any>>
-    private val parseredParsers: MutableMap<Class<out Any>, Parser<out Any>>
+    private val listeners: MutableList<() -> Unit> = mutableListOf()
+    private val parsers: MutableMap<Class<out Any>, Parser<Any>>
+    private val classedParsers: MutableMap<Class<out Any>, Parser<Any>>
+    private val parseredParsers: MutableMap<Class<out Any>, Parser<Any>>
 
     init {
         parsers = mutableMapOf(
@@ -56,13 +57,8 @@ class DefaultConfigProvider(
     }
 
     override fun <T: Any> getProperty(name: String, type: Class<T>): T {
-        if (type in parseredParsers) {
-            val parser = parseredParsers[type] as Parser<T>
-            return parser.parse(configLoader.get(name), type.superclass, findParser(type))
-        } else if (type in classedParsers) {
-            val parser = classedParsers[type] as Parser<T>
-            return parser.parse(configLoader.get(name), type)
-        } else if (parsers.containsKey(type)) {
+        // There is no way that this has a generic parsers because the class actually removes that possiblity
+        if (parsers.containsKey(type)) {
             return getParser(type).parse(configLoader.get(name))
         } else {
             throw ParserClassNotFound("Parser for class ${type.name} was not found")
@@ -109,19 +105,26 @@ class DefaultConfigProvider(
         }
     }
 
-    fun addParser(type: Class<out Any>, parser: Parser<out Any>) {
+    override fun addParser(type: Class<out Any>, parser: Parser<Any>) {
         parsers.putIfAbsent(type, parser)
     }
 
-    fun addClassedParser(type: Class<out Any>, parser: Parser<out Any>) {
+    override fun addClassedParser(type: Class<out Any>, parser: Parser<Any>) {
         classedParsers.putIfAbsent(type, parser)
     }
 
-    fun addParseredParser(type: Class<out Any>, parser: Parser<out Any>) {
+    override fun addParseredParser(type: Class<out Any>, parser: Parser<Any>) {
         parseredParsers.putIfAbsent(type, parser)
     }
 
-    fun cancelReload() = reloadStrategy?.deregister(this)
+    override fun cancelReload() = reloadStrategy?.deregister(this)
 
-    override fun reload() = configLoader.reload()
+    override fun reload() {
+        configLoader.reload()
+        listeners.forEach { it.invoke() } // call listeners
+    }
+
+    override fun addReloadListener(listener: () -> Unit) {
+        listeners.add(listener)
+    }
 }
