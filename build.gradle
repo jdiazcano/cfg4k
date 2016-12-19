@@ -39,7 +39,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     compile 'org.jetbrains.spek:spek-api:1.1.0-beta2'
-    compile 'com.beust:klaxon:0.24'
+    compile 'com.beust:klaxon:0.27'
 
     testCompile 'org.junit.platform:junit-platform-runner:1.0.0-M3'
     testCompile 'com.winterbe:expekt:0.5.0'
