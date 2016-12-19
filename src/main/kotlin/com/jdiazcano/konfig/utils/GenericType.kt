@@ -7,10 +7,6 @@ abstract class GenericType<T> : Typable {
     private val type: Type
 
     init {
-        if (GenericType::class.java != javaClass.superclass) {
-            throw IllegalArgumentException("Classes must extend GenericType")
-        }
-
         val parameterizedType = javaClass.genericSuperclass
 
         if (parameterizedType is ParameterizedType) {
