@@ -64,6 +64,9 @@ class CachedConfigProviderTest: Spek({
                     testBinder.c().should.be.equal("d")
                     testBinder.list().should.be.equal(listOf(1, 2, 3))
                     testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
+
+                    val secondTestBinder = provider.bind("", TestBinder::class.java)
+                    // testBinder.should.be.equal(secondTestBinder)
                 }
             }
         }
