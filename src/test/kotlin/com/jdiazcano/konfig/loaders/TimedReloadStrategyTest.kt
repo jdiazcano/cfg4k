@@ -47,11 +47,9 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String) {
     val lastIteration = 7
     for (i in 1..10) {
         if (i > lastIteration) {
-            println("Cancelling reload from outside")
             provider.cancelReload()
             lastReload = lastIteration // This is the last reload iteration (8-1)
         }
-        println("Writing reload: $lastReload")
         file.writeText(text.replace("%reload1", "b$lastReload").replace("%reload2", "d$lastReload"))
         Thread.sleep(1500)
         provider.getProperty("a", String::class.java).should.be.equal("b$lastReload")
