@@ -1,7 +1,8 @@
 package com.jdiazcano.konfig.utils
 
-import java.lang.reflect.*
-import java.lang.reflect.Array
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.lang.reflect.WildcardType
 import java.util.*
 
 internal class TargetType(private val targetType: Type) {
@@ -25,20 +26,6 @@ internal class TargetType(private val targetType: Type) {
         if (isTargetTypeParameterized) {
             val type = targetType as ParameterizedType
             return type.rawType as Class<*>
-        }
-        if (targetType is GenericArrayType) {
-            val componentType = targetType.genericComponentType
-            if (componentType is Class<*>) {
-                /*
-                 * This is a special case that only happens in Java version 1.6
-                 * (example: java version "1.6.0_30")
-                 */
-                return Array.newInstance(componentType, 0).javaClass
-            }
-            if (componentType is ParameterizedType) {
-                val rawType = componentType.rawType as Class<*>
-                return Array.newInstance(rawType, 0).javaClass
-            }
         }
         return targetType.javaClass
     }

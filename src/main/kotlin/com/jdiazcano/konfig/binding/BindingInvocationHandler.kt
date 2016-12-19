@@ -19,10 +19,7 @@ class BindingInvocationHandler(
 
     override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any {
         if (objectMethods.contains(method.name)) {
-            // TODO this must has the "args" parameter or the equals will throw an error
-            // The problem right now is that it's not possible with the toString because it throws an exception if it
-            // has the args method (toString has no method) but it's counting the "null" args as 1 argument
-            return method.invoke(this)
+            return method.invoke(this, *(args?: arrayOf()))
         }
 
         val type = method.genericReturnType
@@ -34,6 +31,10 @@ class BindingInvocationHandler(
             return provider.bind(prefix(prefix, method.name), method.returnType)
         }
 
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return hashCode() == other?.hashCode()
     }
 
 }

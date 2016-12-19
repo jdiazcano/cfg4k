@@ -96,9 +96,7 @@ open class DefaultConfigProvider(
     }
 
     private fun <T> findParser(type: Class<T>): Parser<T> {
-        if (type in parseredParsers) {
-            return parseredParsers[type] as Parser<T>
-        } else if (type.superclass!! in classedParsers) {
+        if (type.superclass!! in classedParsers) {
             return classedParsers[type.superclass!!] as Parser<T>
         } else {
             return parsers[type] as Parser<T>
