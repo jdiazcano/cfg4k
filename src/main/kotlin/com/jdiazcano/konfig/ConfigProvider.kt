@@ -34,3 +34,5 @@ interface ConfigProvider {
 
     fun addReloadListener(listener: () -> Unit)
 }
+
+inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
