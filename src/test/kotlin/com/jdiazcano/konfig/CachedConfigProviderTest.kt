@@ -50,7 +50,7 @@ class CachedConfigProviderTest: Spek({
                 }
 
                 it("binding test [${provider.javaClass.name}]") {
-                    val testBinder = provider.bind("", TestBinder::class.java)
+                    val testBinder = provider.bind<TestBinder>("")
                     testBinder.booleanProperty().should.be.`true`
                     testBinder.integerProperty().should.be.equal(1)
                     testBinder.longProperty().should.be.equal(2)
@@ -63,7 +63,7 @@ class CachedConfigProviderTest: Spek({
                     testBinder.list().should.be.equal(listOf(1, 2, 3))
                     testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
 
-                    val secondTestBinder = provider.bind("", TestBinder::class.java)
+                    val secondTestBinder = provider.bind<TestBinder>("")
                     when (provider) {
                         // When we have a cached object it must be the same object, but when it's not cached values must
                         is CachedConfigProvider -> testBinder.should.be.equal(secondTestBinder)
