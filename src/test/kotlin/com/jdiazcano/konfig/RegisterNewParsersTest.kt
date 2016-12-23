@@ -18,6 +18,7 @@ package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.parsers.Parser
+import com.jdiazcano.konfig.parsers.Parsers
 import com.jdiazcano.konfig.providers.CachedConfigProvider
 import com.jdiazcano.konfig.providers.DefaultConfigProvider
 import com.jdiazcano.konfig.utils.ParserClassNotFound
@@ -46,7 +47,7 @@ class RegisterNewParsersTest: Spek({
                 }
 
                 it("class has been registered and now everything is cool") {
-                    provider.addParser(Book::class.java, BookParser)
+                    Parsers.addParser(Book::class.java, BookParser)
                     provider.getProperty("harrypotter", Book::class.java).should.be.equal(Book(1, "Prisoner of azkaban"))
                 }
             }

@@ -17,6 +17,7 @@
 package com.jdiazcano.konfig.binding
 
 import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.parsers.Parsers.canParse
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
@@ -39,7 +40,7 @@ class BindingInvocationHandler(
         }
 
         val type = method.genericReturnType
-        if (provider.canParse(method.returnType)) {
+        if (canParse(method.returnType)) {
             return provider.getProperty(prefix(prefix, method.name), object : Typable {
                 override fun getType(): Type = type
             })

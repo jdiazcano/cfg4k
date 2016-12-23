@@ -27,15 +27,13 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 class TimedReloadStrategyTest : Spek({
-    val text = """
-{
+    val text = """{
   "a": "%reload1",
   "c": "%reload2",
   "nested": {
     "a": "reloaded nestedb"
   }
-}
-            """
+}"""
     describe("a timed reloadable json config loader") {
         it("defaultconfigprovider test") {
             val file = File("timedreloadedfile.json")
