@@ -51,6 +51,7 @@ object Parsers {
 
         parseredParsers = mutableMapOf(
                 List::class.java to ListParser<Nothing>(),
+                java.util.List::class.java to ListParser<Nothing>(),
                 Set::class.java to SetParser<Nothing>()
         )
     }

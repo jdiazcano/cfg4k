@@ -17,6 +17,7 @@
 package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.utils.Typable
+import com.jdiazcano.konfig.utils.typeOf
 
 interface ConfigProvider {
     fun <T: Any> getProperty(name: String, type: Class<T>): T
@@ -29,3 +30,4 @@ interface ConfigProvider {
 }
 
 inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
+inline fun <reified T : Any> ConfigProvider.getProperty(name: String) = getProperty<T>(name, typeOf<T>())
