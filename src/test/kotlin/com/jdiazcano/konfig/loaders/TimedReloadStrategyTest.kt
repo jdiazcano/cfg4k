@@ -19,6 +19,7 @@ package com.jdiazcano.konfig.loaders
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.providers.CachedConfigProvider
 import com.jdiazcano.konfig.providers.DefaultConfigProvider
+import com.jdiazcano.konfig.providers.OverrideConfigProvider
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -50,24 +51,56 @@ class TimedReloadStrategyTest : Spek({
             val cachedProvider = CachedConfigProvider(DefaultConfigProvider(JsonConfigLoader(cachedfile.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS)))
             checkProvider(cachedfile, cachedProvider, text)
         }
+
+        it("overrideconfigprovider test") {
+            val overrideFile = File("override.json")
+            overrideFile.createNewFile()
+            overrideFile.writeText(text.replace("%reload1", "overrideb").replace(",\n  \"c\": \"%reload2\"", ""))
+
+            val normalFile = File("normal.json")
+            normalFile.createNewFile()
+            normalFile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
+            val provider = OverrideConfigProvider(
+                    arrayOf(
+                            JsonConfigLoader(overrideFile.toURI().toURL()),
+                            JsonConfigLoader(normalFile.toURI().toURL())
+                    ),
+                    TimedReloadStrategy(1, TimeUnit.SECONDS)
+            )
+            checkProvider(overrideFile, provider, text, true)
+            normalFile.delete()
+        }
     }
 
 })
 
-private fun checkProvider(file: File, provider: ConfigProvider, text: String) {
-    provider.getProperty("a", String::class.java).should.be.equal("b")
+private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
+    if (overriden) {
+        provider.getProperty("a", String::class.java).should.be.equal("overrideb")
+    } else {
+        provider.getProperty("a", String::class.java).should.be.equal("b")
+    }
     provider.getProperty("c", String::class.java).should.be.equal("d")
     var lastReload = 1
-    val lastIteration = 7
-    for (i in 1..10) {
+    val lastIteration = 3
+    for (i in 1..5) {
         if (i > lastIteration) {
             provider.cancelReload()
             lastReload = lastIteration // This is the last reload iteration (8-1)
         }
-        file.writeText(text.replace("%reload1", "b$lastReload").replace("%reload2", "d$lastReload"))
+        if (overriden) {
+            file.writeText(text.replace("%reload1", "overrideb$lastReload").replace(",\n  \"c\": \"%reload2\"", ""))
+        } else {
+            file.writeText(text.replace("%reload1", "b$lastReload").replace("%reload2", "d$lastReload"))
+        }
         Thread.sleep(1500)
-        provider.getProperty("a", String::class.java).should.be.equal("b$lastReload")
-        provider.getProperty("c", String::class.java).should.be.equal("d$lastReload")
+        if (overriden) {
+            provider.getProperty("a", String::class.java).should.be.equal("overrideb$lastReload")
+            provider.getProperty("c", String::class.java).should.be.equal("d")
+        } else {
+            provider.getProperty("a", String::class.java).should.be.equal("b$lastReload")
+            provider.getProperty("c", String::class.java).should.be.equal("d$lastReload")
+        }
         lastReload++
     }
     file.delete()

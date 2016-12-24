@@ -25,8 +25,10 @@ import org.jetbrains.spek.api.dsl.it
 
 class OverrideConfigProviderTest : Spek({
     val provider = OverrideConfigProvider(
-            PropertyConfigLoader(javaClass.classLoader.getResource("overridetest.properties")),
-            PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
+            arrayOf(
+                    PropertyConfigLoader(javaClass.classLoader.getResource("overridetest.properties")),
+                    PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
+            )
     )
     describe("An overriding provider") {
         it("if the property exist in the first, should not go to the second loader") {

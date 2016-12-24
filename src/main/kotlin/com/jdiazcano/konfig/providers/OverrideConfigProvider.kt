@@ -31,9 +31,10 @@ import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Proxy
 
 class OverrideConfigProvider(
-        private vararg val loaders: ConfigLoader,
+        private val loaders: Array<ConfigLoader>,
         private val reloadStrategy: ReloadStrategy? = null
 ) : ConfigProvider, Binder {
+
 
     private val listeners = mutableListOf<() -> Unit>()
     private val cachedLoaders = mutableMapOf<String, ConfigLoader>()
