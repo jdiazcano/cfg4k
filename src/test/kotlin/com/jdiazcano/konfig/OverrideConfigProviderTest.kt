@@ -42,6 +42,7 @@ class OverrideConfigProviderTest : Spek({
             provider.getProperty<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B))
             provider.getProperty<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B)) // cache
             provider.getProperty<List<Int>>("list").should.be.equal(listOf(1, 2, 3))
+            provider.bind<TestBinder>("").floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
         }
     }
 })
