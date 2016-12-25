@@ -41,14 +41,12 @@ class OverrideConfigProvider(
 
     init {
         reloadStrategy?.register(this)
+
+        addReloadListener { cachedLoaders.clear() }
     }
 
     override fun <T : Any> getProperty(name: String, type: Class<T>): T {
-        val value = if (name in cachedLoaders) {
-            cachedLoaders[name]!!.get(name)
-        } else {
-            loaders.first { it.get(name) != "" }.get(name)
-        }
+        val value = getValueAndCacheLoader(name)
 
         // There is no way that this has a generic parsers because the class actually removes that possibility
         if (Parsers.isParser(type)) {
@@ -58,11 +56,36 @@ class OverrideConfigProvider(
         }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Typable): T {
-        val value = if (name in cachedLoaders) {
-            cachedLoaders[name]!!.get(name)
+    private fun getValueAndCacheLoader(name: String): String {
+        var value: String = ""
+        if (name in cachedLoaders) {
+            value = cachedLoaders[name]!!.get(name)
         } else {
-            loaders.first { it.get(name) != "" }.get(name)
+            for (loader in loaders) {
+                val internalValue = loader.get(name)
+                if (internalValue != "") {
+                    value = internalValue
+                    cachedLoaders[name] = loader
+                    break
+                }
+            }
+        }
+        return value
+    }
+
+    override fun <T : Any> getProperty(name: String, type: Typable): T {
+        var value: String = ""
+        if (name in cachedLoaders) {
+            value = cachedLoaders[name]!!.get(name)
+        } else {
+            for (loader in loaders) {
+                val internalValue = loader.get(name)
+                if (internalValue != "") {
+                    value = internalValue
+                    cachedLoaders[name] = loader
+                    break
+                }
+            }
         }
 
         val rawType = TargetType(type.getType()).rawTargetType()
