@@ -65,7 +65,3 @@ fun prefix(before: String, after: String): String {
         append(after)
     }
 }
-
-interface Binder {
-    fun getInvocationHandler(prefix: String): BindingInvocationHandler
-}

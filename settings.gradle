@@ -1,3 +1,4 @@
 rootProject.name = 'cfg4k'
 include 'sample'
+include 'cfg4k-bytebuddy'
 

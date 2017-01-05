@@ -19,15 +19,28 @@ package com.jdiazcano.konfig
 import com.jdiazcano.konfig.utils.Typable
 import com.jdiazcano.konfig.utils.typeOf
 
-interface ConfigProvider {
+interface ConfigProvider : Binder {
     fun <T: Any> getProperty(name: String, type: Class<T>): T
     fun <T: Any> getProperty(name: String, type: Typable): T
-    fun <T: Any> bind(prefix: String, type: Class<T>): T
     fun reload()
     fun cancelReload(): Unit?
 
     fun addReloadListener(listener: () -> Unit)
 }
 
+interface Binder {
+    fun <T: Any> bind(prefix: String, type: Class<T>): T
+}
+
 inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
 inline fun <reified T : Any> ConfigProvider.getProperty(name: String) = getProperty<T>(name, typeOf<T>())
+
+class X(private val test: Int) : Testable {
+    override fun getTest(): Int {
+        return test
+    }
+}
+
+interface Testable {
+    fun getTest(): Int
+}

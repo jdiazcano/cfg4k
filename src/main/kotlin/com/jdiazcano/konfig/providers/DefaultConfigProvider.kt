@@ -18,7 +18,6 @@ package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.binding.Binder
 import com.jdiazcano.konfig.binding.BindingInvocationHandler
 import com.jdiazcano.konfig.loaders.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parser
@@ -38,7 +37,7 @@ import java.lang.reflect.Proxy
 open class DefaultConfigProvider(
         private val configLoader: ConfigLoader,
         private val reloadStrategy: ReloadStrategy? = null
-): ConfigProvider, Binder {
+): ConfigProvider {
 
     private val listeners: MutableList<() -> Unit> = mutableListOf()
 
@@ -75,7 +74,7 @@ open class DefaultConfigProvider(
         return Proxy.newProxyInstance(type.classLoader, arrayOf(type), handler) as T
     }
 
-    override fun getInvocationHandler(prefix: String) = BindingInvocationHandler(this, prefix)
+    fun getInvocationHandler(prefix: String) = BindingInvocationHandler(this, prefix)
 
     override fun cancelReload() = reloadStrategy?.deregister(this)
 
