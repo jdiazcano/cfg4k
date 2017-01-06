@@ -22,7 +22,7 @@ repositories {
 # Example
 
 ```kotlin
-import com.jdiazcano.konfig.loaders.PropertyConfigLoader
+import PropertyConfigLoader
 import com.jdiazcano.konfig.providers.DefaultConfigProvider
 
 fun main(args: Array<String>) {
