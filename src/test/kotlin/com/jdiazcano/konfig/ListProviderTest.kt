@@ -17,7 +17,7 @@
 package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
-import com.jdiazcano.konfig.providers.DefaultConfigProvider
+import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.jdiazcano.konfig.utils.typeOf
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -28,7 +28,7 @@ class ListProviderTest: Spek({
 
     describe("a property config loader") {
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("listtest.properties"))
-        val provider = DefaultConfigProvider(loader)
+        val provider = ProxyConfigProvider(loader)
 
         it("Simple property test") {
             val testBinder: List<Int> = provider.getProperty("list", typeOf<List<Int>>())

@@ -20,7 +20,7 @@ import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers
 import com.jdiazcano.konfig.providers.CachedConfigProvider
-import com.jdiazcano.konfig.providers.DefaultConfigProvider
+import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -36,8 +36,8 @@ class RegisterNewParsersTest: Spek({
         )
         loaders.forEach { loader ->
             val providers = listOf(
-                    DefaultConfigProvider(loader),
-                    CachedConfigProvider(DefaultConfigProvider(loader))
+                    ProxyConfigProvider(loader),
+                    CachedConfigProvider(ProxyConfigProvider(loader))
             )
             providers.forEach { provider ->
                 it("a class is not registered") {

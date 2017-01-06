@@ -18,7 +18,7 @@ package com.jdiazcano.konfig.loaders
 
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.providers.CachedConfigProvider
-import com.jdiazcano.konfig.providers.DefaultConfigProvider
+import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.jdiazcano.konfig.providers.OverrideConfigProvider
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -40,7 +40,7 @@ class TimedReloadStrategyTest : Spek({
             val file = File("timedreloadedfile.json")
             file.createNewFile()
             file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val provider = DefaultConfigProvider(JsonConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
+            val provider = ProxyConfigProvider(JsonConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
             checkProvider(file, provider, text)
         }
 
@@ -48,7 +48,7 @@ class TimedReloadStrategyTest : Spek({
             val cachedfile = File("cachedtimedreloadedfile.json")
             cachedfile.createNewFile()
             cachedfile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val cachedProvider = CachedConfigProvider(DefaultConfigProvider(JsonConfigLoader(cachedfile.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS)))
+            val cachedProvider = CachedConfigProvider(ProxyConfigProvider(JsonConfigLoader(cachedfile.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS)))
             checkProvider(cachedfile, cachedProvider, text)
         }
 

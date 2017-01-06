@@ -19,7 +19,7 @@ package com.jdiazcano.konfig
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.CachedConfigProvider
-import com.jdiazcano.konfig.providers.DefaultConfigProvider
+import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -34,8 +34,8 @@ class CachedConfigProviderTest: Spek({
     loaders.forEach { loader ->
         describe("a property config loader [${loader.javaClass.name}]") {
             val providers = listOf(
-                    DefaultConfigProvider(loader),
-                    CachedConfigProvider(DefaultConfigProvider(loader))
+                    ProxyConfigProvider(loader),
+                    CachedConfigProvider(ProxyConfigProvider(loader))
             )
             providers.forEach { provider ->
                 it("primitive properties [${provider.javaClass.name}]") {
@@ -67,7 +67,7 @@ class CachedConfigProviderTest: Spek({
                     when (provider) {
                         // When we have a cached object it must be the same object, but when it's not cached values must
                         is CachedConfigProvider -> testBinder.should.be.equal(secondTestBinder)
-                        is DefaultConfigProvider -> {
+                        is ProxyConfigProvider -> {
                             with (testBinder) {
                                 booleanProperty().should.be.equal(secondTestBinder.booleanProperty())
                                 integerProperty().should.be.equal(secondTestBinder.integerProperty())

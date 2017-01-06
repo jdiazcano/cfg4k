@@ -18,9 +18,9 @@
 
 package com.jdiazcano.konfig.providers
 
+import com.jdiazcano.konfig.Binder
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.binding.Binder
 import com.jdiazcano.konfig.binding.BindingInvocationHandler
 import com.jdiazcano.konfig.loaders.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parser
@@ -34,7 +34,6 @@ class OverrideConfigProvider(
         private val loaders: Array<ConfigLoader>,
         private val reloadStrategy: ReloadStrategy? = null
 ) : ConfigProvider, Binder {
-
 
     private val listeners = mutableListOf<() -> Unit>()
     private val cachedLoaders = mutableMapOf<String, ConfigLoader>()
@@ -103,11 +102,9 @@ class OverrideConfigProvider(
     }
 
     override fun <T : Any> bind(prefix: String, type: Class<T>): T {
-        val handler = getInvocationHandler(prefix)
+        val handler = BindingInvocationHandler(this, prefix)
         return Proxy.newProxyInstance(type.classLoader, arrayOf(type), handler) as T
     }
-
-    override fun getInvocationHandler(prefix: String) = BindingInvocationHandler(this, prefix)
 
     override fun reload() {
         loaders.forEach { it.reload() }

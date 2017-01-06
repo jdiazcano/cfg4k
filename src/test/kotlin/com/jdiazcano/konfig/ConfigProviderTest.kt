@@ -19,7 +19,7 @@ package com.jdiazcano.konfig
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.CachedConfigProvider
-import com.jdiazcano.konfig.providers.DefaultConfigProvider
+import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -28,10 +28,10 @@ import org.jetbrains.spek.api.dsl.it
 class ConfigProviderTest: Spek({
 
     val providers = listOf(
-            DefaultConfigProvider(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))),
-            DefaultConfigProvider(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),
-            CachedConfigProvider(DefaultConfigProvider(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties")))),
-            CachedConfigProvider(DefaultConfigProvider(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))))
+            ProxyConfigProvider(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))),
+            ProxyConfigProvider(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),
+            CachedConfigProvider(ProxyConfigProvider(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties")))),
+            CachedConfigProvider(ProxyConfigProvider(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))))
     )
 
     providers.forEachIndexed { i, provider ->
