@@ -34,13 +34,3 @@ interface Binder {
 
 inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
 inline fun <reified T : Any> ConfigProvider.getProperty(name: String) = getProperty<T>(name, typeOf<T>())
-
-class X(private val test: Int) : Testable {
-    override fun getTest(): Int {
-        return test
-    }
-}
-
-interface Testable {
-    fun getTest(): Int
-}
