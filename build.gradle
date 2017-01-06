@@ -79,13 +79,15 @@ subprojects {
     }
 }
 
+def activeSubprojects = subprojects.findAll { it.name.startsWith("cfg4k") }
+
 task junitTest(dependsOn: [":cfg4k-core:junitPlatformTest", ":cfg4k-bytebuddy:junitPlatformTest"])
 task report(dependsOn: [":cfg4k-core:junitPlatformJacocoReport", ":cfg4k-bytebuddy:junitPlatformJacocoReport"])
 
 task jacocoRootReport(type: JacocoReport) {
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
+    additionalSourceDirs = files(activeSubprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(activeSubprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(activeSubprojects.sourceSets.main.output)
     executionData = files(
             "cfg4k-core/build/jacoco/junitPlatformTest.exec",
             "cfg4k-bytebuddy/build/jacoco/junitPlatformTest.exec" // needed because the default name is test.exec instead :(
@@ -102,6 +104,6 @@ task jacocoRootReport(type: JacocoReport) {
 }
 
 coveralls {
-    sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
+    sourceDirs = activeSubprojects.sourceSets.main.allSource.srcDirs.flatten()
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
