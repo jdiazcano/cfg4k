@@ -1,4 +1,7 @@
 dependencies {
     compile project(":cfg4k-core")
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // No needed but the build needs to find a test engine!!!
+    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.0-beta2'
 }
