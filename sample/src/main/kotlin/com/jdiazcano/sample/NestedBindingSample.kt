@@ -18,11 +18,11 @@ package com.jdiazcano.sample
 
 import com.jdiazcano.konfig.bind
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
-import com.jdiazcano.konfig.providers.DefaultConfigProvider
+import com.jdiazcano.konfig.providers.ProxyConfigProvider
 
 fun main(args: Array<String>) {
     val loader = PropertyConfigLoader(GlobalConfig::class.java.getResource("/global.properties")) // Create loader
-    val provider = DefaultConfigProvider(loader)                                                  // Create provider
+    val provider = ProxyConfigProvider(loader)                                                    // Create provider
     val globalConfig = provider.bind<GlobalConfig>("")                                            // bind and use
 
     println("Database name: ${globalConfig.database().name()}")
