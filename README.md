@@ -28,7 +28,9 @@ The dependency is from JitPack so it has a schema:
 1. `com.github.jdiazcano` = github user
 2. `cfg4k` = project name
 3. `cfg4k-bytebuddy` = module name (folder inside the project)
-4. `0.2` = version, here you can write a tag or branch (maybe followed by `-SNAPSHOT` to get the latest version)
+4. `0.2` = version, here you can write a tag or branch (maybe followed by `-SNAPSHOT`* to get the latest version)
+
+\* Sometimes the SNAPSHOT build takes times in JitPack when building for the first time, be patient if it takes longer than expected. It is only the first time globally!
 
 # Example
 
