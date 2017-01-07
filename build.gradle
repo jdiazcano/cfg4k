@@ -81,8 +81,16 @@ subprojects {
 
 def activeSubprojects = subprojects.findAll { it.name.startsWith("cfg4k") }
 
-task junitTest(dependsOn: [":cfg4k-core:junitPlatformTest", ":cfg4k-bytebuddy:junitPlatformTest"])
-task report(dependsOn: [":cfg4k-core:junitPlatformJacocoReport", ":cfg4k-bytebuddy:junitPlatformJacocoReport"])
+task junitTest(dependsOn: [
+        ":cfg4k-core:junitPlatformTest",
+        ":cfg4k-bytebuddy:junitPlatformTest",
+        ":cfg4k-hocon:junitPlatformTest"
+])
+task report(dependsOn: [
+        ":cfg4k-core:junitPlatformJacocoReport",
+        ":cfg4k-bytebuddy:junitPlatformJacocoReport",
+        ":cfg4k-hocon:junitPlatformJacocoReport"
+])
 
 task jacocoRootReport(type: JacocoReport) {
     additionalSourceDirs = files(activeSubprojects.sourceSets.main.allSource.srcDirs)
@@ -90,7 +98,8 @@ task jacocoRootReport(type: JacocoReport) {
     classDirectories = files(activeSubprojects.sourceSets.main.output)
     executionData = files(
             "cfg4k-core/build/jacoco/junitPlatformTest.exec",
-            "cfg4k-bytebuddy/build/jacoco/junitPlatformTest.exec" // needed because the default name is test.exec instead :(
+            "cfg4k-bytebuddy/build/jacoco/junitPlatformTest.exec", // needed because the default name is test.exec instead :(
+            "cfg4k-hocon/build/jacoco/junitPlatformTest.exec"
     )
     reports {
         html.enabled = true
