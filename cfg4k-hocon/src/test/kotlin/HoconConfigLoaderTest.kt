@@ -1,6 +1,7 @@
 import com.jdiazcano.konfig.bind
 import com.jdiazcano.konfig.hocon.HoconConfigLoader
 import com.jdiazcano.konfig.providers.Providers
+import com.typesafe.config.ConfigFactory
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -12,7 +13,8 @@ class HoconConfigLoaderTest: Spek({
     val loaders = listOf(
             HoconConfigLoader(File(javaClass.classLoader.getResource("test.properties").toURI())),
             HoconConfigLoader("test.properties"),
-            HoconConfigLoader(javaClass.classLoader.getResource("test.properties"))
+            HoconConfigLoader(javaClass.classLoader.getResource("test.properties")),
+            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), {ConfigFactory.parseResources("test.properties")})
     )
 
     loaders.forEachIndexed { i, loader ->

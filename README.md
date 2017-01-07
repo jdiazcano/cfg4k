@@ -70,5 +70,7 @@ interface DatabaseConfig {
 
 Full example inside the sample module: https://github.com/jdiazcano/cfg4k/tree/master/sample
 
+\* Have in mind that not everything is supported in code coverage in Kotlin (inline extension functions) so the code coverage might appear worse than it really is!
+
 # License
 Licensed under the Apache License, Version 2.0. See LICENSE file.
