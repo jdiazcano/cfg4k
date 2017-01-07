@@ -24,6 +24,7 @@ This is a multimodule dependency so the core will always be needed but you can a
 
 # Dependency explained
 The dependency is from JitPack so it has a schema:
+
 1. `com.github.jdiazcano` = github user
 2. `cfg4k` = project name
 3. `cfg4k-bytebuddy` = module name (folder inside the project)
