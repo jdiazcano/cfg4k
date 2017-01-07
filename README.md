@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jdiazcano/cfg4k.svg?branch=bytebuddy)](https://travis-ci.org/jdiazcano/cfg4k) [![Coverage Status](https://coveralls.io/repos/github/jdiazcano/cfg4k/badge.svg?branch=bytebuddy)](https://coveralls.io/github/jdiazcano/cfg4k?branch=bytebuddy) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Release](https://jitpack.io/v/com.github.jdiazcano.cfg4k/bytebuddy.svg)](https://jitpack.io/#com.github.jdiazcano.cfg4k/bytebuddy)
+[![Build Status](https://travis-ci.org/jdiazcano/cfg4k.svg?branch=master)](https://travis-ci.org/jdiazcano/cfg4k) [![Coverage Status](https://coveralls.io/repos/github/jdiazcano/cfg4k/badge.svg?branch=master)](https://coveralls.io/github/jdiazcano/cfg4k?branch=master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Release](https://jitpack.io/v/jdiazcano/cfg4k.svg)](https://jitpack.io/#jdiazcano/cfg4k)
 
 #Overview 
 Cfg4k is a configuration library made for Kotlin in Kotlin!
