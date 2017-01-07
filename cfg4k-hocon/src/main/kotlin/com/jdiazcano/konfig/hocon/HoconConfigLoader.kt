@@ -13,8 +13,8 @@ import java.net.URL
  */
 open class HoconConfigLoader : ConfigLoader {
 
-    var config: Config
-    val loader: () -> Config
+    protected var config: Config
+    protected val loader: () -> Config
 
     /**
      * Loadst he configuration based on an URL
