@@ -19,6 +19,7 @@ package com.jdiazcano.konfig.bytebuddy
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.loaders.ReloadStrategy
 import com.jdiazcano.konfig.providers.AbstractConfigProvider
+import com.jdiazcano.konfig.providers.Providers
 import com.jdiazcano.konfig.utils.Typable
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.implementation.FixedValue
@@ -47,3 +48,5 @@ open class ByteBuddyConfigProvider(
     }
 
 }
+
+fun Providers.Companion.bytebuddy(loader: ConfigLoader, reloadStrategy: ReloadStrategy? = null) = ByteBuddyConfigProvider(loader, reloadStrategy)
