@@ -84,11 +84,13 @@ def activeSubprojects = subprojects.findAll { it.name.startsWith("cfg4k") }
 task junitTest(dependsOn: [
         ":cfg4k-core:junitPlatformTest",
         ":cfg4k-bytebuddy:junitPlatformTest",
+        ":cfg4k-yaml:junitPlatformTest",
         ":cfg4k-hocon:junitPlatformTest"
 ])
 task report(dependsOn: [
         ":cfg4k-core:junitPlatformJacocoReport",
         ":cfg4k-bytebuddy:junitPlatformJacocoReport",
+        ":cfg4k-yaml:junitPlatformJacocoReport",
         ":cfg4k-hocon:junitPlatformJacocoReport"
 ])
 
@@ -99,6 +101,7 @@ task jacocoRootReport(type: JacocoReport) {
     executionData = files(
             "cfg4k-core/build/jacoco/junitPlatformTest.exec",
             "cfg4k-bytebuddy/build/jacoco/junitPlatformTest.exec", // needed because the default name is test.exec instead :(
+            "cfg4k-yaml/build/jacoco/junitPlatformTest.exec",
             "cfg4k-hocon/build/jacoco/junitPlatformTest.exec"
     )
     reports {
