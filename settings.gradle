@@ -3,4 +3,5 @@ include 'sample'
 include 'cfg4k-core'
 include 'cfg4k-bytebuddy'
 include 'cfg4k-hocon'
+include 'cfg4k-yaml'
 
