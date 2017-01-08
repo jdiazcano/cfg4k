@@ -21,6 +21,10 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timer
 
+/**
+ * This reload strategy will reload the config provider when the timer ticks. A TimeUnit is used which will be
+ * translated to milliseconds.
+ */
 class TimedReloadStrategy(val time: Long, val unit: TimeUnit) : ReloadStrategy {
 
     private lateinit var reloadTimer: Timer

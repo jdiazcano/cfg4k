@@ -1,3 +1,5 @@
+package com.jdiazcano.hocon
+
 import com.jdiazcano.konfig.bind
 import com.jdiazcano.konfig.hocon.HoconConfigLoader
 import com.jdiazcano.konfig.providers.Providers
@@ -14,7 +16,7 @@ class HoconConfigLoaderTest: Spek({
             HoconConfigLoader(File(javaClass.classLoader.getResource("test.properties").toURI())),
             HoconConfigLoader("test.properties"),
             HoconConfigLoader(javaClass.classLoader.getResource("test.properties")),
-            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), {ConfigFactory.parseResources("test.properties")})
+            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), { ConfigFactory.parseResources("test.properties")})
     )
 
     loaders.forEachIndexed { i, loader ->

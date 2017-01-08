@@ -18,6 +18,16 @@ package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.utils.Reloadable
 
+/**
+ * A config loader only defines a get method which will return a string with the value
+ */
 interface ConfigLoader : Reloadable {
+
+    /**
+     * Searches the value from a key
+     *
+     * @param key The key of the value that we are looking for
+     * @return The value of the key
+     */
     fun get(key: String): String
 }

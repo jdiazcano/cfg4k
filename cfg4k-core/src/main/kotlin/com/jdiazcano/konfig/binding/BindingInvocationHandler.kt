@@ -23,16 +23,16 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 
+/**
+ * InvocationHandler that handles the proxying between the interface and the call. This class is used in the
+ * ProxyConfigProvider.
+ */
 class BindingInvocationHandler(
         private val provider: ConfigProvider,
         private val prefix: String
 ): InvocationHandler {
 
-    private val objectMethods: List<String>
-
-    init {
-        objectMethods = Object::class.java.declaredMethods.map { it.name }
-    }
+    private val objectMethods: List<String> = Object::class.java.declaredMethods.map { it.name }
 
     override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any {
         if (objectMethods.contains(method.name)) {

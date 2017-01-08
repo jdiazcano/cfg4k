@@ -18,8 +18,18 @@ package com.jdiazcano.konfig.loaders
 
 import com.jdiazcano.konfig.ConfigProvider
 
+/**
+ * A reload strategy defines when a reload of the config loader will be reloaded.
+ */
 interface ReloadStrategy {
+
+    /**
+     * Registers a config provider to be reloaded once the time comes.
+     */
     fun register(configProvider: ConfigProvider)
 
+    /**
+     * Deregisters the config provider so it will not be reloaded anymore.
+     */
     fun deregister(configProvider: ConfigProvider)
 }
