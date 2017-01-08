@@ -68,6 +68,82 @@ interface DatabaseConfig {
 }
 ```
 
+# Detailed features
+
+## Providers
+1. AbstractConfigProvider: Base class for all the other providers. It has the basic functionality for a Provider. (You can obviously ignore it if implementing a new provider)
+2. ProxyConfigProvider: This used to be default provider before having ByteBuddy. Provides all the basic functionality for a provider if performance is not a problem. This uses InvocationHandler and Interface proxying of java for binding.
+3. ByteBuddyConfigProvider: This is the same as Proxy but uses `ByteBuddy` to create a class that implements the interface and returns the value.
+4. CachedConfigProvider: This provider will cache the calls into a map and use the cached one once the same call is done again. When the method `reload` is called this cache will be cleared.
+5. OverrideConfigProvider: With this provider you can input a list of Loaders in order of precedence and it will return the first one that is not null/empty. So you can override properties for example: `EnvironmentConfigLoader -> JsonConfigLoader` it would pick first from Environment and then from Json.
+
+## Loaders
+1. JsonConfigLoader: Load the properties from a Json file, an URL must be provided.
+2. PropertyConfigLoader: Load the properties from a Java properties file.
+3. EnvironmentConfigLoader: Load the properties from the Environment Variables. This will transform the environment variables so they can be used inside the project and stay consistent with the rest of the properties. For example having the variable `GLOBAL_URL` will result in the property `global.url`
+    1. `_` will become `.`
+    2. `-` will become `.`
+    3. The property name will become lowercase
+4. HoconConfigLoader: Load the properties from a Hocon file. This has many advantages over Json or Property (it is a superset of both) so I recommend this loader but not before taking a look at the project: https://github.com/typesafehub/config#using-hocon-the-json-superset
+5. YamlConfigLoader: Load the properties from a Yaml file.
+6. (Future) GitConfigLoader: Load the properties from a Git repository, possible giving the branch name or folder to denote different environments.
+
+## Reload strategies
+1. TimedReloadStrategy: This will reload the properties on a time basis.
+
+## Parsers
+These parsers are supported out of the box
+
+1. Int
+2. Long
+3. Double
+4. Short
+5. Float
+6. Double
+7. Byte
+8. String
+9. Boolean
+10. List
+11. Set
+12. Enum
+
+# Customizing Cfg4k
+
+## Providers
+You can create your own Providers by implementing `ConfigProvider` or extending `AbstractConfigProvider`, keep in mind that the abstract provider already has the parsing so it is alwasy a good practice to extend it.
+```kotlin
+TODO() // In the meantime you can take a look at ProxyConfigProvider/AbstractConfigProvider
+```
+
+## Loaders
+You can create your own config loader by implementing the `ConfigLoader` interface
+```kotlin
+TODO() // In the meantime you can take a look at JsonConfigLoader
+```
+
+## Reload strategies
+You can create your own reloading strategy by implementing the `ReloadStrategy` interface. Remember that you have to use it then in the provider.
+
+```kotlin
+TODO() // In the meantime you can take a look at TimedReloadStrategy
+```
+
+## Parsers
+There are two steps in order to use a new parser.
+
+1. Create your class by implementing Parser
+2. Register your parser in the `Parsers` class `addParser(), addClassedParser(), addParseredParser()`
+
+```kotlin
+data class Point(val x: Int, val y: Int)
+
+object PointParser: Parser<Point> {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = Point(value.split(',')[0], value.split(',')[1])
+}
+
+Parsers.addParser(Point::class.java, PointParser())
+```
+
 Full example inside the sample module: https://github.com/jdiazcano/cfg4k/tree/master/sample
 
 \* Have in mind that not everything is supported in code coverage in Kotlin (inline extension functions) so the code coverage might appear worse than it really is!
