@@ -22,9 +22,9 @@ import com.jdiazcano.konfig.Binder
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.binding.BindingInvocationHandler
-import com.jdiazcano.konfig.loaders.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers
+import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable

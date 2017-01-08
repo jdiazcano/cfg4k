@@ -2,7 +2,7 @@ package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.loaders.ReloadStrategy
+import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 
 class Providers {
     companion object {

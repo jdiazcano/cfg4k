@@ -18,8 +18,6 @@ package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.binding.BindingInvocationHandler
-import com.jdiazcano.konfig.loaders.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers.findParser
 import com.jdiazcano.konfig.parsers.Parsers.getClassedParser
@@ -28,10 +26,10 @@ import com.jdiazcano.konfig.parsers.Parsers.getParseredParser
 import com.jdiazcano.konfig.parsers.Parsers.isClassedParser
 import com.jdiazcano.konfig.parsers.Parsers.isParser
 import com.jdiazcano.konfig.parsers.Parsers.isParseredParser
+import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
-import java.lang.reflect.Proxy
 import java.lang.reflect.Type
 
 @Suppress("UNCHECKED_CAST")

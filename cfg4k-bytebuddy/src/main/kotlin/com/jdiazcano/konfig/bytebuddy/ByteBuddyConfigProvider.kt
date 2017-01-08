@@ -18,7 +18,7 @@ package com.jdiazcano.konfig.bytebuddy
 
 import com.jdiazcano.konfig.binding.prefix;
 import com.jdiazcano.konfig.ConfigLoader
-import com.jdiazcano.konfig.loaders.ReloadStrategy
+import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parsers
 import com.jdiazcano.konfig.providers.AbstractConfigProvider
 import com.jdiazcano.konfig.providers.Providers

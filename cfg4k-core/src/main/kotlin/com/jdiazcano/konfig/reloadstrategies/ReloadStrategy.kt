@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jdiazcano.konfig.loaders
+package com.jdiazcano.konfig.reloadstrategies
 
 import com.jdiazcano.konfig.ConfigProvider
 

@@ -16,6 +16,7 @@
 
 package com.jdiazcano.konfig
 
+import com.jdiazcano.konfig.loaders.EnvironmentConfigLoader
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.winterbe.expekt.should
@@ -37,6 +38,24 @@ class ConfigLoaderTest: Spek({
         it("a value should be b") {
             loader.get("a").should.be.equal("b")
             loader.get("nested.a").should.be.equal("nestedb")
+        }
+    }
+
+    /**
+     * If this test fails you need to add the next environment variables to your build/system/whatever
+     *
+     * JAVAHOME => myjavahome
+     * FOO_BAR => bar
+     * FOO_BAR_MORE => morebar
+     * NESTED_FOO_BAR => nestedbar
+     */
+    describe("a environment config loader") {
+        val loader = EnvironmentConfigLoader()
+        it("a value should be b") {
+            loader.get("foo.bar").should.be.equal("bar")
+            loader.get("javahome").should.be.equal("myjavahome")
+            loader.get("foo.bar.more").should.be.equal("morebar")
+            loader.get("nested.foo.bar").should.be.equal("nestedbar")
         }
     }
 })
