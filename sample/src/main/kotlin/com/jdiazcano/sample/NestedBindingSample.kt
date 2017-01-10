@@ -16,7 +16,7 @@
 
 package com.jdiazcano.sample
 
-import com.jdiazcano.konfig.bind
+import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.ProxyConfigProvider
 

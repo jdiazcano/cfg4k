@@ -16,7 +16,7 @@
 
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.providers.ConfigProvider
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timer

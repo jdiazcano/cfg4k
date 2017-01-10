@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jdiazcano.konfig
+package com.jdiazcano.konfig.loaders
 
 import com.jdiazcano.konfig.utils.Reloadable
 

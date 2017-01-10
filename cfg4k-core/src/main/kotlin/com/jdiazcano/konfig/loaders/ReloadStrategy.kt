@@ -16,7 +16,7 @@
 
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.providers.ConfigProvider
 
 /**
  * A reload strategy defines when a reload of the config loader will be reloaded.

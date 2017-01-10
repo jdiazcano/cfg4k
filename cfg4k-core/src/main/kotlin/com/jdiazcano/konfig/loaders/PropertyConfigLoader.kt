@@ -16,7 +16,6 @@
 
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.utils.Reloadable
 import com.jdiazcano.konfig.utils.asLines
 import java.net.URL

@@ -16,7 +16,6 @@
 
 package com.jdiazcano.konfig.providers
 
-import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.utils.Typable
 
 /**

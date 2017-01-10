@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jdiazcano.konfig
+package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.providers.CachedConfigProvider
 import com.jdiazcano.konfig.utils.Typable
