@@ -19,8 +19,8 @@ class ByteBuddyConfigProviderReloadTest: Spek({
     "a": "reloaded nestedb"
   }
 }"""
-    describe("a timed reloadable json config loader") {
-        it("defaultconfigprovider test") {
+    describe("a timed reloadable bytebuddy proxy with json config loader") {
+        it("bytebuddy test") {
             val file = File("timedreloadedfile.json")
             file.createNewFile()
             file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
@@ -33,6 +33,7 @@ class ByteBuddyConfigProviderReloadTest: Spek({
 
 private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
     val bindedProperty = provider.bind<Normal>("")
+    bindedProperty.nested().a().should.be.equal("reloaded nestedb")
     if (overriden) {
         bindedProperty.a().should.be.equal("overrideb")
     } else {
