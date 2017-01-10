@@ -1,12 +1,5 @@
-repositories {
-    maven {
-        url 'https://jitpack.io'
-    }
-}
-
 dependencies {
     compile project(":cfg4k-core")
-    compile 'com.github.jdiazcano.cfg4k:cfg4k-bytebuddy:bytebuddy-performance-SNAPSHOT'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // No needed but the build needs to find a test engine!!!
