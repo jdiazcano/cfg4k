@@ -16,9 +16,8 @@
 
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.TestBinder
-import com.jdiazcano.konfig.bind
+import com.jdiazcano.konfig.providers.ConfigProvider
+import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.providers.CachedConfigProvider
 import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.jdiazcano.konfig.providers.OverrideConfigProvider
