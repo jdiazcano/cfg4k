@@ -44,21 +44,24 @@ class ByteBuddyConfigProviderTest: Spek({
         }
 
         it("binding test") {
-            val testBinder = provider.bind<TestBinder>("")
-            testBinder.booleanProperty().should.be.`true`
-            testBinder.integerProperty().should.be.equal(1)
-            testBinder.longProperty().should.be.equal(2)
-            testBinder.shortProperty().should.be.equal(1)
-            testBinder.floatProperty().should.be.equal(2.1F)
-            testBinder.doubleProperty().should.be.equal(1.1)
-            testBinder.byteProperty().should.be.equal(2)
-            testBinder.a().should.be.equal("b")
-            testBinder.c().should.be.equal("d")
-            testBinder.list().should.be.equal(listOf(1, 2, 3))
-            testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
+            (1..10).forEach {
+                val testBinder = provider.bind<TestBinder>("")
+                testBinder.booleanProperty().should.be.`true`
+                testBinder.integerProperty().should.be.equal(1)
+                testBinder.longProperty().should.be.equal(2)
+                testBinder.shortProperty().should.be.equal(1)
+                testBinder.floatProperty().should.be.equal(2.1F)
+                testBinder.doubleProperty().should.be.equal(1.1)
+                testBinder.byteProperty().should.be.equal(2)
+                testBinder.a().should.be.equal("b")
+                testBinder.c().should.be.equal("d")
+                testBinder.list().should.be.equal(listOf(1, 2, 3))
+                testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
 
-            // toString should be the object tostring not the one that comes from the property
-            testBinder.toString().should.not.be.equal("this should not be ever used")
+                // toString should be the object tostring not the one that comes from the property
+                testBinder.toString().should.not.be.equal("this should not be ever used")
+            }
+
         }
     }
 })

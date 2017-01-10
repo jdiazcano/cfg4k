@@ -16,7 +16,7 @@
 
 package com.jdiazcano.konfig.bytebuddy
 
-import com.jdiazcano.konfig.binding.prefix;
+import com.jdiazcano.konfig.binding.prefix
 import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.loaders.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parsers
@@ -24,20 +24,23 @@ import com.jdiazcano.konfig.providers.AbstractConfigProvider
 import com.jdiazcano.konfig.providers.Providers
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
-import net.bytebuddy.implementation.*
 import java.lang.reflect.Modifier
 import net.bytebuddy.implementation.bind.annotation.RuntimeType
-import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
-import net.bytebuddy.matcher.ElementMatchers.not
 
+import net.bytebuddy.implementation.MethodDelegation
 
 @Suppress("UNCHECKED_CAST")
 open class ByteBuddyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
 ): AbstractConfigProvider(configLoader, reloadStrategy) {
+    val cache = mutableMapOf<String, Any>()
 
     override fun <T: Any> bind(prefix: String, type: Class<T>): T {
+        if (cache.containsKey(prefix)) {
+            return cache[prefix] as T
+        }
+
         var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
         type.methods.forEach { method ->
 
@@ -54,11 +57,11 @@ open class ByteBuddyConfigProvider(
 
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
                     .intercept(MethodDelegation
-                            .withEmptyConfiguration()
-                            .filter(not(isDeclaredBy(Any::class.java)))
                             .to(object : Any() { @RuntimeType fun delegate() = value.invoke() }))
         }
+
         val instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
+        cache[prefix] = instance
         return instance
     }
 
