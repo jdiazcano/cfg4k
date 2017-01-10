@@ -17,6 +17,8 @@
 package com.jdiazcano.konfig.loaders
 
 import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.TestBinder
+import com.jdiazcano.konfig.bind
 import com.jdiazcano.konfig.providers.CachedConfigProvider
 import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.jdiazcano.konfig.providers.OverrideConfigProvider
@@ -75,12 +77,16 @@ class TimedReloadStrategyTest : Spek({
 })
 
 private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
+    val binded = provider.bind<Normal>("")
     if (overriden) {
         provider.getProperty("a", String::class.java).should.be.equal("overrideb")
+        binded.a().should.be.equal("overrideb")
     } else {
         provider.getProperty("a", String::class.java).should.be.equal("b")
+        binded.a().should.be.equal("b")
     }
     provider.getProperty("c", String::class.java).should.be.equal("d")
+    binded.c().should.be.equal("d")
     var lastReload = 1
     val lastIteration = 3
     for (i in 1..5) {
@@ -97,11 +103,25 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
         if (overriden) {
             provider.getProperty("a", String::class.java).should.be.equal("overrideb$lastReload")
             provider.getProperty("c", String::class.java).should.be.equal("d")
+            binded.a().should.be.equal("overrideb$lastReload")
+            binded.c().should.be.equal("d")
         } else {
             provider.getProperty("a", String::class.java).should.be.equal("b$lastReload")
             provider.getProperty("c", String::class.java).should.be.equal("d$lastReload")
+            binded.a().should.be.equal("b$lastReload")
+            binded.c().should.be.equal("d$lastReload")
         }
         lastReload++
     }
     file.delete()
+}
+
+interface Nested {
+    fun a(): String
+}
+
+interface Normal {
+    fun nested(): Nested
+    fun a(): String
+    fun c(): String
 }

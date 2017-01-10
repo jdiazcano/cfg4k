@@ -32,6 +32,7 @@ import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Proxy
+import java.lang.reflect.Type
 
 @Suppress("UNCHECKED_CAST")
 abstract class AbstractConfigProvider(
@@ -55,10 +56,14 @@ abstract class AbstractConfigProvider(
     }
 
     override fun <T: Any> getProperty(name: String, type: Typable): T {
-        val rawType = TargetType(type.getType()).rawTargetType()
+        return getProperty(name, type.getType())
+    }
+
+    override fun <T: Any> getProperty(name: String, type: Type): T {
+        val rawType = TargetType(type).rawTargetType()
         if (isParseredParser(rawType)) {
             val parser = getParseredParser(rawType) as Parser<T>
-            val superType = TargetType(type.getType()).getParameterizedClassArguments()[0]
+            val superType = TargetType(type).getParameterizedClassArguments()[0]
             return parser.parse(configLoader.get(name), superType, findParser(superType) as Parser<T>)
         } else if (isClassedParser(rawType.superclass)) {
             val parser = getClassedParser(rawType.superclass!!) as Parser<T>

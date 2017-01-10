@@ -16,8 +16,10 @@
 
 package com.jdiazcano.konfig
 
+import com.jdiazcano.konfig.providers.CachedConfigProvider
 import com.jdiazcano.konfig.utils.Typable
 import com.jdiazcano.konfig.utils.typeOf
+import java.lang.reflect.Type
 
 /**
  * Base interface for all the ConfigProviders, this interface defines the needed methods of a provider in order to be
@@ -59,6 +61,8 @@ interface ConfigProvider : Binder {
      * Adds a reload listener that will be called once the reload is performed.
      */
     fun addReloadListener(listener: () -> Unit)
+
+    fun <T : Any> getProperty(name: String, type: Type): T
 }
 
 /**
@@ -79,3 +83,4 @@ interface Binder {
 
 inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
 inline fun <reified T : Any> ConfigProvider.getProperty(name: String) = getProperty<T>(name, typeOf<T>())
+fun ConfigProvider.cache() = CachedConfigProvider(this)
