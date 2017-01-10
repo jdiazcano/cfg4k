@@ -16,16 +16,20 @@
 
 package com.jdiazcano.konfig.bytebuddy
 
+import com.jdiazcano.konfig.binding.prefix;
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.loaders.ReloadStrategy
+import com.jdiazcano.konfig.parsers.Parsers
 import com.jdiazcano.konfig.providers.AbstractConfigProvider
 import com.jdiazcano.konfig.providers.Providers
-import com.jdiazcano.konfig.utils.Typable
 import net.bytebuddy.ByteBuddy
-import net.bytebuddy.implementation.FixedValue
-import net.bytebuddy.matcher.ElementMatchers
+import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
+import net.bytebuddy.implementation.*
 import java.lang.reflect.Modifier
-import java.lang.reflect.Type
+import net.bytebuddy.implementation.bind.annotation.RuntimeType
+import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
+import net.bytebuddy.matcher.ElementMatchers.not
+
 
 @Suppress("UNCHECKED_CAST")
 open class ByteBuddyConfigProvider(
@@ -34,17 +38,28 @@ open class ByteBuddyConfigProvider(
 ): AbstractConfigProvider(configLoader, reloadStrategy) {
 
     override fun <T: Any> bind(prefix: String, type: Class<T>): T {
-        var subclass = ByteBuddy().subclass(type)
+        var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
         type.methods.forEach { method ->
+
+            val returnType = method.genericReturnType
+
+            val value: () -> T = {
+                if (Parsers.canParse(method.returnType)) {
+                    getProperty(prefix(prefix, method.name), returnType)
+                } else {
+                    bind(prefix(prefix, method.name), method.returnType) as T
+                }
+            }
             subclass = subclass
+
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
-                    .intercept(FixedValue.value(getProperty<Any>(method.name, object : Typable {
-                        override fun getType(): Type {
-                            return method.genericReturnType
-                        }
-                    }) as T))
+                    .intercept(MethodDelegation
+                            .withEmptyConfiguration()
+                            .filter(not(isDeclaredBy(Any::class.java)))
+                            .to(object : Any() { @RuntimeType fun delegate() = value.invoke() }))
         }
-        return subclass.make().load(javaClass.classLoader).loaded.newInstance()
+        val instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
+        return instance
     }
 
 }

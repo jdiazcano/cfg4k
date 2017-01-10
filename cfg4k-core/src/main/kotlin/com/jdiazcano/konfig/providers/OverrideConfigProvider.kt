@@ -29,6 +29,7 @@ import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Proxy
+import java.lang.reflect.Type
 
 class OverrideConfigProvider(
         private val loaders: Array<ConfigLoader>,
@@ -73,6 +74,10 @@ class OverrideConfigProvider(
     }
 
     override fun <T : Any> getProperty(name: String, type: Typable): T {
+        return getProperty(name, type.getType())
+    }
+
+    override fun <T : Any> getProperty(name: String, type: Type): T {
         var value: String = ""
         if (name in cachedLoaders) {
             value = cachedLoaders[name]!!.get(name)
@@ -87,10 +92,10 @@ class OverrideConfigProvider(
             }
         }
 
-        val rawType = TargetType(type.getType()).rawTargetType()
+        val rawType = TargetType(type).rawTargetType()
         if (Parsers.isParseredParser(rawType)) {
             val parser = Parsers.getParseredParser(rawType) as Parser<T>
-            val superType = TargetType(type.getType()).getParameterizedClassArguments()[0]
+            val superType = TargetType(type).getParameterizedClassArguments()[0]
             return parser.parse(value, superType, Parsers.findParser(superType) as Parser<T>)
         } else if (Parsers.isClassedParser(rawType.superclass)) {
             val parser = Parsers.getClassedParser(rawType.superclass!!) as Parser<T>

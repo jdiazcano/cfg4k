@@ -19,6 +19,10 @@ package com.jdiazcano.konfig.providers
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.utils.Typable
 
+/**
+ * This config provider will cache the calls so binding and property lookup is not done everytime. Reloading this
+ * provider will clear the cache so things will have to be binded again.
+ */
 @Suppress("UNCHECKED_CAST")
 class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider by configProvider {
     private val cache = mutableMapOf<String, Any>()
