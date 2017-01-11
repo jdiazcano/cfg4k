@@ -30,11 +30,15 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.implementation.MethodDelegation
 
 @Suppress("UNCHECKED_CAST")
-open class ByteBuddyConfigProvider(
+class ByteBuddyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
 ): AbstractConfigProvider(configLoader, reloadStrategy) {
-    val cache = mutableMapOf<String, Any>()
+    private val cache = mutableMapOf<String, Any>()
+
+    init {
+        addReloadListener { cache.clear() }
+    }
 
     override fun <T: Any> bind(prefix: String, type: Class<T>): T {
         if (cache.containsKey(prefix)) {
@@ -47,11 +51,19 @@ open class ByteBuddyConfigProvider(
             val returnType = method.genericReturnType
 
             val value: () -> T = {
-                if (Parsers.canParse(method.returnType)) {
-                    getProperty(prefix(prefix, method.name), returnType)
-                } else {
-                    bind(prefix(prefix, method.name), method.returnType) as T
+                val prefixWithMethodName = prefix(prefix, method.name)
+                if (cache.containsKey(prefixWithMethodName)) {
+                    cache[prefixWithMethodName]
                 }
+
+                val prop: Any
+                if (Parsers.canParse(method.returnType)) {
+                    prop = getProperty(prefixWithMethodName, returnType)
+                } else {
+                    prop = bind(prefixWithMethodName, method.returnType) as T
+                }
+                cache[prefixWithMethodName] = prop
+                prop as T
             }
             subclass = subclass
 
