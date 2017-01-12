@@ -3,7 +3,7 @@ package com.jdiazcano.konfig.bytebuddy
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.bind
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
-import com.jdiazcano.konfig.loaders.TimedReloadStrategy
+import com.jdiazcano.konfig.reloadstrategies.TimedReloadStrategy
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
