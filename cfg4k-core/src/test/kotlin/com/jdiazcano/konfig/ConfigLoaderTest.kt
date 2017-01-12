@@ -19,6 +19,7 @@ package com.jdiazcano.konfig
 import com.jdiazcano.konfig.loaders.EnvironmentConfigLoader
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
+import com.jdiazcano.konfig.loaders.SystemPropertyConfigLoader
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -56,6 +57,19 @@ class ConfigLoaderTest: Spek({
             loader.get("javahome").should.be.equal("myjavahome")
             loader.get("foo.bar.more").should.be.equal("morebar")
             loader.get("nested.foo.bar").should.be.equal("nestedbar")
+        }
+    }
+
+    describe("a system property config loader") {
+        beforeEachTest {
+            System.setProperty("this.is.a.test", "testvalue")
+            System.setProperty("another.test", "bestest")
+        }
+
+        it("settings should have the above values") {
+            val loader = SystemPropertyConfigLoader()
+            loader.get("this.is.a.test").should.be.equal("testvalue")
+            loader.get("another.test").should.be.equal("bestest")
         }
     }
 })

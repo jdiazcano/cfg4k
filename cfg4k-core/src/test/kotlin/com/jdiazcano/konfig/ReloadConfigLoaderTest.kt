@@ -18,6 +18,7 @@ package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
+import com.jdiazcano.konfig.loaders.SystemPropertyConfigLoader
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -166,6 +167,32 @@ c=reloadedd
             loader.get("c").should.be.equal("reloadedd")
 
             file.delete()
+        }
+    }
+
+    describe("a reloadable system properties config loader") {
+        var loader: ConfigLoader? = null
+        var inc = 1
+        beforeEachTest {
+            System.setProperty("first", "$inc")
+            System.setProperty("second", "$inc")
+        }
+
+        it("the first time should be 1 and 2") {
+            loader = SystemPropertyConfigLoader()
+            loader?.let {
+                it.get("first").should.be.equal("1")
+                it.get("second").should.be.equal("1")
+            }
+        }
+
+        it("the first time should be 1 and 2") {
+            loader?.let {
+                it.reload()
+                it.get("first").should.be.equal("2")
+                it.get("second").should.be.equal("2")
+            }
+
         }
     }
 
