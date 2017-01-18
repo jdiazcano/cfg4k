@@ -13,7 +13,7 @@ open class EnvironmentConfigLoader : ConfigLoader {
 
     init {
         addTransformer( { key ->
-            key.replace("([a-z]).([A-Z])".toRegex(), { result -> "${result.groups[1]!!.value}_${result.groups[2]!!.value}" })
+            key.replace("([a-z])([A-Z])".toRegex(), { result -> "${result.groups[1]!!.value}_${result.groups[2]!!.value}" })
         })
         addTransformer( { key -> key.replace('.', '_') } )
         addTransformer( { key -> key.replace('.', '-') } )
@@ -26,7 +26,7 @@ open class EnvironmentConfigLoader : ConfigLoader {
         }
 
         transformations.forEach {
-            val transformed = it.invoke(key)
+            val transformed = it.invoke(key).toUpperCase()
             val value = System.getenv(transformed)
             if (value != null) {
                 properties[key] = value
