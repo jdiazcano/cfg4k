@@ -2,49 +2,52 @@ package com.jdiazcano.konfig.loaders
 
 import com.jdiazcano.konfig.ConfigLoader
 
+/**
+ * EnvironmentConfigLoader will try to match the key to an environment variable. This will apply a series of
+ * transformations before matching. Once the match is done, it will be cached until the next time. Once reload is called
+ * it will clear the cache until the next get() call is done and the value is cached again.
+ */
 open class EnvironmentConfigLoader : ConfigLoader {
     protected val properties: MutableMap<String, String> = mutableMapOf()
     protected val transformations: MutableList<(String) -> String> = mutableListOf()
 
     init {
-        /*
-        I leave this here in case we want to have a transformer for camelCase
         addTransformer( { key ->
-            key.replace("([a-z])([A-Z])".toRegex(), { result -> "${result.groups[1]!!.value}.${result.groups[2]!!.value}" })
-        })*/
-        addTransformer( { key -> key.replace('_', '.') } )
-        addTransformer( { key -> key.replace('-', '.') } )
-
-        loadProperties()
-    }
-
-    private fun loadProperties() {
-        properties.clear()
-        System.getenv().forEach { key, value ->
-            properties[sanitize(key)] = value
-        }
-    }
-
-    private fun sanitize(key: String): String {
-        var sanitizedKey = key
-        transformations.forEach { transformation ->
-            sanitizedKey = transformation.invoke(sanitizedKey)
-        }
-
-        return sanitizedKey.toLowerCase()
+            key.replace("([a-z]).([A-Z])".toRegex(), { result -> "${result.groups[1]!!.value}_${result.groups[2]!!.value}" })
+        })
+        addTransformer( { key -> key.replace('.', '_') } )
+        addTransformer( { key -> key.replace('.', '-') } )
     }
 
     override fun get(key: String): String {
-        return properties[key]?:""
+        // If we already have it in cache, we have to use it
+        if (properties.containsKey(key)) {
+            return properties[key]!!
+        }
+
+        transformations.forEach {
+            val transformed = it.invoke(key)
+            val value = System.getenv(transformed)
+            if (value != null) {
+                properties[key] = value
+                return value
+            }
+        }
+
+        return ""
     }
 
     override fun reload() {
-        loadProperties()
+        properties.clear()
     }
 
     /**
-     * Adds a transformer in order to transform an ENVIRONMENT_VARIABLE into a environment.variable property setting.
-     * So later this will be the one that you will be using in order to retrieve it from the provider/loader.
+     * Adds a transformer that will be performed once the get() method is called. This will transform the key to the
+     * environment variable form (UPPER_CASE_FORM) and by default there are three transformers.
+     *
+     * 1- foo.bar to FOO-BAR
+     * 1- foo.bar to FOO_BAR
+     * 1- fooBar to FOO_BAR
      */
     fun addTransformer(transformer: (String) -> String) {
         transformations.add(transformer)
