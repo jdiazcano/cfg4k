@@ -22,10 +22,13 @@ import com.jdiazcano.konfig.providers.Providers.cached
 import com.jdiazcano.konfig.providers.Providers.proxy
 import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.providers.cache
+import com.jdiazcano.konfig.providers.getProperty
+import com.jdiazcano.konfig.utils.SettingNotFound
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import kotlin.test.assertFailsWith
 
 class ConfigProviderTest: Spek({
 
@@ -38,6 +41,17 @@ class ConfigProviderTest: Spek({
 
     providers.forEachIndexed { i, provider ->
         describe("provider[$i]") {
+            it("default values") {
+                provider.getProperty("this.does.not.exist", 1).should.be.equal(1)
+                // When having a cached provider then it will cache the "this.does.not.exist" if it has a default value
+                // because the delegated provider will return the default value. Should the default value not be passed
+                // and the exception caught? I think that would mean a performance impact and having exceptions into
+                // account for normal logic is not right
+                assertFailsWith<SettingNotFound> {
+                    provider.getProperty<Int>("i.dont.extist")
+                }
+            }
+
             it("integer properties") {
                 provider.getProperty("integerProperty", Int::class.java).should.be.equal(1)
                 provider.getProperty("integerProperty", Integer::class.java).should.be.equal(Integer(1))
