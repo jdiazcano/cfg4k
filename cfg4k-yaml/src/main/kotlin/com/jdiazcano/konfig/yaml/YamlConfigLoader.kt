@@ -41,7 +41,5 @@ class YamlConfigLoader(private val url: URL): ConfigLoader {
         loadProperties()
     }
 
-    override fun get(key: String): String {
-        return properties[key]?:""
-    }
+    override fun get(key: String) = properties[key]
 }

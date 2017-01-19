@@ -28,6 +28,7 @@ import com.jdiazcano.konfig.parsers.Parsers.isParser
 import com.jdiazcano.konfig.parsers.Parsers.isParseredParser
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.ParserClassNotFound
+import com.jdiazcano.konfig.utils.SettingNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Type
@@ -45,32 +46,53 @@ open class DefaultConfigProvider(
         reloadStrategy?.register(this)
     }
 
-    override fun <T: Any> getProperty(name: String, type: Class<T>): T {
+    override fun <T: Any> getProperty(name: String, type: Class<T>, default: T?): T {
         // There is no way that this has a generic parsers because the class actually removes that possiblity
         if (isParser(type)) {
-            return getParser(type).parse(configLoader.get(name))
+            val value = configLoader.get(name)
+            if (value != null) {
+                return getParser(type).parse(value)
+            } else {
+                if (default != null) {
+                    return default
+                } else {
+                    throw SettingNotFound("Setting $name was not found")
+                }
+            }
         } else {
             throw ParserClassNotFound("Parser for class ${type.name} was not found")
         }
     }
 
-    override fun <T: Any> getProperty(name: String, type: Typable): T {
-        return getProperty(name, type.getType())
+    override fun <T: Any> getProperty(name: String, type: Typable, default: T?): T {
+        return getProperty(name, type.getType(), default)
     }
 
-    override fun <T: Any> getProperty(name: String, type: Type): T {
+    override fun <T: Any> getProperty(name: String, type: Type, default: T?): T {
         val rawType = TargetType(type).rawTargetType()
-        if (isParseredParser(rawType)) {
-            val parser = getParseredParser(rawType) as Parser<T>
-            val superType = TargetType(type).getParameterizedClassArguments()[0]
-            return parser.parse(configLoader.get(name), superType, findParser(superType) as Parser<T>)
-        } else if (isClassedParser(rawType.superclass)) {
-            val parser = getClassedParser(rawType.superclass!!) as Parser<T>
-            return parser.parse(configLoader.get(name), rawType as Class<T>)
-        } else if (isParser(rawType)) {
-            return getParser(rawType).parse(configLoader.get(name)) as T
+
+        val value = configLoader.get(name)
+        if (value != null) {
+            if (isParseredParser(rawType)) {
+                val parser = getParseredParser(rawType) as Parser<T>
+                val superType = TargetType(type).getParameterizedClassArguments()[0]
+                return parser.parse(value, superType, findParser(superType) as Parser<T>)
+            } else if (isClassedParser(rawType.superclass)) {
+                val parser = getClassedParser(rawType.superclass!!) as Parser<T>
+                return parser.parse(value, rawType as Class<T>)
+            } else if (isParser(rawType)) {
+                return getParser(rawType).parse(value) as T
+            }
+            throw ParserClassNotFound("Parser for class $type was not found")
+        } else {
+            if (default != null) {
+                return default
+            } else {
+                throw SettingNotFound("Setting $name was not found")
+            }
         }
-        throw ParserClassNotFound("Parser for class $type was not found")
+
+
     }
 
     override fun cancelReload() = reloadStrategy?.deregister(this)

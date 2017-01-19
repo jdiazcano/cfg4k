@@ -31,21 +31,21 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
         configProvider.addReloadListener { cache.clear() }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Class<T>): T {
+    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
-            val property = configProvider.getProperty(name, type)
+            val property = configProvider.getProperty(name, type, default)
             cache[name] = property
             return property
         }
     }
 
-    override fun <T: Any> getProperty(name: String, type: Typable): T {
+    override fun <T: Any> getProperty(name: String, type: Typable, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
-            val property: T = configProvider.getProperty(name, type)
+            val property: T = configProvider.getProperty(name, type, default)
             cache[name] = property
             return property
         }

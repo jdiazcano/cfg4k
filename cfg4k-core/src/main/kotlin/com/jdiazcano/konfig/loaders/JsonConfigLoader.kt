@@ -45,7 +45,7 @@ open class JsonConfigLoader(
         }
     }
 
-    override fun get(key: String) = properties[key]?: ""
+    override fun get(key: String) = properties[key]
 
     private fun reduce(json: JsonObject, prefix: String = ""): MutableMap<String, String> {
         val properties = mutableMapOf<String, String>()

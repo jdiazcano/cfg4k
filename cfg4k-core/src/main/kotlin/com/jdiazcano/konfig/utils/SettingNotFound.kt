@@ -14,33 +14,10 @@
  * limitations under the License.
  */
 
-package com.jdiazcano.konfig.loaders
+package com.jdiazcano.konfig.utils
 
-import com.jdiazcano.konfig.loaders.ConfigLoader
-import com.jdiazcano.konfig.utils.asLines
-import java.net.URL
-
-open class PropertyConfigLoader(
-        private val url: URL
-): ConfigLoader {
-
-    val properties: MutableMap<String, String> = mutableMapOf()
-
-    init {
-        loadProperties()
-    }
-
-    private fun loadProperties() {
-        url.asLines().forEach { line ->
-            val split = line.split('=')
-            properties[split[0]] = split[1]
-        }
-    }
-
-    override fun reload() {
-        loadProperties()
-    }
-
-    override fun get(key: String) = properties[key]
-
-}
+/**
+ * This exception will be thrown when a parser is not defined for a specific class. If you see this error you need to
+ * call the methods "addParser" "addClassedParser" of the Provider
+ */
+class SettingNotFound(message: String) : Exception(message)

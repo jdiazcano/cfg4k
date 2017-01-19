@@ -25,6 +25,7 @@ import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.ParserClassNotFound
+import com.jdiazcano.konfig.utils.SettingNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Type
@@ -44,25 +45,33 @@ class OverrideConfigProvider(
         addReloadListener { cachedLoaders.clear() }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Class<T>): T {
+    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
         val value = getValueAndCacheLoader(name)
 
         // There is no way that this has a generic parsers because the class actually removes that possibility
-        if (Parsers.isParser(type)) {
-            return Parsers.getParser(type).parse(value)
+        if (value != null) {
+            if (Parsers.isParser(type)) {
+                return Parsers.getParser(type).parse(value)
+            } else {
+                throw ParserClassNotFound("Parser for class ${type.name} was not found")
+            }
         } else {
-            throw ParserClassNotFound("Parser for class ${type.name} was not found")
+            if (default != null) {
+                return default
+            } else {
+                throw SettingNotFound("Setting $name was not found")
+            }
         }
     }
 
-    private fun getValueAndCacheLoader(name: String): String {
-        var value: String = ""
+    private fun getValueAndCacheLoader(name: String): String? {
+        var value: String? = null
         if (name in cachedLoaders) {
             value = cachedLoaders[name]!!.get(name)
         } else {
             for (loader in loaders) {
                 val internalValue = loader.get(name)
-                if (internalValue != "") {
+                if (internalValue != null) {
                     value = internalValue
                     cachedLoaders[name] = loader
                     break
@@ -72,18 +81,18 @@ class OverrideConfigProvider(
         return value
     }
 
-    override fun <T : Any> getProperty(name: String, type: Typable): T {
+    override fun <T : Any> getProperty(name: String, type: Typable, default: T?): T {
         return getProperty(name, type.getType())
     }
 
-    override fun <T : Any> getProperty(name: String, type: Type): T {
+    override fun <T : Any> getProperty(name: String, type: Type, default: T?): T {
         var value: String = ""
         if (name in cachedLoaders) {
-            value = cachedLoaders[name]!!.get(name)
+            value = cachedLoaders[name]!!.get(name)!!
         } else {
             for (loader in loaders) {
                 val internalValue = loader.get(name)
-                if (internalValue != "") {
+                if (internalValue != null) {
                     value = internalValue
                     cachedLoaders[name] = loader
                     break

@@ -27,7 +27,5 @@ interface ConfigLoader {
      * @param key The key of the value that we are looking for
      * @return The value of the key
      */
-    fun get(key: String): String
-
-    fun reload()
+    fun get(key: String): String?
 }
