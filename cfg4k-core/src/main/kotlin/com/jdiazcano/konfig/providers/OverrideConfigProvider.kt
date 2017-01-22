@@ -113,7 +113,7 @@ class OverrideConfigProvider(
 
     override fun reload() {
         loaders.forEach { it.reload() }
-        listeners.forEach { it.invoke() }
+        listeners.forEach { it() }
     }
 
     override fun cancelReload(): Unit? {

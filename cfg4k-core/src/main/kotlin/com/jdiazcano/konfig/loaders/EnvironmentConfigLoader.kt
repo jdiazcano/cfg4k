@@ -26,7 +26,7 @@ open class EnvironmentConfigLoader : ConfigLoader {
         }
 
         transformations.forEach {
-            val transformed = it.invoke(key).toUpperCase()
+            val transformed = it(key).toUpperCase()
             val value = System.getenv(transformed)
             if (value != null) {
                 properties[key] = value

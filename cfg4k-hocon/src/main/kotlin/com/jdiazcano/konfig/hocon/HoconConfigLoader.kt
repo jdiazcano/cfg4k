@@ -17,14 +17,14 @@ open class HoconConfigLoader : ConfigLoader {
     protected val loader: () -> Config
 
     /**
-     * Loadst he configuration based on an URL
+     * Loads the configuration based on an URL
      */
     constructor(
             url: URL,
             options: ConfigParseOptions = ConfigParseOptions.defaults()
     ) {
         loader = { ConfigFactory.parseURL(url, options) }
-        config = loader.invoke()
+        config = loader()
     }
 
     /**
@@ -35,7 +35,7 @@ open class HoconConfigLoader : ConfigLoader {
             options: ConfigParseOptions = ConfigParseOptions.defaults()
     ) {
         loader = { ConfigFactory.parseFileAnySyntax(file, options) }
-        config = loader.invoke()
+        config = loader()
     }
 
     /**
@@ -46,7 +46,7 @@ open class HoconConfigLoader : ConfigLoader {
             options: ConfigParseOptions = ConfigParseOptions.defaults()
     ) {
         loader = { ConfigFactory.parseResourcesAnySyntax(resource, options) }
-        config = loader.invoke()
+        config = loader()
     }
 
     /**
@@ -60,7 +60,7 @@ open class HoconConfigLoader : ConfigLoader {
     }
 
     override fun reload() {
-        config = loader.invoke()
+        config = loader()
     }
 
     override fun get(key: String): String {
