@@ -52,7 +52,7 @@ class ConfigLoaderTest: Spek({
      */
     describe("a environment config loader") {
         val loader = EnvironmentConfigLoader()
-        it("a value should be b") {
+        it("variables should have the values of the javadoc comment") {
             loader.get("foo.bar").should.be.equal("bar")
             loader.get("javahome").should.be.equal("myjavahome")
             loader.get("foo.bar.more").should.be.equal("morebar")

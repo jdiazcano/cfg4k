@@ -76,7 +76,7 @@ abstract class AbstractConfigProvider(
 
     override fun reload() {
         configLoader.reload()
-        listeners.forEach { it.invoke() } // call listeners
+        listeners.forEach { it() } // call listeners
     }
 
     override fun addReloadListener(listener: () -> Unit) {

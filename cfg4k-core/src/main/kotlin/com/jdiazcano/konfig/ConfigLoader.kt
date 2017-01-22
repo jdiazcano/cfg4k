@@ -16,12 +16,10 @@
 
 package com.jdiazcano.konfig
 
-import com.jdiazcano.konfig.utils.Reloadable
-
 /**
  * A config loader only defines a get method which will return a string with the value
  */
-interface ConfigLoader : Reloadable {
+interface ConfigLoader {
 
     /**
      * Searches the value from a key
@@ -30,4 +28,6 @@ interface ConfigLoader : Reloadable {
      * @return The value of the key
      */
     fun get(key: String): String
+
+    fun reload()
 }

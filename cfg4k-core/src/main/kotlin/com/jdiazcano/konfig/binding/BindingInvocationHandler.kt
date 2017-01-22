@@ -41,9 +41,7 @@ class BindingInvocationHandler(
 
         val type = method.genericReturnType
         if (canParse(method.returnType)) {
-            return provider.getProperty(prefix(prefix, method.name), object : Typable {
-                override fun getType(): Type = type
-            })
+            return provider.getProperty(prefix(prefix, method.name), type)
         } else {
             return provider.bind(prefix(prefix, method.name), method.returnType)
         }

@@ -56,7 +56,7 @@ open class ByteBuddyConfigProvider(
                     .intercept(MethodDelegation
                             .withEmptyConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(object : Any() { @RuntimeType fun delegate() = value.invoke() }))
+                            .to(object : Any() { @RuntimeType fun delegate() = value() }))
         }
         val instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
         return instance
