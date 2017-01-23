@@ -57,6 +57,11 @@ class ConfigLoaderTest: Spek({
             loader.get("javahome").should.be.equal("myjavahome")
             loader.get("foo.bar.more").should.be.equal("morebar")
             loader.get("nested.foo.bar").should.be.equal("nestedbar")
+            loader.get("nested.foo.bar").should.be.equal("nestedbar") // This should be a cached property!
+
+            loader.get("this.will.be.not.found").should.be.equal("")
+
+            loader.reload() // This is mostly for coverage, I haven't seen that environment can be reloaded
         }
     }
 
