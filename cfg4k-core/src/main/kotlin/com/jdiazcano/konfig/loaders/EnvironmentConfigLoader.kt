@@ -12,9 +12,6 @@ open class EnvironmentConfigLoader : ConfigLoader {
     protected val transformations: MutableList<(String) -> String> = mutableListOf()
 
     init {
-        addTransformer( { key ->
-            key.replace("([a-z])([A-Z])".toRegex(), { result -> "${result.groups[1]!!.value}_${result.groups[2]!!.value}" })
-        })
         addTransformer( { key -> key.replace('.', '_') } )
         addTransformer( { key -> key.replace('.', '-') } )
     }
@@ -46,8 +43,7 @@ open class EnvironmentConfigLoader : ConfigLoader {
      * environment variable form (UPPER_CASE_FORM) and by default there are three transformers.
      *
      * 1- foo.bar to FOO-BAR
-     * 1- foo.bar to FOO_BAR
-     * 1- fooBar to FOO_BAR
+     * 2- foo.bar to FOO_BAR
      */
     fun addTransformer(transformer: (String) -> String) {
         transformations.add(transformer)
