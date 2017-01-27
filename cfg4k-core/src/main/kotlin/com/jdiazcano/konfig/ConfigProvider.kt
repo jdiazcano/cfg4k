@@ -25,7 +25,9 @@ import java.lang.reflect.Type
  * Base interface for all the ConfigProviders, this interface defines the needed methods of a provider in order to be
  * configurable and reloadable.
  */
-interface ConfigProvider : Binder {
+interface ConfigProvider {
+
+    val binder: Binder
 
     /**
      * Gets a property from the loader and parses it to the correct type. Normally only primitive and custom parsers
@@ -63,6 +65,10 @@ interface ConfigProvider : Binder {
     fun addReloadListener(listener: () -> Unit)
 
     fun <T : Any> getProperty(name: String, type: Type): T
+
+    fun <T: Any> bind(prefix: String, type: Class<T>): T {
+        return binder.bind(this, prefix, type)
+    }
 }
 
 /**
@@ -78,7 +84,7 @@ interface Binder {
      * @param prefix The prefix of the configuration, if this is not empty, configs starting with the prefix will be used
      * @param type The interface that will be implemented and it will be returned
      */
-    fun <T: Any> bind(prefix: String, type: Class<T>): T
+    fun <T: Any> bind(provider: ConfigProvider, prefix: String, type: Class<T>): T
 }
 
 inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jdiazcano.konfig.binding
+package com.jdiazcano.konfig.binders
 
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.parsers.Parsers.canParse

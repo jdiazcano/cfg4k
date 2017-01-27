@@ -17,7 +17,8 @@
 package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.ConfigLoader
-import com.jdiazcano.konfig.binding.BindingInvocationHandler
+import com.jdiazcano.konfig.binders.BindingInvocationHandler
+import com.jdiazcano.konfig.binders.ProxyBinder
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import java.lang.reflect.Proxy
 
@@ -25,11 +26,4 @@ import java.lang.reflect.Proxy
 open class ProxyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
-): AbstractConfigProvider(configLoader, reloadStrategy) {
-
-    override fun <T: Any> bind(prefix: String, type: Class<T>): T {
-        val handler = BindingInvocationHandler(this, prefix)
-        return Proxy.newProxyInstance(type.classLoader, arrayOf(type), handler) as T
-    }
-
-}
+): DefaultConfigProvider(configLoader, reloadStrategy, ProxyBinder())

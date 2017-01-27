@@ -19,7 +19,7 @@ package com.jdiazcano.konfig.loaders
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.jdiazcano.konfig.ConfigLoader
-import com.jdiazcano.konfig.binding.prefix
+import com.jdiazcano.konfig.binders.prefix
 import java.net.URL
 
 open class JsonConfigLoader(
