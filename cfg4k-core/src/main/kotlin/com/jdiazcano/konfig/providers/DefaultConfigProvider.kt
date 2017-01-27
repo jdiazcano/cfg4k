@@ -16,6 +16,7 @@
 
 package com.jdiazcano.konfig.providers
 
+import com.jdiazcano.konfig.Binder
 import com.jdiazcano.konfig.ConfigLoader
 import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.parsers.Parser
@@ -33,9 +34,10 @@ import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Type
 
 @Suppress("UNCHECKED_CAST")
-abstract class AbstractConfigProvider(
-        protected val configLoader: ConfigLoader,
-        protected val reloadStrategy: ReloadStrategy? = null
+open class DefaultConfigProvider(
+        private val configLoader: ConfigLoader,
+        private val reloadStrategy: ReloadStrategy? = null,
+        override val binder: Binder
 ): ConfigProvider {
 
     private val listeners: MutableList<() -> Unit> = mutableListOf()
@@ -82,4 +84,5 @@ abstract class AbstractConfigProvider(
     override fun addReloadListener(listener: () -> Unit) {
         listeners.add(listener)
     }
+
 }

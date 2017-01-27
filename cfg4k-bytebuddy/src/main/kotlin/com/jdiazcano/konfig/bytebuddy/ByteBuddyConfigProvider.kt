@@ -16,11 +16,13 @@
 
 package com.jdiazcano.konfig.bytebuddy
 
-import com.jdiazcano.konfig.binding.prefix;
+import com.jdiazcano.konfig.Binder
+import com.jdiazcano.konfig.binders.prefix;
 import com.jdiazcano.konfig.ConfigLoader
+import com.jdiazcano.konfig.ConfigProvider
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parsers
-import com.jdiazcano.konfig.providers.AbstractConfigProvider
+import com.jdiazcano.konfig.providers.DefaultConfigProvider
 import com.jdiazcano.konfig.providers.Providers
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
@@ -35,9 +37,11 @@ import net.bytebuddy.matcher.ElementMatchers.not
 open class ByteBuddyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
-): AbstractConfigProvider(configLoader, reloadStrategy) {
+): DefaultConfigProvider(configLoader, reloadStrategy, ByteBuddyBinder())
 
-    override fun <T: Any> bind(prefix: String, type: Class<T>): T {
+@Suppress("UNCHECKED_CAST")
+class ByteBuddyBinder : Binder {
+    override fun <T : Any> bind(provider: ConfigProvider, prefix: String, type: Class<T>): T {
         var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
         type.methods.forEach { method ->
 
@@ -45,9 +49,9 @@ open class ByteBuddyConfigProvider(
 
             val value: () -> T = {
                 if (Parsers.canParse(method.returnType)) {
-                    getProperty(prefix(prefix, method.name), returnType)
+                    provider.getProperty(prefix(prefix, method.name), returnType)
                 } else {
-                    bind(prefix(prefix, method.name), method.returnType) as T
+                    provider.bind(prefix(prefix, method.name), method.returnType) as T
                 }
             }
             subclass = subclass
@@ -61,7 +65,6 @@ open class ByteBuddyConfigProvider(
         val instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
         return instance
     }
-
 }
 
 fun Providers.Companion.bytebuddy(loader: ConfigLoader, reloadStrategy: ReloadStrategy? = null) = ByteBuddyConfigProvider(loader, reloadStrategy)
