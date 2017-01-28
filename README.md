@@ -8,7 +8,7 @@ Features
 * Interface binding
 * Huge flexibility, custom sources
 * Easy to use
-* Performance matters, the new Bytebuddy provider will be able to compile your bindings at runtime in order to get the same performance as if you were writing the code yourself!
+* Performance matters, the new Bytebuddy provider will be able to compile your bindings at runtime
 
 #Quick start
 1. Add the JitPack repository: 
@@ -71,11 +71,13 @@ interface DatabaseConfig {
 # Detailed features
 
 ## Providers
-1. AbstractConfigProvider: Base class for all the other providers. It has the basic functionality for a Provider. (You can obviously ignore it if implementing a new provider)
-2. ProxyConfigProvider: This used to be default provider before having ByteBuddy. Provides all the basic functionality for a provider if performance is not a problem. This uses InvocationHandler and Interface proxying of java for binding.
-3. ByteBuddyConfigProvider: This is the same as Proxy but uses `ByteBuddy` to create a class that implements the interface and returns the value.
+1. DefaultConfigProvider: Base class for all the other providers. It has the basic functionality for a Provider. (You can obviously ignore it if implementing a new provider)
 4. CachedConfigProvider: This provider will cache the calls into a map and use the cached one once the same call is done again. When the method `reload` is called this cache will be cleared.
 5. OverrideConfigProvider: With this provider you can input a list of Loaders in order of precedence and it will return the first one that is not null/empty. So you can override properties for example: `EnvironmentConfigLoader -> JsonConfigLoader` it would pick first from Environment and then from Json.
+
+## Binders
+1. ProxyBinder: Uses Java `InvocationHandler` in order to implement the interface and intercept the calls to return the correct value.
+2. ByteBuddyBinder: Uses `ByteBuddy` to create a class that implements the interface and returns the value.
 
 ## Loaders
 1. JsonConfigLoader: Load the properties from a Json file, an URL must be provided.
@@ -106,26 +108,52 @@ These parsers are supported out of the box
 10. List
 11. Set
 12. Enum
+13. TODO(DateTime)
+14. TODO()
 
 # Customizing Cfg4k
 
 ## Providers
-You can create your own Providers by implementing `ConfigProvider` or extending `AbstractConfigProvider`, keep in mind that the abstract provider already has the parsing so it is alwasy a good practice to extend it.
+You can create your own Providers by implementing `ConfigProvider` or extending `DefaultConfigProvider`, keep in mind that the abstract provider already has the parsing so it is alwasy a good practice to extend it.
 ```kotlin
 TODO() // In the meantime you can take a look at ProxyConfigProvider/AbstractConfigProvider
 ```
+More examples in the package `providers`
 
 ## Loaders
 You can create your own config loader by implementing the `ConfigLoader` interface
 ```kotlin
-TODO() // In the meantime you can take a look at JsonConfigLoader
+open class SystemPropertyConfigLoader : ConfigLoader {
+    override fun reload() {
+        // Nothing to do, the System.properties do the reload for us!
+    }
+
+    override fun get(key: String): String {
+        return System.getProperty(key, "")
+    }
+
+}
 ```
+More examples in the package `loaders`
 
 ## Reload strategies
 You can create your own reloading strategy by implementing the `ReloadStrategy` interface. Remember that you have to use it then in the provider.
 
 ```kotlin
-TODO() // In the meantime you can take a look at TimedReloadStrategy
+class TimedReloadStrategy(val time: Long, val unit: TimeUnit) : ReloadStrategy {
+
+    private lateinit var reloadTimer: Timer
+
+    override fun register(configProvider: ConfigProvider) {
+        reloadTimer = timer("TimeReloadStrategy", true, unit.toMillis(time), unit.toMillis(time)) {
+            configProvider.reload()
+        }
+    }
+
+    override fun deregister(configProvider: ConfigProvider) {
+        reloadTimer.cancel()
+    }
+}
 ```
 
 ## Parsers
@@ -142,6 +170,47 @@ object PointParser: Parser<Point> {
 }
 
 Parsers.addParser(Point::class.java, PointParser())
+```
+
+A more complicated example
+
+```kotlin
+class PrinterClassedParser : Parser<Printer> {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Printer {
+        val split = value.split('-')
+        return Printer(split[0], split[1].toInt())
+    }
+}
+
+class Printer(name: String, age: Int) : Person(name, age) {
+    fun print() = super.toString()
+}
+
+open class Person(val name: String, val age: Int) {
+    override fun toString() = "$name, $age"
+
+    // Override and equals needed for comparing in tests
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as Person
+
+        if (name != other.name) return false
+        if (age != other.age) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + age
+        return result
+    }
+
+}
+
+Parsers.addClassedParser(Person::class.java, PrinterClassedParser())
 ```
 
 Full example inside the sample module: https://github.com/jdiazcano/cfg4k/tree/master/sample
