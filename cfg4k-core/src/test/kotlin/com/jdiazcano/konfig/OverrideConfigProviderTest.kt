@@ -17,7 +17,7 @@
 package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
-import com.jdiazcano.konfig.providers.Providers.Companion.overriden
+import com.jdiazcano.konfig.providers.Providers.overriden
 import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.providers.getProperty
 import com.winterbe.expekt.should

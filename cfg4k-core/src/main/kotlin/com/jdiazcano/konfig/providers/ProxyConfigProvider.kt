@@ -23,7 +23,7 @@ import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import java.lang.reflect.Proxy
 
 @Suppress("UNCHECKED_CAST")
-open class ProxyConfigProvider(
+class ProxyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
 ): DefaultConfigProvider(configLoader, reloadStrategy, ProxyBinder())

@@ -64,8 +64,24 @@ interface ConfigProvider {
      */
     fun addReloadListener(listener: () -> Unit)
 
+    /**
+     * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
+     * this method will correctly parse List<Int> for example.
+     *
+     * @param name Name of the property
+     * @param type Type of the property. (You can get the type with typeOf<Class>() method)
+     */
     fun <T : Any> getProperty(name: String, type: Type): T
 
+    /**
+     * Binds an interface
+     *
+     * This method will return an implementation of the interface with the given methods for configuration. (Will call
+     * the Binder.bind method)
+     *
+     * @param prefix The prefix of the configuration, if this is not empty, configs starting with the prefix will be used
+     * @param type The interface that will be implemented and it will be returned
+     */
     fun <T: Any> bind(prefix: String, type: Class<T>): T {
         return binder.bind(this, prefix, type)
     }
