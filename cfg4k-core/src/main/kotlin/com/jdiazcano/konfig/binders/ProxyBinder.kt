@@ -1,7 +1,6 @@
 package com.jdiazcano.konfig.binders
 
-import com.jdiazcano.konfig.Binder
-import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.providers.ConfigProvider
 import java.lang.reflect.Proxy
 
 @Suppress("UNCHECKED_CAST")

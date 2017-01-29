@@ -1,6 +1,6 @@
 package com.jdiazcano.konfig.yaml
 
-import com.jdiazcano.konfig.bind
+import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.providers.Providers.Companion.proxy
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

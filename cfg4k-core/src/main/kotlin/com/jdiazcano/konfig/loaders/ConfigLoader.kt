@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jdiazcano.konfig
+package com.jdiazcano.konfig.loaders
 
 /**
  * A config loader only defines a get method which will return a string with the value

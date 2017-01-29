@@ -16,10 +16,10 @@
 
 package com.jdiazcano.konfig.bytebuddy
 
-import com.jdiazcano.konfig.Binder
-import com.jdiazcano.konfig.binders.prefix;
-import com.jdiazcano.konfig.ConfigLoader
-import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.binders.Binder
+import com.jdiazcano.konfig.binders.prefix
+import com.jdiazcano.konfig.loaders.ConfigLoader
+import com.jdiazcano.konfig.providers.ConfigProvider
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.parsers.Parsers
 import com.jdiazcano.konfig.providers.DefaultConfigProvider

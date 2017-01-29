@@ -18,10 +18,8 @@
 
 package com.jdiazcano.konfig.providers
 
-import com.jdiazcano.konfig.Binder
-import com.jdiazcano.konfig.ConfigLoader
-import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.binders.BindingInvocationHandler
+import com.jdiazcano.konfig.binders.Binder
+import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.binders.ProxyBinder
 import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers
@@ -29,7 +27,6 @@ import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
-import java.lang.reflect.Proxy
 import java.lang.reflect.Type
 
 class OverrideConfigProvider(

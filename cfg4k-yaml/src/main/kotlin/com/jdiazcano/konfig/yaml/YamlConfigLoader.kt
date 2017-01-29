@@ -1,6 +1,6 @@
 package com.jdiazcano.konfig.yaml
 
-import com.jdiazcano.konfig.ConfigLoader
+import com.jdiazcano.konfig.loaders.ConfigLoader
 import org.yaml.snakeyaml.Yaml
 import com.jdiazcano.konfig.binders.prefix
 import java.net.URL

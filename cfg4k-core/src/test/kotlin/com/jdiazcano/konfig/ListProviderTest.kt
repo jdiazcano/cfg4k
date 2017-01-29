@@ -18,6 +18,7 @@ package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.ProxyConfigProvider
+import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.utils.typeOf
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

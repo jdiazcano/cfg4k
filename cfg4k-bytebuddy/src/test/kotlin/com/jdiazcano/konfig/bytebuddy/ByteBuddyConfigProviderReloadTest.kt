@@ -1,7 +1,7 @@
 package com.jdiazcano.konfig.bytebuddy
 
-import com.jdiazcano.konfig.ConfigProvider
-import com.jdiazcano.konfig.bind
+import com.jdiazcano.konfig.providers.ConfigProvider
+import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.reloadstrategies.TimedReloadStrategy
 import com.winterbe.expekt.should

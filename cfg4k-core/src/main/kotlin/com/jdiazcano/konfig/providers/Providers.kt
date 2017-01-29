@@ -1,7 +1,7 @@
 package com.jdiazcano.konfig.providers
 
-import com.jdiazcano.konfig.ConfigLoader
-import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.loaders.ConfigLoader
+import com.jdiazcano.konfig.providers.ConfigProvider
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 
 class Providers {

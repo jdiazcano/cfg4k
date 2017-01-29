@@ -1,6 +1,6 @@
 package com.jdiazcano.konfig.hocon
 
-import com.jdiazcano.konfig.ConfigLoader
+import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigParseOptions

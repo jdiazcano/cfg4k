@@ -16,9 +16,8 @@
 
 package com.jdiazcano.konfig.providers
 
-import com.jdiazcano.konfig.Binder
-import com.jdiazcano.konfig.ConfigLoader
-import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.binders.Binder
+import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers.findParser
 import com.jdiazcano.konfig.parsers.Parsers.getClassedParser

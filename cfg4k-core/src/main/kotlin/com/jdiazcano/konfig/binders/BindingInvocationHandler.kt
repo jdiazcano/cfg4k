@@ -16,7 +16,7 @@
 
 package com.jdiazcano.konfig.binders
 
-import com.jdiazcano.konfig.ConfigProvider
+import com.jdiazcano.konfig.providers.ConfigProvider
 import com.jdiazcano.konfig.parsers.Parsers.canParse
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.InvocationHandler

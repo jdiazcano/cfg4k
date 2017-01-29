@@ -16,6 +16,7 @@
 
 package com.jdiazcano.konfig
 
+import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.loaders.SystemPropertyConfigLoader

@@ -1,7 +1,7 @@
 package com.jdiazcano.konfig.bytebuddy
 
-import com.jdiazcano.konfig.bind
-import com.jdiazcano.konfig.getProperty
+import com.jdiazcano.konfig.providers.bind
+import com.jdiazcano.konfig.providers.getProperty
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

@@ -17,9 +17,7 @@
 package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
-import com.jdiazcano.konfig.providers.CachedConfigProvider
-import com.jdiazcano.konfig.providers.ProxyConfigProvider
-import com.jdiazcano.konfig.providers.OverrideConfigProvider
+import com.jdiazcano.konfig.providers.*
 import com.jdiazcano.konfig.reloadstrategies.TimedReloadStrategy
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

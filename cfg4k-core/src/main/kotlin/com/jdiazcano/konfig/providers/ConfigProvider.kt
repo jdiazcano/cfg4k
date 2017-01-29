@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.jdiazcano.konfig
+package com.jdiazcano.konfig.providers
 
-import com.jdiazcano.konfig.providers.CachedConfigProvider
+import com.jdiazcano.konfig.binders.Binder
 import com.jdiazcano.konfig.utils.Typable
 import com.jdiazcano.konfig.utils.typeOf
 import java.lang.reflect.Type
@@ -69,22 +69,6 @@ interface ConfigProvider {
     fun <T: Any> bind(prefix: String, type: Class<T>): T {
         return binder.bind(this, prefix, type)
     }
-}
-
-/**
- * Interface that defines the method for binding an interface for a configuration.
- */
-interface Binder {
-
-    /**
-     * Binds an interface
-     *
-     * This method will return an implementation of the interface with the given methods for configuration.
-     *
-     * @param prefix The prefix of the configuration, if this is not empty, configs starting with the prefix will be used
-     * @param type The interface that will be implemented and it will be returned
-     */
-    fun <T: Any> bind(provider: ConfigProvider, prefix: String, type: Class<T>): T
 }
 
 inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)

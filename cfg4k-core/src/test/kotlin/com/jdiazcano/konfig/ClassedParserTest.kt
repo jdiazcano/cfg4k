@@ -4,6 +4,7 @@ import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers
 import com.jdiazcano.konfig.providers.ProxyConfigProvider
+import com.jdiazcano.konfig.providers.getProperty
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
