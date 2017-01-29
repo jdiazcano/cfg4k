@@ -16,6 +16,9 @@
 
 package com.jdiazcano.konfig
 
+import java.math.BigDecimal
+import java.math.BigInteger
+
 interface TestBinder {
     fun integerProperty(): Int
     fun a(): String
@@ -28,6 +31,8 @@ interface TestBinder {
     fun byteProperty(): Byte
     fun list(): List<Int>
     fun floatList(): List<Float>
+    fun bigIntegerProperty(): BigInteger
+    fun bigDecimalProperty(): BigDecimal
 }
 
 enum class TestEnum {

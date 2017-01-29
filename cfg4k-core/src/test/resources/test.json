@@ -10,6 +10,8 @@
   "list": "1,2,3",
   "floatList": "1.2,2.2,3.2",
   "booleanProperty": true,
+  "bigIntegerProperty": 1,
+  "bigDecimalProperty": 1.1,
   "nested": {
     "a": "nestedb"
   },

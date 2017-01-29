@@ -18,6 +18,9 @@
 
 package com.jdiazcano.konfig.parsers
 
+import java.math.BigDecimal
+import java.math.BigInteger
+
 object Parsers {
     private val parsers: MutableMap<Class<out Any>, Parser<Any>>
     private val classedParsers: MutableMap<Class<out Any>, Parser<Any>>
@@ -34,6 +37,8 @@ object Parsers {
                 Byte::class.java to ByteParser,
                 String::class.java to StringParser,
                 Boolean::class.java to BooleanParser,
+                BigDecimal::class.java to BigDecimalParser,
+                BigInteger::class.java to BigIntegerParser,
                 java.lang.Integer::class.java to IntParser,
                 java.lang.Long::class.java to LongParser,
                 java.lang.Double::class.java to DoubleParser,

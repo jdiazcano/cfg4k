@@ -28,6 +28,8 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.test.assertFailsWith
 
 class ConfigProviderTest: Spek({
@@ -81,6 +83,14 @@ class ConfigProviderTest: Spek({
                 provider.getProperty("booleanProperty", Boolean::class.java).should.be.`true`
             }
 
+            it("big integer properties") {
+                provider.getProperty<BigInteger>("bigIntegerProperty").should.be.equal(BigInteger("1"))
+            }
+
+            it("big decimal properties") {
+                provider.getProperty<BigDecimal>("bigDecimalProperty").should.be.equal(BigDecimal("1.1"))
+            }
+
             it("binding test") {
                 val testBinder = provider.bind<TestBinder>("")
                 testBinder.booleanProperty().should.be.`true`
@@ -94,6 +104,8 @@ class ConfigProviderTest: Spek({
                 testBinder.c().should.be.equal("d")
                 testBinder.list().should.be.equal(listOf(1, 2, 3))
                 testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
+                testBinder.bigDecimalProperty().should.be.equal(BigDecimal("1.1"))
+                testBinder.bigIntegerProperty().should.be.equal(BigInteger("1"))
 
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")
