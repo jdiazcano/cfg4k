@@ -33,7 +33,7 @@ class ConfigProviderTest: Spek({
             proxy(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))),
             proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),
             proxy(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))).cache(),
-            proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))).cache()
+            cached(proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))))
     )
 
     providers.forEachIndexed { i, provider ->
