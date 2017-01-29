@@ -28,4 +28,6 @@ interface ConfigLoader {
      * @return The value of the key
      */
     fun get(key: String): String?
+
+    fun reload()
 }
