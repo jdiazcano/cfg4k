@@ -105,11 +105,18 @@ These parsers are supported out of the box
 7. Byte
 8. String
 9. Boolean
-10. List
-11. Set
+10. List<Any>
+11. Set<Any>
 12. Enum
-13. TODO(DateTime)
-14. TODO()
+13. BigInteger
+14. BigDecimal
+15. LocalDateTime
+16. LocalDate
+17. ZonedDateTime
+18. OffsetDateTime
+19. OffsetTime
+20. Calendar
+21. Date
 
 # Customizing Cfg4k
 
