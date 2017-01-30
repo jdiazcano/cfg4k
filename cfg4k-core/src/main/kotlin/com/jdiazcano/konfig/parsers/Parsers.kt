@@ -90,15 +90,15 @@ object Parsers {
     fun getClassedParser(type: Class<*>) = classedParsers[type]
 
     fun addParser(type: Class<out Any>, parser: Parser<Any>) {
-        parsers.putIfAbsent(type, parser)
+        parsers.put(type, parser)
     }
 
     fun addClassedParser(type: Class<out Any>, parser: Parser<Any>) {
-        classedParsers.putIfAbsent(type, parser)
+        classedParsers.put(type, parser)
     }
 
     fun addParseredParser(type: Class<out Any>, parser: Parser<Any>) {
-        parseredParsers.putIfAbsent(type, parser)
+        parseredParsers.put(type, parser)
     }
 }
 

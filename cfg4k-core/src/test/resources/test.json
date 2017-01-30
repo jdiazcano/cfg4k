@@ -12,6 +12,18 @@
   "booleanProperty": true,
   "bigIntegerProperty": 1,
   "bigDecimalProperty": 1.1,
+  "dateProperty": "01-01-2017",
+  "calendarProperty": "01-01-2017",
+  "localDateProperty": "01-01-2017",
+  "isoLocalDateProperty": "2017-01-01",
+  "localDateTimeProperty": "01-01-2017 18:01:31",
+  "isoLocalDateTimeProperty": "2017-01-01T18:01:31",
+  "zonedDateTimeProperty": "01-01-2017 18:01:31",
+  "isoZonedDateTimeProperty": "2017-01-01T18:01:31+01:00",
+  "offsetDateTimeProperty": "01-01-2017 18:01:31+01:00",
+  "isoOffsetDateTimeProperty": "2017-01-01T18:01:31+01:00",
+  "offsetTimeProperty": "18:01:31+01:00",
+  "isoOffsetTimeProperty": "18:01:31+01:00",
   "nested": {
     "a": "nestedb"
   },

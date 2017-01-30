@@ -18,6 +18,7 @@ package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
+import com.jdiazcano.konfig.parsers.*
 import com.jdiazcano.konfig.providers.Providers.cached
 import com.jdiazcano.konfig.providers.Providers.proxy
 import com.jdiazcano.konfig.providers.bind
@@ -30,6 +31,9 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.*
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.test.assertFailsWith
 
 class ConfigProviderTest: Spek({
@@ -89,6 +93,124 @@ class ConfigProviderTest: Spek({
 
             it("big decimal properties") {
                 provider.getProperty<BigDecimal>("bigDecimalProperty").should.be.equal(BigDecimal("1.1"))
+            }
+
+            it("date property") {
+                Parsers.addParser(Date::class.java, DateParser("dd-MM-yyyy"))
+                val date = provider.getProperty<Date>("dateProperty")
+
+                // A calendar must be built on top of that date to work with it
+                val calendar = Calendar.getInstance()
+                calendar.time = date
+                calendar.get(Calendar.DAY_OF_YEAR).should.be.equal(1)
+                calendar.get(Calendar.MONTH).should.be.equal(0)
+                calendar.get(Calendar.YEAR).should.be.equal(2017)
+            }
+
+            it("localdateproperty property") {
+                Parsers.addParser(LocalDate::class.java, LocalDateParser("dd-MM-yyyy"))
+                val localDate = provider.getProperty<LocalDate>("localDateProperty")
+                localDate.dayOfYear.should.be.equal(1)
+                localDate.month.should.be.equal(Month.JANUARY)
+                localDate.year.should.be.equal(2017)
+            }
+
+            it("isolocaldateproperty property") {
+                Parsers.addParser(LocalDate::class.java, LocalDateParser(DateTimeFormatter.ISO_LOCAL_DATE))
+                val localDate = provider.getProperty<LocalDate>("isoLocalDateProperty")
+                localDate.dayOfYear.should.be.equal(1)
+                localDate.month.should.be.equal(Month.JANUARY)
+                localDate.year.should.be.equal(2017)
+            }
+
+            it("localdatetime property") {
+                Parsers.addParser(LocalDateTime::class.java, LocalDateTimeParser("dd-MM-yyyy HH:mm:ss"))
+                val localDateTime = provider.getProperty<LocalDateTime>("localDateTimeProperty")
+                localDateTime.dayOfYear.should.be.equal(1)
+                localDateTime.month.should.be.equal(Month.JANUARY)
+                localDateTime.year.should.be.equal(2017)
+                localDateTime.hour.should.be.equal(18)
+                localDateTime.minute.should.be.equal(1)
+                localDateTime.second.should.be.equal(31)
+            }
+
+            it("isolocaldatetime property") {
+                Parsers.addParser(LocalDateTime::class.java, LocalDateTimeParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                val localDateTime = provider.getProperty<LocalDateTime>("isoLocalDateTimeProperty")
+                localDateTime.dayOfYear.should.be.equal(1)
+                localDateTime.month.should.be.equal(Month.JANUARY)
+                localDateTime.year.should.be.equal(2017)
+                localDateTime.hour.should.be.equal(18)
+                localDateTime.minute.should.be.equal(1)
+                localDateTime.second.should.be.equal(31)
+            }
+
+            it("zoneddatetime property") {
+                Parsers.addParser(ZonedDateTime::class.java, ZonedDateTimeParser("dd-MM-yyyy HH:mm:ss"))
+                val zonedDateTime = provider.getProperty<ZonedDateTime>("zonedDateTimeProperty")
+                zonedDateTime.dayOfYear.should.be.equal(1)
+                zonedDateTime.month.should.be.equal(Month.JANUARY)
+                zonedDateTime.year.should.be.equal(2017)
+                zonedDateTime.hour.should.be.equal(18)
+                zonedDateTime.minute.should.be.equal(1)
+                zonedDateTime.second.should.be.equal(31)
+            }
+
+            it("isozoneddatetime property") {
+                Parsers.addParser(ZonedDateTime::class.java, ZonedDateTimeParser(DateTimeFormatter.ISO_ZONED_DATE_TIME))
+                val zonedDateTime = provider.getProperty<ZonedDateTime>("isoZonedDateTimeProperty")
+                zonedDateTime.dayOfYear.should.be.equal(1)
+                zonedDateTime.month.should.be.equal(Month.JANUARY)
+                zonedDateTime.year.should.be.equal(2017)
+                zonedDateTime.hour.should.be.equal(18)
+                zonedDateTime.minute.should.be.equal(1)
+                zonedDateTime.second.should.be.equal(31)
+            }
+
+            it("offsetdatetime property") {
+                Parsers.addParser(OffsetDateTime::class.java, OffsetDateTimeParser("dd-MM-yyyy HH:mm:ssXXX"))
+                val offsetDateTime = provider.getProperty<OffsetDateTime>("offsetDateTimeProperty")
+                offsetDateTime.dayOfYear.should.be.equal(1)
+                offsetDateTime.month.should.be.equal(Month.JANUARY)
+                offsetDateTime.year.should.be.equal(2017)
+                offsetDateTime.hour.should.be.equal(18)
+                offsetDateTime.minute.should.be.equal(1)
+                offsetDateTime.second.should.be.equal(31)
+            }
+
+            it("isooffsetdatetime property") {
+                Parsers.addParser(OffsetDateTime::class.java, OffsetDateTimeParser(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                val offsetDateTime = provider.getProperty<OffsetDateTime>("isoOffsetDateTimeProperty")
+                offsetDateTime.dayOfYear.should.be.equal(1)
+                offsetDateTime.month.should.be.equal(Month.JANUARY)
+                offsetDateTime.year.should.be.equal(2017)
+                offsetDateTime.hour.should.be.equal(18)
+                offsetDateTime.minute.should.be.equal(1)
+                offsetDateTime.second.should.be.equal(31)
+            }
+
+            it("offsettime property") {
+                Parsers.addParser(OffsetTime::class.java, OffsetTimeParser("HH:mm:ssXXX"))
+                val offsetTime = provider.getProperty<OffsetTime>("offsetTimeProperty")
+                offsetTime.hour.should.be.equal(18)
+                offsetTime.minute.should.be.equal(1)
+                offsetTime.second.should.be.equal(31)
+            }
+
+            it("isooffsettime property") {
+                Parsers.addParser(OffsetTime::class.java, OffsetTimeParser(DateTimeFormatter.ISO_OFFSET_TIME))
+                val offsetTime = provider.getProperty<OffsetTime>("isoOffsetTimeProperty")
+                offsetTime.hour.should.be.equal(18)
+                offsetTime.minute.should.be.equal(1)
+                offsetTime.second.should.be.equal(31)
+            }
+
+            it("calendar property") {
+                Parsers.addParser(Calendar::class.java, CalendarParser("dd-MM-yyyy"))
+                val calendar = provider.getProperty<Calendar>("calendarProperty")
+                calendar.get(Calendar.DAY_OF_YEAR).should.be.equal(1)
+                calendar.get(Calendar.MONTH).should.be.equal(0)
+                calendar.get(Calendar.YEAR).should.be.equal(2017)
             }
 
             it("binding test") {
