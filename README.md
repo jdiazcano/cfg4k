@@ -121,9 +121,50 @@ These parsers are supported out of the box
 # Customizing Cfg4k
 
 ## Providers
-You can create your own Providers by implementing `ConfigProvider` or extending `DefaultConfigProvider`, keep in mind that the abstract provider already has the parsing so it is alwasy a good practice to extend it.
+You can create your own Providers by implementing `ConfigProvider` or extending `DefaultConfigProvider`, keep in mind that the default provider already has the parsing so it is always a good practice to extend it.
+
+Example of how caching properties can be done with the `CachedConfigProvider`
+
 ```kotlin
-TODO() // In the meantime you can take a look at ProxyConfigProvider/AbstractConfigProvider
+class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider by configProvider {
+    private val cache = mutableMapOf<String, Any>()
+
+    init {
+        configProvider.addReloadListener { cache.clear() }
+    }
+
+    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
+        if (cache.containsKey(name)) {
+            return cache[name] as T
+        } else {
+            val property = configProvider.getProperty(name, type, default)
+            cache[name] = property
+            return property
+        }
+    }
+
+    override fun <T: Any> getProperty(name: String, type: Typable, default: T?): T {
+        if (cache.containsKey(name)) {
+            return cache[name] as T
+        } else {
+            val property: T = configProvider.getProperty(name, type, default)
+            cache[name] = property
+            return property
+        }
+    }
+
+    override fun <T: Any> bind(prefix: String, type: Class<T>): T {
+        // This is using %pre. in order to not collide with general properties
+        val cachePrefix = "%pre.$prefix"
+        if (cache.containsKey(cachePrefix)) {
+            return cache[cachePrefix] as T
+        } else {
+            val property: T = configProvider.bind(prefix, type)
+            cache[cachePrefix] = property
+            return property
+        }
+    }
+}
 ```
 More examples in the package `providers`
 
