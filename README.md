@@ -88,7 +88,7 @@ interface DatabaseConfig {
     3. The property name will become lowercase
 4. HoconConfigLoader: Load the properties from a Hocon file. This has many advantages over Json or Property (it is a superset of both) so I recommend this loader but not before taking a look at the project: https://github.com/typesafehub/config#using-hocon-the-json-superset
 5. YamlConfigLoader: Load the properties from a Yaml file.
-6. (Future) GitConfigLoader: Load the properties from a Git repository, possible giving the branch name or folder to denote different environments.
+6. GitConfigLoader: Load the properties from a Git repository, possible giving the branch name or folder to denote different environments.
 
 ## Reload strategies
 1. TimedReloadStrategy: This will reload the properties on a time basis.

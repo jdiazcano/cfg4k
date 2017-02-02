@@ -85,13 +85,15 @@ task junitTest(dependsOn: [
         ":cfg4k-core:junitPlatformTest",
         ":cfg4k-bytebuddy:junitPlatformTest",
         ":cfg4k-yaml:junitPlatformTest",
-        ":cfg4k-hocon:junitPlatformTest"
+        ":cfg4k-hocon:junitPlatformTest",
+        ":cfg4k-git:junitPlatformTest"
 ])
 task report(dependsOn: [
         ":cfg4k-core:junitPlatformJacocoReport",
         ":cfg4k-bytebuddy:junitPlatformJacocoReport",
         ":cfg4k-yaml:junitPlatformJacocoReport",
-        ":cfg4k-hocon:junitPlatformJacocoReport"
+        ":cfg4k-hocon:junitPlatformJacocoReport",
+        ":cfg4k-git:junitPlatformJacocoReport"
 ])
 
 task jacocoRootReport(type: JacocoReport) {
@@ -102,7 +104,8 @@ task jacocoRootReport(type: JacocoReport) {
             "cfg4k-core/build/jacoco/junitPlatformTest.exec",
             "cfg4k-bytebuddy/build/jacoco/junitPlatformTest.exec", // needed because the default name is test.exec instead :(
             "cfg4k-yaml/build/jacoco/junitPlatformTest.exec",
-            "cfg4k-hocon/build/jacoco/junitPlatformTest.exec"
+            "cfg4k-hocon/build/jacoco/junitPlatformTest.exec",
+            "cfg4k-git/build/jacoco/junitPlatformTest.exec"
     )
     reports {
         html.enabled = true

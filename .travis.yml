@@ -18,5 +18,16 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+before_install:
+  - mkdir -p ~/.ssh
+  - openssl aes-256-cbc -K $encrypted_39d25670321c_key -iv $encrypted_39d25670321c_iv -in encripted_rsa -out ~/.ssh/id_rsa -d
+  - chmod 600 ~/.ssh/id_rsa
+  - eval "$(ssh-agent -s)"
+  - ssh-add ~/.ssh/id_rsa
+  - ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+  - ssh-keyscan github.com >> ~/.ssh/known_hosts
+
 after_success:
   - ./gradlew junitTest report jacocoRootReport coveralls
+  - ssh-add -D
+  - rm ~/.ssh/id_rsa

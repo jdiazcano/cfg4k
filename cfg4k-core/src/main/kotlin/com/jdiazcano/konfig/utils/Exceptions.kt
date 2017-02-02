@@ -21,3 +21,8 @@ package com.jdiazcano.konfig.utils
  * call the methods "addParser" "addClassedParser" of the Provider
  */
 class SettingNotFound(message: String) : Exception(message)
+
+/**
+ * Thrown when the settings have not been initialised/loaded into memory and you try to access them.
+ */
+class SettingsNotInitialisedException(message: String): Exception(message)
