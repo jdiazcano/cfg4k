@@ -92,6 +92,7 @@ interface DatabaseConfig {
 
 ## Reload strategies
 1. TimedReloadStrategy: This will reload the properties on a time basis.
+2. FileChangeReloadStrategy: This will reload when a file content has changed. This will only look for edits on the file that is passed as argument and this should be the same file than in the ConfigLoader
 
 ## Parsers
 These parsers are supported out of the box

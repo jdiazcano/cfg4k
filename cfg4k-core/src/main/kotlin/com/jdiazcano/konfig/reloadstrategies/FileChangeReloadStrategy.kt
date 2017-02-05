@@ -17,6 +17,7 @@
 package com.jdiazcano.konfig.reloadstrategies
 
 import com.jdiazcano.konfig.providers.ConfigProvider
+import java.io.File
 import java.nio.file.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -31,8 +32,11 @@ class FileChangeReloadStrategy(val file: Path) : ReloadStrategy {
 
     private val watcher = FileSystems.getDefault().newWatchService()
     private var watching = false
+    private lateinit var thread: Thread
 
     constructor(file: String): this(Paths.get(file))
+
+    constructor(file: File): this(file.toPath())
 
     init {
         if (file.toFile().isDirectory) {
@@ -43,7 +47,7 @@ class FileChangeReloadStrategy(val file: Path) : ReloadStrategy {
     override fun register(configProvider: ConfigProvider) {
         val fileWatcher = file.toAbsolutePath().parent.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY)
         watching = true
-        thread(start = true, isDaemon = true) {
+        thread = thread(start = true, isDaemon = true) {
             while (watching) {
                 try {
                     val key = watcher.take()
@@ -66,6 +70,6 @@ class FileChangeReloadStrategy(val file: Path) : ReloadStrategy {
     }
 
     override fun deregister(configProvider: ConfigProvider) {
-        watching = false
+        thread.interrupt()
     }
 }

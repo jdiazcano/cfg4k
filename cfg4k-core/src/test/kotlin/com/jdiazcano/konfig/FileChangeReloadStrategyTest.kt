@@ -31,6 +31,9 @@ class FileChangeReloadStrategyTest : Spek({
             Thread.sleep(5000) // Another wait for that
             provider.getProperty<String>("foo").should.be.equal("bar2")
             provider.cancelReload()
+            file.toFile().writeText("foo=bar3")
+            Thread.sleep(5000) // Another wait for that
+            provider.getProperty<String>("foo").should.be.equal("bar2") // We hav ecanceled the reload so no more reloads
             file.toFile().deleteOnExit()
         }
     }
