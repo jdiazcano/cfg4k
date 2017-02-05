@@ -16,24 +16,23 @@
 
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.loaders.ConfigLoader
-import com.jdiazcano.konfig.utils.asLines
 import java.net.URL
+import java.util.*
 
 open class PropertyConfigLoader(
         private val url: URL
 ): ConfigLoader {
 
-    val properties: MutableMap<String, String> = mutableMapOf()
+    val properties = Properties()
 
     init {
         loadProperties()
     }
 
     private fun loadProperties() {
-        url.asLines().forEach { line ->
-            val split = line.split('=')
-            properties[split[0]] = split[1]
+        properties.clear()
+        url.openStream().use {
+            properties.load(it)
         }
     }
 
@@ -41,6 +40,6 @@ open class PropertyConfigLoader(
         loadProperties()
     }
 
-    override fun get(key: String) = properties[key]
+    override fun get(key: String): String? = properties.getProperty(key)
 
 }
