@@ -17,6 +17,7 @@
 package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.binders.Binder
+import com.jdiazcano.konfig.binders.ProxyBinder
 import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.parsers.Parser
 import com.jdiazcano.konfig.parsers.Parsers.findParser
@@ -37,7 +38,7 @@ import java.lang.reflect.Type
 open class DefaultConfigProvider(
         private val configLoader: ConfigLoader,
         private val reloadStrategy: ReloadStrategy? = null,
-        override val binder: Binder
+        override val binder: Binder = ProxyBinder()
 ): ConfigProvider {
 
     private val listeners: MutableList<() -> Unit> = mutableListOf()
