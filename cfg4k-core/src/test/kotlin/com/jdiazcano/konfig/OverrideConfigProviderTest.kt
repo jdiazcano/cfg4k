@@ -17,6 +17,7 @@
 package com.jdiazcano.konfig
 
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
+import com.jdiazcano.konfig.providers.DefaultConfigProvider
 import com.jdiazcano.konfig.providers.Providers.overriden
 import com.jdiazcano.konfig.providers.bind
 import com.jdiazcano.konfig.providers.getProperty
@@ -27,8 +28,10 @@ import org.jetbrains.spek.api.dsl.it
 
 class OverrideConfigProviderTest : Spek({
     val provider = overriden(
-            arrayOf(
-                    PropertyConfigLoader(javaClass.classLoader.getResource("overridetest.properties")),
+            DefaultConfigProvider(
+                    PropertyConfigLoader(javaClass.classLoader.getResource("overridetest.properties"))
+            ),
+            DefaultConfigProvider(
                     PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
             )
     )

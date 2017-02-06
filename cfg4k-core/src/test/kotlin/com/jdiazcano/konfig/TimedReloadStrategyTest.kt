@@ -60,11 +60,14 @@ class TimedReloadStrategyTest : Spek({
             normalFile.createNewFile()
             normalFile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
             val provider = OverrideConfigProvider(
-                    arrayOf(
+                    DefaultConfigProvider(
                             JsonConfigLoader(overrideFile.toURI().toURL()),
-                            JsonConfigLoader(normalFile.toURI().toURL())
+                            TimedReloadStrategy(1, TimeUnit.SECONDS)
                     ),
-                    TimedReloadStrategy(1, TimeUnit.SECONDS)
+                    DefaultConfigProvider(
+                            JsonConfigLoader(normalFile.toURI().toURL()),
+                            TimedReloadStrategy(1, TimeUnit.SECONDS)
+                    )
             )
             checkProvider(overrideFile, provider, text, true)
             normalFile.delete()

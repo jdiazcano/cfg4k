@@ -74,6 +74,11 @@ interface ConfigProvider {
     fun addReloadListener(listener: () -> Unit)
 
     /**
+     * Checks if a property exists in the provider.
+     */
+    fun contains(name: String): Boolean
+
+    /**
      * Binds an interface
      *
      * This method will return an implementation of the interface with the given methods for configuration. (Will call

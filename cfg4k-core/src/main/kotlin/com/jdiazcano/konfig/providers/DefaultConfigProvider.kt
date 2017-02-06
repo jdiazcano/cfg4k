@@ -92,9 +92,9 @@ open class DefaultConfigProvider(
                 throw SettingNotFound("Setting $name was not found")
             }
         }
-
-
     }
+
+    override fun contains(name: String) = configLoader.get(name) != null
 
     override fun cancelReload() = reloadStrategy?.deregister(this)
 
