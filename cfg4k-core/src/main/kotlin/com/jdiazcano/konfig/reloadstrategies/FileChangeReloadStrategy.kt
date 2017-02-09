@@ -18,11 +18,11 @@ package com.jdiazcano.konfig.reloadstrategies
 
 import com.jdiazcano.konfig.providers.ConfigProvider
 import java.io.File
-import java.nio.file.*
-import java.util.*
-import java.util.concurrent.TimeUnit
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardWatchEventKinds
 import kotlin.concurrent.thread
-import kotlin.concurrent.timer
 
 /**
  * This reload strategy will reload the config provider when the timer ticks. A TimeUnit is used which will be
