@@ -18,7 +18,6 @@ package com.jdiazcano.konfig.loaders
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.binders.prefix
 import java.net.URL
 

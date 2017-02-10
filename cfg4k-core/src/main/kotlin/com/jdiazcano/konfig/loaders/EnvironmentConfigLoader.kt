@@ -1,7 +1,5 @@
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.loaders.ConfigLoader
-
 /**
  * EnvironmentConfigLoader will try to match the key to an environment variable. This will apply a series of
  * transformations before matching. Once the match is done, it will be cached until the next time. Once reload is called

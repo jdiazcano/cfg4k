@@ -1,7 +1,5 @@
 package com.jdiazcano.konfig.loaders
 
-import com.jdiazcano.konfig.loaders.ConfigLoader
-
 open class SystemPropertyConfigLoader : ConfigLoader {
     override fun reload() {
         // Nothing to do, the System.properties do the reload for us!

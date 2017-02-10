@@ -16,12 +16,10 @@
 
 package com.jdiazcano.konfig.binders
 
-import com.jdiazcano.konfig.providers.ConfigProvider
 import com.jdiazcano.konfig.parsers.Parsers.canParse
-import com.jdiazcano.konfig.utils.Typable
+import com.jdiazcano.konfig.providers.ConfigProvider
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
-import java.lang.reflect.Type
 
 /**
  * InvocationHandler that handles the proxying between the interface and the call. This class is used in the

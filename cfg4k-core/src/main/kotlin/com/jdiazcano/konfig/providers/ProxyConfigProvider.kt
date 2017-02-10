@@ -16,11 +16,9 @@
 
 package com.jdiazcano.konfig.providers
 
-import com.jdiazcano.konfig.loaders.ConfigLoader
-import com.jdiazcano.konfig.binders.BindingInvocationHandler
 import com.jdiazcano.konfig.binders.ProxyBinder
+import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
-import java.lang.reflect.Proxy
 
 @Suppress("UNCHECKED_CAST")
 class ProxyConfigProvider(
