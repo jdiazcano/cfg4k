@@ -5,14 +5,3 @@ dependencies {
     // No needed but the build needs to find a test engine!!!
     testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.0-beta2'
 }
-
-// Needed because there's something messy with kotlin version numbers and dependencies
-configurations.all {
-    resolutionStrategy {
-        eachDependency { DependencyResolveDetails details ->
-            if (details.requested.group == 'org.jetbrains.kotlin') {
-                details.useVersion "$kotlin_version"
-            }
-        }
-    }
-}

@@ -1,7 +1,9 @@
+import java.util.stream.Collectors
+
 buildscript {
 
     ext {
-        kotlin_version = '1.1.0-beta-38'
+        kotlin_version = '1.1.0'
         artifactGroup = "com.jdiazcano.konfig"
         artifactVersion = "0.2"
     }
@@ -77,36 +79,21 @@ subprojects {
     coveralls {
         sourceDirs += ['src/main/kotlin']
     }
+
+
 }
 
 def activeSubprojects = subprojects.findAll { it.name.startsWith("cfg4k") }
+def subprojectsExecFiles = files( activeSubprojects.stream().map { "${it.name}/build/jacoco/junitPlatformTest.exec" }.collect(Collectors.toList()) )
 
-task junitTest(dependsOn: [
-        ":cfg4k-core:junitPlatformTest",
-        ":cfg4k-bytebuddy:junitPlatformTest",
-        ":cfg4k-yaml:junitPlatformTest",
-        ":cfg4k-hocon:junitPlatformTest",
-        ":cfg4k-git:junitPlatformTest"
-])
-task report(dependsOn: [
-        ":cfg4k-core:junitPlatformJacocoReport",
-        ":cfg4k-bytebuddy:junitPlatformJacocoReport",
-        ":cfg4k-yaml:junitPlatformJacocoReport",
-        ":cfg4k-hocon:junitPlatformJacocoReport",
-        ":cfg4k-git:junitPlatformJacocoReport"
-])
+task junitTest(dependsOn: getTasksByName("junitPlatformTest", true))
+task report(dependsOn: getTasksByName("junitPlatformJacocoReport", true))
 
 task jacocoRootReport(type: JacocoReport) {
     additionalSourceDirs = files(activeSubprojects.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(activeSubprojects.sourceSets.main.allSource.srcDirs)
     classDirectories = files(activeSubprojects.sourceSets.main.output)
-    executionData = files(
-            "cfg4k-core/build/jacoco/junitPlatformTest.exec",
-            "cfg4k-bytebuddy/build/jacoco/junitPlatformTest.exec", // needed because the default name is test.exec instead :(
-            "cfg4k-yaml/build/jacoco/junitPlatformTest.exec",
-            "cfg4k-hocon/build/jacoco/junitPlatformTest.exec",
-            "cfg4k-git/build/jacoco/junitPlatformTest.exec"
-    )
+    executionData = subprojectsExecFiles
     reports {
         html.enabled = true
         xml.enabled = true
