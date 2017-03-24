@@ -1,6 +1,8 @@
+apply from: '../gradle/versions.gradle'
+
 dependencies {
     compile project(":cfg4k-core")
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$versions.jetbrains.kotlin"
 
     // No needed but the build needs to find a test engine!!!
     testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.0-beta2'

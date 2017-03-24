@@ -1,0 +1,36 @@
+ext.versions = [
+        jetbrains: [
+                kotlin: '1.1.1',
+                spek: '1.1.19',
+                engine: '1.1.0-beta2'
+        ],
+        bytebuddy: '1.6.12',
+        klaxon: '0.31',
+        typesafe: '1.3.1',
+        jgit: '4.6.1.201703071140-r',
+        expekt: '0.5.0',
+        junitrunner: '1.0.0-M3',
+        snakeyaml: '1.18'
+]
+
+ext.libraries = [
+        eclipse: [
+                jgit: "org.eclipse.jgit:org.eclipse.jgit:$versions.jgit"
+        ],
+        jetbrains: [
+                kotlin: [
+                        stdlib: "org.jetbrains.kotlin:kotlin-stdlib:$versions.jetbrains.kotlin",
+                        test: "org.jetbrains.kotlin:kotlin-test:$versions.jetbrains.kotlin"
+                ],
+                spek: [
+                        api: "org.jetbrains.spek:spek-api:$versions.jetbrains.spek",
+                        engine: "org.jetbrains.spek:spek-junit-platform-engine:$versions.jetbrains.engine"
+                ]
+        ],
+        junitrunner: "org.junit.platform:junit-platform-runner:$versions.junitrunner",
+        expekt: "com.winterbe:expekt:$versions.expekt",
+        bytebuddy: "net.bytebuddy:byte-buddy:$versions.bytebuddy",
+        typesafe: "com.typesafe:config:$versions.typesafe",
+        snakeyaml: "org.yaml:snakeyaml:$versions.snakeyaml",
+        klaxon: "com.beust:klaxon:$versions.klaxon"
+]
