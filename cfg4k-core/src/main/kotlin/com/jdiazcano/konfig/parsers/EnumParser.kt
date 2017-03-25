@@ -16,8 +16,10 @@
 
 package com.jdiazcano.konfig.parsers
 
+import kotlin.reflect.KClass
+
 class EnumParser<T : Enum<T>> : Parser<T> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): T {
-        return java.lang.Enum.valueOf(type as Class<T>, value)
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>): T {
+        return java.lang.Enum.valueOf(type.java as Class<T>, value)
     }
 }

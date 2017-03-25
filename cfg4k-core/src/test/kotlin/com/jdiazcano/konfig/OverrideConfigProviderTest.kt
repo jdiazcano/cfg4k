@@ -37,9 +37,9 @@ class OverrideConfigProviderTest : Spek({
     )
     describe("An overriding provider") {
         it("if the property exist in the first, should not go to the second loader") {
-            provider.getProperty("a", String::class.java).should.be.equal("overrideb")
-            provider.getProperty("a", String::class.java).should.be.equal("overrideb") // cached property!
-            provider.getProperty("c", String::class.java).should.be.equal("overrided")
+            provider.getProperty("a", String::class).should.be.equal("overrideb")
+            provider.getProperty("a", String::class).should.be.equal("overrideb") // cached property!
+            provider.getProperty("c", String::class).should.be.equal("overrided")
         }
 
         it("if the property does not exist, then the second one should be tested") {

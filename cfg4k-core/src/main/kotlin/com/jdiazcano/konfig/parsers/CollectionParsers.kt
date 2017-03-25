@@ -18,22 +18,24 @@
 
 package com.jdiazcano.konfig.parsers
 
+import kotlin.reflect.KClass
+
 class ListParser<out T : List<Any>>: Parser<T> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): T {
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>): T {
         return toList(parser, type, value) as T
     }
 
 }
 
 class SetParser<out T : Set<Any>>: Parser<T> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): T {
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>): T {
         return toList(parser, type, value).toSet() as T
     }
 }
 
-private fun toList(parser: Parser<*>, type: Class<*>, value: String): List<Any?> {
+private fun toList(parser: Parser<*>, type: KClass<*>, value: String): List<Any?> {
     return value.split(',').map {
-        if (type.isEnum) {
+        if (type.java.isEnum) {
             parser.parse(it.trim(), type)
         } else {
             parser.parse(it.trim())

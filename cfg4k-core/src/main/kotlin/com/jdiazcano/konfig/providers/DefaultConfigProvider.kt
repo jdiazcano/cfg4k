@@ -33,6 +33,8 @@ import com.jdiazcano.konfig.utils.SettingNotFound
 import com.jdiazcano.konfig.utils.TargetType
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Type
+import kotlin.jvm.internal.Reflection
+import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 open class DefaultConfigProvider(
@@ -47,12 +49,12 @@ open class DefaultConfigProvider(
         reloadStrategy?.register(this)
     }
 
-    override fun <T: Any> getProperty(name: String, type: Class<T>, default: T?): T {
+    override fun <T: Any> getProperty(name: String, type: KClass<T>, default: T?): T {
         // There is no way that this has a generic parsers because the class actually removes that possiblity
         if (isParser(type)) {
             val value = configLoader.get(name)
             if (value != null) {
-                return getParser(type).parse(value)
+                return getParser<T>(type).parse(value)
             } else {
                 if (default != null) {
                     return default
@@ -61,7 +63,7 @@ open class DefaultConfigProvider(
                 }
             }
         } else {
-            throw ParserClassNotFound("Parser for class ${type.name} was not found")
+            throw ParserClassNotFound("Parser for class ${type.simpleName} was not found")
         }
     }
 
@@ -70,19 +72,19 @@ open class DefaultConfigProvider(
     }
 
     override fun <T: Any> getProperty(name: String, type: Type, default: T?): T {
-        val rawType = TargetType(type).rawTargetType()
+        val rawType = TargetType(type).rawTargetType().kotlin
 
         val value = configLoader.get(name)
         if (value != null) {
             if (isParseredParser(rawType)) {
                 val parser = getParseredParser(rawType) as Parser<T>
-                val superType = TargetType(type).getParameterizedClassArguments()[0]
-                return parser.parse(value, superType, findParser(superType) as Parser<T>)
-            } else if (isClassedParser(rawType.superclass)) {
-                val parser = getClassedParser(rawType.superclass!!) as Parser<T>
-                return parser.parse(value, rawType as Class<T>)
+                val superType = TargetType(type).getParameterizedClassArguments()[0].kotlin
+                return parser.parse(value, superType, findParser<T>(superType))
+            } else if (isClassedParser(Reflection.createKotlinClass(rawType.javaObjectType.superclass))) {
+                val parser = getClassedParser(Reflection.createKotlinClass(rawType.javaObjectType.superclass!!)) as Parser<T>
+                return parser.parse(value, rawType)
             } else if (isParser(rawType)) {
-                return getParser(rawType).parse(value) as T
+                return getParser<T>(rawType).parse(value)
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {

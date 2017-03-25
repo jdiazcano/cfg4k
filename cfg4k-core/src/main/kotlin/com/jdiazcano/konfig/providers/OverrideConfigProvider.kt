@@ -23,6 +23,7 @@ import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.SettingNotFound
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Type
+import kotlin.reflect.KClass
 
 class OverrideConfigProvider(
         vararg private val providers: ConfigProvider,
@@ -39,7 +40,7 @@ class OverrideConfigProvider(
         addReloadListener { cachedProviders.clear() }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
+    override fun <T : Any> getProperty(name: String, type: KClass<T>, default: T?): T {
         if (name in cachedProviders) {
             return cachedProviders[name]!!.getProperty(name, type, default)
         } else {

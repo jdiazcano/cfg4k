@@ -1,6 +1,7 @@
 package com.jdiazcano.konfig.binders
 
 import com.jdiazcano.konfig.providers.ConfigProvider
+import kotlin.reflect.KClass
 
 
 /**
@@ -16,5 +17,5 @@ interface Binder {
      * @param prefix The prefix of the configuration, if this is not empty, configs starting with the prefix will be used
      * @param type The interface that will be implemented and it will be returned
      */
-    fun <T: Any> bind(provider: ConfigProvider, prefix: String, type: Class<T>): T
+    fun <T: Any> bind(provider: ConfigProvider, prefix: String, type: KClass<T>): T
 }

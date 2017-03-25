@@ -59,32 +59,32 @@ class ConfigProviderTest: Spek({
             }
 
             it("integer properties") {
-                provider.getProperty("integerProperty", Int::class.java).should.be.equal(1)
-                provider.getProperty("integerProperty", Integer::class.java).should.be.equal(Integer(1))
+                provider.getProperty("integerProperty", Int::class).should.be.equal(1)
+                provider.getProperty("integerProperty", Integer::class).should.be.equal(Integer(1))
             }
 
             it("long properties") {
-                provider.getProperty("longProperty", Long::class.java).should.be.equal(2)
+                provider.getProperty("longProperty", Long::class).should.be.equal(2)
             }
 
             it("short properties") {
-                provider.getProperty("shortProperty", Short::class.java).should.be.equal(1)
+                provider.getProperty("shortProperty", Short::class).should.be.equal(1)
             }
 
             it("float properties") {
-                provider.getProperty("floatProperty", Float::class.java).should.be.equal(2.1F)
+                provider.getProperty("floatProperty", Float::class).should.be.equal(2.1F)
             }
 
             it("double properties") {
-                provider.getProperty("doubleProperty", Double::class.java).should.be.equal(1.1)
+                provider.getProperty("doubleProperty", Double::class).should.be.equal(1.1)
             }
 
             it("byte properties") {
-                provider.getProperty("byteProperty", Byte::class.java).should.be.equal(2)
+                provider.getProperty("byteProperty", Byte::class).should.be.equal(2)
             }
 
             it("boolean properties") {
-                provider.getProperty("booleanProperty", Boolean::class.java).should.be.`true`
+                provider.getProperty("booleanProperty", Boolean::class).should.be.`true`
             }
 
             it("big integer properties") {
@@ -96,7 +96,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("date property") {
-                Parsers.addParser(Date::class.java, DateParser("dd-MM-yyyy"))
+                Parsers.addParser(Date::class, DateParser("dd-MM-yyyy"))
                 val date = provider.getProperty<Date>("dateProperty")
 
                 // A calendar must be built on top of that date to work with it
@@ -108,7 +108,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("localdateproperty property") {
-                Parsers.addParser(LocalDate::class.java, LocalDateParser("dd-MM-yyyy"))
+                Parsers.addParser(LocalDate::class, LocalDateParser("dd-MM-yyyy"))
                 val localDate = provider.getProperty<LocalDate>("localDateProperty")
                 localDate.dayOfYear.should.be.equal(1)
                 localDate.month.should.be.equal(Month.JANUARY)
@@ -116,7 +116,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("isolocaldateproperty property") {
-                Parsers.addParser(LocalDate::class.java, LocalDateParser(DateTimeFormatter.ISO_LOCAL_DATE))
+                Parsers.addParser(LocalDate::class, LocalDateParser(DateTimeFormatter.ISO_LOCAL_DATE))
                 val localDate = provider.getProperty<LocalDate>("isoLocalDateProperty")
                 localDate.dayOfYear.should.be.equal(1)
                 localDate.month.should.be.equal(Month.JANUARY)
@@ -124,7 +124,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("localdatetime property") {
-                Parsers.addParser(LocalDateTime::class.java, LocalDateTimeParser("dd-MM-yyyy HH:mm:ss"))
+                Parsers.addParser(LocalDateTime::class, LocalDateTimeParser("dd-MM-yyyy HH:mm:ss"))
                 val localDateTime = provider.getProperty<LocalDateTime>("localDateTimeProperty")
                 localDateTime.dayOfYear.should.be.equal(1)
                 localDateTime.month.should.be.equal(Month.JANUARY)
@@ -135,7 +135,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("isolocaldatetime property") {
-                Parsers.addParser(LocalDateTime::class.java, LocalDateTimeParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                Parsers.addParser(LocalDateTime::class, LocalDateTimeParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 val localDateTime = provider.getProperty<LocalDateTime>("isoLocalDateTimeProperty")
                 localDateTime.dayOfYear.should.be.equal(1)
                 localDateTime.month.should.be.equal(Month.JANUARY)
@@ -146,7 +146,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("zoneddatetime property") {
-                Parsers.addParser(ZonedDateTime::class.java, ZonedDateTimeParser("dd-MM-yyyy HH:mm:ss"))
+                Parsers.addParser(ZonedDateTime::class, ZonedDateTimeParser("dd-MM-yyyy HH:mm:ss"))
                 val zonedDateTime = provider.getProperty<ZonedDateTime>("zonedDateTimeProperty")
                 zonedDateTime.dayOfYear.should.be.equal(1)
                 zonedDateTime.month.should.be.equal(Month.JANUARY)
@@ -157,7 +157,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("isozoneddatetime property") {
-                Parsers.addParser(ZonedDateTime::class.java, ZonedDateTimeParser(DateTimeFormatter.ISO_ZONED_DATE_TIME))
+                Parsers.addParser(ZonedDateTime::class, ZonedDateTimeParser(DateTimeFormatter.ISO_ZONED_DATE_TIME))
                 val zonedDateTime = provider.getProperty<ZonedDateTime>("isoZonedDateTimeProperty")
                 zonedDateTime.dayOfYear.should.be.equal(1)
                 zonedDateTime.month.should.be.equal(Month.JANUARY)
@@ -168,7 +168,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("offsetdatetime property") {
-                Parsers.addParser(OffsetDateTime::class.java, OffsetDateTimeParser("dd-MM-yyyy HH:mm:ssXXX"))
+                Parsers.addParser(OffsetDateTime::class, OffsetDateTimeParser("dd-MM-yyyy HH:mm:ssXXX"))
                 val offsetDateTime = provider.getProperty<OffsetDateTime>("offsetDateTimeProperty")
                 offsetDateTime.dayOfYear.should.be.equal(1)
                 offsetDateTime.month.should.be.equal(Month.JANUARY)
@@ -179,7 +179,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("isooffsetdatetime property") {
-                Parsers.addParser(OffsetDateTime::class.java, OffsetDateTimeParser(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                Parsers.addParser(OffsetDateTime::class, OffsetDateTimeParser(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                 val offsetDateTime = provider.getProperty<OffsetDateTime>("isoOffsetDateTimeProperty")
                 offsetDateTime.dayOfYear.should.be.equal(1)
                 offsetDateTime.month.should.be.equal(Month.JANUARY)
@@ -190,7 +190,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("offsettime property") {
-                Parsers.addParser(OffsetTime::class.java, OffsetTimeParser("HH:mm:ssXXX"))
+                Parsers.addParser(OffsetTime::class, OffsetTimeParser("HH:mm:ssXXX"))
                 val offsetTime = provider.getProperty<OffsetTime>("offsetTimeProperty")
                 offsetTime.hour.should.be.equal(18)
                 offsetTime.minute.should.be.equal(1)
@@ -198,7 +198,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("isooffsettime property") {
-                Parsers.addParser(OffsetTime::class.java, OffsetTimeParser(DateTimeFormatter.ISO_OFFSET_TIME))
+                Parsers.addParser(OffsetTime::class, OffsetTimeParser(DateTimeFormatter.ISO_OFFSET_TIME))
                 val offsetTime = provider.getProperty<OffsetTime>("isoOffsetTimeProperty")
                 offsetTime.hour.should.be.equal(18)
                 offsetTime.minute.should.be.equal(1)
@@ -206,7 +206,7 @@ class ConfigProviderTest: Spek({
             }
 
             it("calendar property") {
-                Parsers.addParser(Calendar::class.java, CalendarParser("dd-MM-yyyy"))
+                Parsers.addParser(Calendar::class, CalendarParser("dd-MM-yyyy"))
                 val calendar = provider.getProperty<Calendar>("calendarProperty")
                 calendar.get(Calendar.DAY_OF_YEAR).should.be.equal(1)
                 calendar.get(Calendar.MONTH).should.be.equal(0)

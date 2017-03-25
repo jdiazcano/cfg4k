@@ -18,8 +18,10 @@ package com.jdiazcano.konfig.binders
 
 import com.jdiazcano.konfig.parsers.Parsers.canParse
 import com.jdiazcano.konfig.providers.ConfigProvider
+import com.jdiazcano.konfig.providers.bind
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import kotlin.reflect.functions
 
 /**
  * InvocationHandler that handles the proxying between the interface and the call. This class is used in the
@@ -30,7 +32,7 @@ class BindingInvocationHandler(
         private val prefix: String
 ): InvocationHandler {
 
-    private val objectMethods: List<String> = Object::class.java.declaredMethods.map { it.name }
+    private val objectMethods: List<String> = Object::class.functions.map { it.name }
 
     override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any {
         if (objectMethods.contains(method.name)) {
@@ -38,10 +40,10 @@ class BindingInvocationHandler(
         }
 
         val type = method.genericReturnType
-        if (canParse(method.returnType)) {
+        if (canParse(method.returnType.kotlin)) {
             return provider.getProperty(prefix(prefix, method.name), type)
         } else {
-            return provider.bind(prefix(prefix, method.name), method.returnType)
+            return provider.bind(prefix(prefix, method.name), method.returnType.kotlin)
         }
 
     }

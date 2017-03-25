@@ -16,35 +16,37 @@
 
 package com.jdiazcano.konfig.parsers
 
+import kotlin.reflect.KClass
+
 object IntParser: Parser<Int> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value.toInt()
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value.toInt()
 }
 
 object LongParser: Parser<Long> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value.toLong()
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value.toLong()
 }
 
 object ShortParser: Parser<Short> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value.toShort()
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value.toShort()
 }
 
 object BooleanParser: Parser<Boolean> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value.toBoolean()
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value.toBoolean()
 }
 
 object FloatParser: Parser<Float> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value.toFloat()
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value.toFloat()
 }
 
 object DoubleParser: Parser<Double> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value.toDouble()
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value.toDouble()
 }
 
 object ByteParser: Parser<Byte> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value.toByte()
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value.toByte()
 }
 
 object StringParser: Parser<String> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = value
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>) = value
 
 }

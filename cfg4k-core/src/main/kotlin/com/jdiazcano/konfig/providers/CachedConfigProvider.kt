@@ -17,6 +17,7 @@
 package com.jdiazcano.konfig.providers
 
 import com.jdiazcano.konfig.utils.Typable
+import kotlin.reflect.KClass
 
 /**
  * This config provider will cache the calls so binding and property lookup is not done everytime. Reloading this
@@ -30,7 +31,7 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
         configProvider.addReloadListener { cache.clear() }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
+    override fun <T : Any> getProperty(name: String, type: KClass<T>, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
@@ -50,7 +51,7 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
         }
     }
 
-    override fun <T: Any> bind(prefix: String, type: Class<T>): T {
+    override fun <T: Any> bind(prefix: String, type: KClass<T>): T {
         // This is using %pre. in order to not collide with general properties
         val cachePrefix = "%pre.$prefix"
         if (cache.containsKey(cachePrefix)) {

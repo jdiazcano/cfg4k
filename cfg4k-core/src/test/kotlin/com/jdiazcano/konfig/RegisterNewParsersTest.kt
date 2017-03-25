@@ -26,6 +26,7 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 
 class RegisterNewParsersTest: Spek({
@@ -42,13 +43,13 @@ class RegisterNewParsersTest: Spek({
             providers.forEach { provider ->
                 it("a class is not registered") {
                     assertFailsWith<ParserClassNotFound> {
-                        provider.getProperty("harrypotter", Book::class.java)
+                        provider.getProperty("harrypotter", Book::class)
                     }
                 }
 
                 it("class has been registered and now everything is cool") {
-                    Parsers.addParser(Book::class.java, BookParser)
-                    provider.getProperty("harrypotter", Book::class.java).should.be.equal(Book(1, "Prisoner of azkaban"))
+                    Parsers.addParser(Book::class, BookParser)
+                    provider.getProperty("harrypotter", Book::class).should.be.equal(Book(1, "Prisoner of azkaban"))
                 }
             }
         }
@@ -57,7 +58,7 @@ class RegisterNewParsersTest: Spek({
 
 data class Book(val id: Long, val title: String)
 object BookParser : Parser<Book> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Book {
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>): Book {
         val (id, title) = value.split(", ")
         return Book(id.toLong(), title)
     }

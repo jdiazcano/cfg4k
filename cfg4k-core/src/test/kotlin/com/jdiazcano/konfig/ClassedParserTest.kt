@@ -9,6 +9,7 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import kotlin.reflect.KClass
 
 /**
  * A classed parser should be alright! The type is passed to the parse function if needed. Right now it is hard to think
@@ -17,7 +18,7 @@ import org.jetbrains.spek.api.dsl.it
  */
 class ClassedParserTest: Spek({
     describe("A new parser is registered and it should parse it correctly with the new parser") {
-        Parsers.addClassedParser(Person::class.java, PrinterClassedParser())
+        Parsers.addClassedParser(Person::class, PrinterClassedParser())
 
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("classedparser.properties"))
         val provider = ProxyConfigProvider(loader)
@@ -33,7 +34,7 @@ class ClassedParserTest: Spek({
 })
 
 class PrinterClassedParser : Parser<Printer> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Printer {
+    override fun parse(value: String, type: KClass<*>, parser: Parser<*>): Printer {
         val split = value.split('-')
         return Printer(split[0], split[1].toInt())
     }

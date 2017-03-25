@@ -31,6 +31,10 @@ import java.lang.reflect.Modifier
 import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
+import kotlin.reflect.KClass
+import kotlin.reflect.functions
+import kotlin.reflect.jvm.javaMethod
+import kotlin.reflect.jvm.javaType
 
 
 @Suppress("UNCHECKED_CAST")
@@ -41,22 +45,22 @@ open class ByteBuddyConfigProvider(
 
 @Suppress("UNCHECKED_CAST")
 class ByteBuddyBinder : Binder {
-    override fun <T : Any> bind(provider: ConfigProvider, prefix: String, type: Class<T>): T {
-        var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
-        type.methods.forEach { method ->
+    override fun <T : Any> bind(provider: ConfigProvider, prefix: String, type: KClass<T>): T {
+        var subclass = ByteBuddy().subclass(type.javaObjectType, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
+        type.functions.forEach { method ->
 
-            val returnType = method.genericReturnType
+            val returnType = method.javaMethod!!.genericReturnType
 
             val value: () -> T = {
-                if (Parsers.canParse(method.returnType)) {
+                if (Parsers.canParse(method.javaMethod!!.returnType.kotlin)) {
                     provider.getProperty(prefix(prefix, method.name), returnType)
                 } else {
-                    provider.bind(prefix(prefix, method.name), method.returnType) as T
+                    provider.bind(prefix(prefix, method.name), method.javaMethod!!.returnType.kotlin) as T
                 }
             }
             subclass = subclass
 
-                    .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
+                    .defineMethod(method.name, method.returnType.javaType, Modifier.PUBLIC)
                     .intercept(MethodDelegation
                             .withEmptyConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))

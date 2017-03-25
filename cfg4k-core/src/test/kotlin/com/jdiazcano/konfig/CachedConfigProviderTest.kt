@@ -43,13 +43,13 @@ class CachedConfigProviderTest: Spek({
                 it("primitive properties [${provider.javaClass.name}]") {
                     provider.getProperty<Int>("integerProperty").should.be.equal(1)
                     provider.getProperty<Int>("integerProperty").should.be.equal(1)
-                    provider.getProperty("integerProperty", Integer::class.java).should.be.equal(Integer(1))
-                    provider.getProperty("longProperty", Long::class.java).should.be.equal(2)
-                    provider.getProperty("shortProperty", Short::class.java).should.be.equal(1)
-                    provider.getProperty("floatProperty", Float::class.java).should.be.equal(2.1F)
-                    provider.getProperty("doubleProperty", Double::class.java).should.be.equal(1.1)
-                    provider.getProperty("byteProperty", Byte::class.java).should.be.equal(2)
-                    provider.getProperty("booleanProperty", Boolean::class.java).should.be.`true`
+                    provider.getProperty("integerProperty", Integer::class).should.be.equal(Integer(1))
+                    provider.getProperty("longProperty", Long::class).should.be.equal(2)
+                    provider.getProperty("shortProperty", Short::class).should.be.equal(1)
+                    provider.getProperty("floatProperty", Float::class).should.be.equal(2.1F)
+                    provider.getProperty("doubleProperty", Double::class).should.be.equal(1.1)
+                    provider.getProperty("byteProperty", Byte::class).should.be.equal(2)
+                    provider.getProperty("booleanProperty", Boolean::class).should.be.`true`
                 }
 
                 it("binding test [${provider.javaClass.name}]") {

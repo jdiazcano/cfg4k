@@ -20,6 +20,7 @@ import com.jdiazcano.konfig.binders.Binder
 import com.jdiazcano.konfig.utils.Typable
 import com.jdiazcano.konfig.utils.typeOf
 import java.lang.reflect.Type
+import kotlin.reflect.KClass
 
 /**
  * Base interface for all the ConfigProviders, this interface defines the needed methods of a provider in order to be
@@ -36,7 +37,7 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Class of the property, it will be parsed to it.
      */
-    fun <T: Any> getProperty(name: String, type: Class<T>, default: T? = null): T
+    fun <T: Any> getProperty(name: String, type: KClass<T>, default: T? = null): T
 
     /**
      * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
@@ -87,11 +88,11 @@ interface ConfigProvider {
      * @param prefix The prefix of the configuration, if this is not empty, configs starting with the prefix will be used
      * @param type The interface that will be implemented and it will be returned
      */
-    fun <T: Any> bind(prefix: String, type: Class<T>): T {
+    fun <T: Any> bind(prefix: String, type: KClass<T>): T {
         return binder.bind(this, prefix, type)
     }
 }
 
-inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
+inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class)
 inline fun <reified T : Any> ConfigProvider.getProperty(name: String, default: T? = null) = getProperty(name, typeOf<T>(), default)
 fun ConfigProvider.cache() = CachedConfigProvider(this)
