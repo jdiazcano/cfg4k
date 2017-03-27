@@ -16,17 +16,16 @@
 
 package com.jdiazcano.konfig.utils
 
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
+import kotlin.reflect.KType
 
 abstract class GenericType<T> : Typable {
-    private val type: Type
+    private val type: KType
 
     init {
-        val parameterizedType = javaClass.genericSuperclass
+        val parameterizedType = javaClass.kotlin.supertypes
 
-        if (parameterizedType is ParameterizedType) {
-            type = parameterizedType.actualTypeArguments[0]
+        if (parameterizedType.isNotEmpty()) {
+            type = javaClass.kotlin.supertypes[0] // this is not working yet but soon(tm)!!
         } else {
             throw IllegalArgumentException("Class must be parameterized")
         }
@@ -41,7 +40,7 @@ abstract class GenericType<T> : Typable {
 }
 
 interface Typable {
-    fun getType(): Type
+    fun getType(): KType
 }
 
-inline fun <reified T> typeOf() = object : GenericType<T>() {}
+inline fun <reified T> typeOf() = object : GenericType<T>() {}.getType()

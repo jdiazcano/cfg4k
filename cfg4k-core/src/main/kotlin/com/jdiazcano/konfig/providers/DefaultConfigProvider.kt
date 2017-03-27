@@ -19,22 +19,14 @@ package com.jdiazcano.konfig.providers
 import com.jdiazcano.konfig.binders.Binder
 import com.jdiazcano.konfig.binders.ProxyBinder
 import com.jdiazcano.konfig.loaders.ConfigLoader
-import com.jdiazcano.konfig.parsers.Parser
+import com.jdiazcano.konfig.parsers.Parsers.canParse
 import com.jdiazcano.konfig.parsers.Parsers.findParser
-import com.jdiazcano.konfig.parsers.Parsers.getClassedParser
-import com.jdiazcano.konfig.parsers.Parsers.getParser
-import com.jdiazcano.konfig.parsers.Parsers.getParseredParser
-import com.jdiazcano.konfig.parsers.Parsers.isClassedParser
-import com.jdiazcano.konfig.parsers.Parsers.isParser
-import com.jdiazcano.konfig.parsers.Parsers.isParseredParser
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.SettingNotFound
-import com.jdiazcano.konfig.utils.TargetType
-import com.jdiazcano.konfig.utils.Typable
-import java.lang.reflect.Type
-import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
 open class DefaultConfigProvider(
@@ -51,10 +43,10 @@ open class DefaultConfigProvider(
 
     override fun <T: Any> getProperty(name: String, type: KClass<T>, default: T?): T {
         // There is no way that this has a generic parsers because the class actually removes that possiblity
-        if (isParser(type)) {
+        if (canParse(type)) {
             val value = configLoader.get(name)
             if (value != null) {
-                return getParser<T>(type).parse(value)
+                return findParser<T>(type).parse(value)
             } else {
                 if (default != null) {
                     return default
@@ -67,24 +59,15 @@ open class DefaultConfigProvider(
         }
     }
 
-    override fun <T: Any> getProperty(name: String, type: Typable, default: T?): T {
-        return getProperty(name, type.getType(), default)
-    }
-
-    override fun <T: Any> getProperty(name: String, type: Type, default: T?): T {
-        val rawType = TargetType(type).rawTargetType().kotlin
+    override fun <T: Any> getProperty(name: String, type: KType, default: T?): T {
+        val rawType = type.jvmErasure
 
         val value = configLoader.get(name)
         if (value != null) {
-            if (isParseredParser(rawType)) {
-                val parser = getParseredParser(rawType) as Parser<T>
-                val superType = TargetType(type).getParameterizedClassArguments()[0].kotlin
-                return parser.parse(value, superType, findParser<T>(superType))
-            } else if (isClassedParser(Reflection.createKotlinClass(rawType.javaObjectType.superclass))) {
-                val parser = getClassedParser(Reflection.createKotlinClass(rawType.javaObjectType.superclass!!)) as Parser<T>
-                return parser.parse(value, rawType)
-            } else if (isParser(rawType)) {
-                return getParser<T>(rawType).parse(value)
+            if (canParse(rawType)) {
+                val parser = findParser<T>(rawType)
+                val superType = type.arguments.firstOrNull()?.type?.jvmErasure ?: Any::class
+                return parser.parse(value, rawType, findParser<T>(superType))
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {

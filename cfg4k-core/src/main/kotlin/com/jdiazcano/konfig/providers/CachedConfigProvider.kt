@@ -16,7 +16,6 @@
 
 package com.jdiazcano.konfig.providers
 
-import com.jdiazcano.konfig.utils.Typable
 import kotlin.reflect.KClass
 
 /**
@@ -36,16 +35,6 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
             return cache[name] as T
         } else {
             val property = configProvider.getProperty(name, type, default)
-            cache[name] = property
-            return property
-        }
-    }
-
-    override fun <T: Any> getProperty(name: String, type: Typable, default: T?): T {
-        if (cache.containsKey(name)) {
-            return cache[name] as T
-        } else {
-            val property: T = configProvider.getProperty(name, type, default)
             cache[name] = property
             return property
         }

@@ -19,6 +19,7 @@ package com.jdiazcano.konfig
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.jdiazcano.konfig.providers.bind
+import com.jdiazcano.konfig.providers.getProperty
 import com.jdiazcano.konfig.utils.typeOf
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -32,7 +33,7 @@ class ListProviderTest: Spek({
         val provider = ProxyConfigProvider(loader)
 
         it("Simple property test") {
-            val testBinder: List<Int> = provider.getProperty("list", typeOf<List<Int>>())
+            val testBinder: List<Int> = provider.getProperty<List<Int>>("list")
             testBinder.should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
         }
 

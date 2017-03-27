@@ -21,6 +21,7 @@ import com.jdiazcano.konfig.utils.Typable
 import com.jdiazcano.konfig.utils.typeOf
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 
 /**
  * Base interface for all the ConfigProviders, this interface defines the needed methods of a provider in order to be
@@ -44,18 +45,9 @@ interface ConfigProvider {
      * this method will correctly parse List<Int> for example.
      *
      * @param name Name of the property
-     * @param type Type of the property. (You can get the type with typeOf<Class>() method)
+     * @param type KType of the property.
      */
-    fun <T: Any> getProperty(name: String, type: Typable, default: T? = null): T
-
-    /**
-     * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
-     * this method will correctly parse List<Int> for example.
-     *
-     * @param name Name of the property
-     * @param type Type of the property. (You can get the type with typeOf<Class>() method)
-     */
-    fun <T: Any> getProperty(name: String, type: Type, default: T? = null): T
+    fun <T: Any> getProperty(name: String, type: KType, default: T? = null): T
 
     /**
      * This method will be called when there is an order to reload the properties. This can happen in different scenarios

@@ -22,79 +22,43 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
+import kotlin.reflect.full.superclasses
 
 object Parsers {
-    private val parsers: MutableMap<KClass<out Any>, Parser<Any>>
-    private val classedParsers: MutableMap<KClass<out Any>, Parser<Any>>
-    private val parseredParsers: MutableMap<KClass<out Any>, Parser<Any>>
-
-    init {
-        parsers = mutableMapOf(
-                Int::class to IntParser,
-                Long::class to LongParser,
-                Double::class to DoubleParser,
-                Short::class to ShortParser,
-                Float::class to FloatParser,
-                Double::class to DoubleParser,
-                Byte::class to ByteParser,
-                String::class to StringParser,
-                Boolean::class to BooleanParser,
-                BigDecimal::class to BigDecimalParser,
-                BigInteger::class to BigIntegerParser
-        )
-
-        classedParsers = mutableMapOf(
-                Enum::class to EnumParser<Nothing>()
-        )
-
-        parseredParsers = mutableMapOf(
-                List::class to ListParser<Nothing>(),
-                java.util.List::class to ListParser<Nothing>(),
-                Set::class to SetParser<Nothing>()
-        )
-    }
-
-    //fun KClass<*>.isParser() = this in parsers
-
-    fun isParser(type: KClass<*>) = type in parsers
-
-    fun isParseredParser(type: KClass<*>?) = type in parseredParsers
-
-    fun isClassedParser(type: KClass<*>?) = type in classedParsers
+    private val parsers: MutableMap<KClass<out Any>, Parser<Any>> = mutableMapOf(
+            Int::class to IntParser,
+            Long::class to LongParser,
+            Double::class to DoubleParser,
+            Short::class to ShortParser,
+            Float::class to FloatParser,
+            Double::class to DoubleParser,
+            Byte::class to ByteParser,
+            String::class to StringParser,
+            Boolean::class to BooleanParser,
+            BigDecimal::class to BigDecimalParser,
+            BigInteger::class to BigIntegerParser,
+            Enum::class to EnumParser<Nothing>(),
+            List::class to ListParser<Nothing>(),
+            java.util.List::class to ListParser<Nothing>(),
+            Set::class to SetParser<Nothing>()
+    )
 
     fun canParse(type: KClass<out Any>): Boolean {
-        return type in parsers
-                || type in parseredParsers
-                || (type.javaObjectType.superclass != null
-                    && Reflection.createKotlinClass(type.javaObjectType.superclass) in classedParsers)
-    }
-
-    fun <T> getParser(type: KClass<*>): Parser<T> {
-        return parsers[type] as Parser<T>
+        return type in parsers || type.superclasses[0] in parsers
     }
 
     fun <T> findParser(type: KClass<*>): Parser<T> {
-        if (Reflection.createKotlinClass(type.javaObjectType.superclass)!! in classedParsers) {
-            return classedParsers[Reflection.createKotlinClass(type.javaObjectType.superclass)] as Parser<T>
-        } else {
+        if (type in parsers) {
             return parsers[type] as Parser<T>
+        } else if (type != Any::class) {
+            return parsers[type.superclasses[0]] as Parser<T>
         }
+
+        return StringParser as Parser<T>
     }
-
-    fun getParseredParser(type: KClass<*>) = parseredParsers[type]
-
-    fun getClassedParser(type: KClass<*>) = classedParsers[type]
 
     fun addParser(type: KClass<out Any>, parser: Parser<Any>) {
         parsers.put(type, parser)
     }
 
-    fun addClassedParser(type: KClass<out Any>, parser: Parser<Any>) {
-        classedParsers.put(type, parser)
-    }
-
-    fun addParseredParser(type: KClass<out Any>, parser: Parser<Any>) {
-        parseredParsers.put(type, parser)
-    }
 }
-

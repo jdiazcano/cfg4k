@@ -19,9 +19,13 @@ package com.jdiazcano.konfig.binders
 import com.jdiazcano.konfig.parsers.Parsers.canParse
 import com.jdiazcano.konfig.providers.ConfigProvider
 import com.jdiazcano.konfig.providers.bind
+import com.jdiazcano.konfig.providers.getProperty
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import kotlin.jvm.internal.Reflection
 import kotlin.reflect.functions
+import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.kotlinFunction
 
 /**
  * InvocationHandler that handles the proxying between the interface and the call. This class is used in the
@@ -39,8 +43,8 @@ class BindingInvocationHandler(
             return method.invoke(this, *(args?: arrayOf()))
         }
 
-        val type = method.genericReturnType
-        if (canParse(method.returnType.kotlin)) {
+        val type = method.kotlinFunction?.returnType!!
+        if (canParse(type.jvmErasure)) {
             return provider.getProperty(prefix(prefix, method.name), type)
         } else {
             return provider.bind(prefix(prefix, method.name), method.returnType.kotlin)

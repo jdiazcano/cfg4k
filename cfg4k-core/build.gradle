@@ -3,6 +3,7 @@ apply from: '../gradle/versions.gradle'
 dependencies {
     compile libraries.jetbrains.kotlin.stdlib
     compile libraries.jetbrains.kotlin.test
+    compile libraries.jetbrains.kotlin.reflect
     compile libraries.jetbrains.spek.api
     compile libraries.klaxon
 

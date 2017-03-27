@@ -24,6 +24,7 @@ import com.jdiazcano.konfig.utils.SettingNotFound
 import com.jdiazcano.konfig.utils.Typable
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 
 class OverrideConfigProvider(
         vararg private val providers: ConfigProvider,
@@ -59,11 +60,7 @@ class OverrideConfigProvider(
         }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Typable, default: T?): T {
-        return getProperty(name, type.getType())
-    }
-
-    override fun <T : Any> getProperty(name: String, type: Type, default: T?): T {
+    override fun <T : Any> getProperty(name: String, type: KType, default: T?): T {
         if (name in cachedProviders) {
             return cachedProviders[name]!!.getProperty(name, type, default)
         } else {
