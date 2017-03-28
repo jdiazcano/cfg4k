@@ -60,7 +60,6 @@ class ConfigProviderTest: Spek({
 
             it("integer properties") {
                 provider.getProperty("integerProperty", Int::class.java).should.be.equal(1)
-                provider.getProperty("integerProperty", Integer::class.java).should.be.equal(Integer(1))
             }
 
             it("long properties") {

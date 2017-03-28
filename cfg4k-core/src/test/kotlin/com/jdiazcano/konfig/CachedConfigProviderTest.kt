@@ -43,7 +43,7 @@ class CachedConfigProviderTest: Spek({
                 it("primitive properties [${provider.javaClass.name}]") {
                     provider.getProperty<Int>("integerProperty").should.be.equal(1)
                     provider.getProperty<Int>("integerProperty").should.be.equal(1)
-                    provider.getProperty("integerProperty", Integer::class.java).should.be.equal(Integer(1))
+                    provider.getProperty("integerProperty", Int::class.java).should.be.equal(1)
                     provider.getProperty("longProperty", Long::class.java).should.be.equal(2)
                     provider.getProperty("shortProperty", Short::class.java).should.be.equal(1)
                     provider.getProperty("floatProperty", Float::class.java).should.be.equal(2.1F)

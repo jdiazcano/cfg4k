@@ -19,10 +19,8 @@ package com.jdiazcano.konfig.providers
 import com.jdiazcano.konfig.binders.Binder
 import com.jdiazcano.konfig.binders.ProxyBinder
 import com.jdiazcano.konfig.loaders.ConfigLoader
-import com.jdiazcano.konfig.parsers.Parsers.canParse
+import com.jdiazcano.konfig.parsers.Parsers.isParseable
 import com.jdiazcano.konfig.parsers.Parsers.findParser
-import com.jdiazcano.konfig.parsers.Parsers.getParser
-import com.jdiazcano.konfig.parsers.Parsers.isParser
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 import com.jdiazcano.konfig.utils.SettingNotFound
@@ -44,11 +42,11 @@ open class DefaultConfigProvider(
     }
 
     override fun <T: Any> getProperty(name: String, type: Class<T>, default: T?): T {
-        // There is no way that this has a generic parsers because the class actually removes that possiblity
-        if (canParse(type)) {
+        // There is no way that this has a generic parsers because the class actually removes that possibility
+        if (type.isParseable()) {
             val value = configLoader.get(name)
             if (value != null) {
-                return getParser(type).parse(value)
+                return type.findParser<T>()?.parse(value) as T
             } else {
                 if (default != null) {
                     return default
@@ -71,10 +69,10 @@ open class DefaultConfigProvider(
 
         val value = configLoader.get(name)
         if (value != null) {
-            if (canParse(rawType)) {
+            if (rawType.isParseable()) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
-                return findParser<T>(rawType)?.parse(value, classType, findParser<T>(superType)) as T
+                return rawType.findParser<T>()?.parse(value, classType, superType.findParser<T>()) as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {
