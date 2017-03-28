@@ -21,7 +21,7 @@ import com.jdiazcano.konfig.binders.prefix
 import com.jdiazcano.konfig.loaders.ConfigLoader
 import com.jdiazcano.konfig.providers.ConfigProvider
 import com.jdiazcano.konfig.reloadstrategies.ReloadStrategy
-import com.jdiazcano.konfig.parsers.Parsers
+import com.jdiazcano.konfig.parsers.Parsers.isParseable
 import com.jdiazcano.konfig.providers.DefaultConfigProvider
 import com.jdiazcano.konfig.providers.Providers
 import net.bytebuddy.ByteBuddy
@@ -48,7 +48,7 @@ class ByteBuddyBinder : Binder {
             val returnType = method.genericReturnType
 
             val value: () -> T = {
-                if (Parsers.canParse(method.returnType)) {
+                if (method.returnType.isParseable()) {
                     provider.getProperty(prefix(prefix, method.name), returnType)
                 } else {
                     provider.bind(prefix(prefix, method.name), method.returnType) as T
