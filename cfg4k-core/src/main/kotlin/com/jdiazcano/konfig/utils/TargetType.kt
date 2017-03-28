@@ -55,7 +55,7 @@ internal class TargetType(private val targetType: Type) {
 
     fun extractParameterizedClassArguments(): List<Class<*>> {
         if (!isTargetTypeParameterized) {
-            throw UnsupportedOperationException("Type $targetType must be parameterized")
+            return emptyList()
         }
 
         val pt = targetType as ParameterizedType

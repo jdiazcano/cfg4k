@@ -57,7 +57,7 @@ class RegisterNewParsersTest: Spek({
 
 data class Book(val id: Long, val title: String)
 object BookParser : Parser<Book> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Book {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Book {
         val (id, title) = value.split(", ")
         return Book(id.toLong(), title)
     }

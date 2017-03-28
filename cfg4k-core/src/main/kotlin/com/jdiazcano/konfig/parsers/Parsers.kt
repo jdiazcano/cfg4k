@@ -18,12 +18,12 @@
 
 package com.jdiazcano.konfig.parsers
 
+import com.jdiazcano.konfig.utils.ParserClassNotFound
 import java.math.BigDecimal
 import java.math.BigInteger
 
 object Parsers {
     private val parsers: MutableMap<Class<out Any>, Parser<Any>>
-    private val classedParsers: MutableMap<Class<out Any>, Parser<Any>>
     private val parseredParsers: MutableMap<Class<out Any>, Parser<Any>>
 
     init {
@@ -47,10 +47,7 @@ object Parsers {
                 java.lang.Double::class.java to DoubleParser,
                 java.lang.Byte::class.java to ByteParser,
                 java.lang.String::class.java to StringParser,
-                java.lang.Boolean::class.java to BooleanParser
-        )
-
-        classedParsers = mutableMapOf(
+                java.lang.Boolean::class.java to BooleanParser,
                 Enum::class.java to EnumParser<Nothing>()
         )
 
@@ -65,40 +62,33 @@ object Parsers {
 
     fun isParser(type: Class<*>) = type in parsers
 
-    fun isParseredParser(type: Class<*>?) = type in parseredParsers
-
-    fun isClassedParser(type: Class<*>?) = type in classedParsers
-
     fun canParse(type: Class<out Any>): Boolean {
-        return type in parsers || type in parseredParsers || (type.superclass != null && type.superclass in classedParsers)
+        return type in parsers || type in parseredParsers || (type.superclass != null && type.superclass in parsers)
     }
 
     fun <T> getParser(type: Class<T>): Parser<T> {
         return parsers[type] as Parser<T>
     }
 
-    fun <T> findParser(type: Class<T>): Parser<T> {
-        if (type.superclass!! in classedParsers) {
-            return classedParsers[type.superclass!!] as Parser<T>
-        } else {
-            return parsers[type] as Parser<T>
+    fun <T> findParser(type: Class<*>?): Parser<T>? {
+        if (type == null) {
+            return null
         }
+
+        if (type in parsers) {
+            return parsers[type] as Parser<T>
+        } else if (type.superclass != null && type.superclass in parsers) {
+            return parsers[type.superclass!!] as Parser<T>
+        } else if (type in parseredParsers) {
+            return parseredParsers[type] as Parser<T>
+        }
+
+        return throw ParserClassNotFound("Parser not found for class $type")
     }
-
-    fun getParseredParser(type: Class<*>) = parseredParsers[type]
-
-    fun getClassedParser(type: Class<*>) = classedParsers[type]
 
     fun addParser(type: Class<out Any>, parser: Parser<Any>) {
         parsers.put(type, parser)
     }
 
-    fun addClassedParser(type: Class<out Any>, parser: Parser<Any>) {
-        classedParsers.put(type, parser)
-    }
-
-    fun addParseredParser(type: Class<out Any>, parser: Parser<Any>) {
-        parseredParsers.put(type, parser)
-    }
 }
 

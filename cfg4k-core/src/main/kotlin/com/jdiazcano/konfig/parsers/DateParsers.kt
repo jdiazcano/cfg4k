@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DateParser(private val format: String, private val locale: Locale = Locale.getDefault()) : Parser<Date> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Date {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Date {
         return SimpleDateFormat(format, locale).parse(value)
     }
 }
@@ -34,7 +34,7 @@ class LocalDateTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): LocalDateTime {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): LocalDateTime {
         if (formatter != null) {
             return LocalDateTime.parse(value, formatter)
         } else {
@@ -66,7 +66,7 @@ class LocalDateParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): LocalDate {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): LocalDate {
         if (formatter != null) {
             return LocalDate.parse(value, formatter)
         } else {
@@ -98,7 +98,7 @@ class ZonedDateTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): ZonedDateTime {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): ZonedDateTime {
         if (formatter != null) {
             return ZonedDateTime.parse(value, formatter)
         } else {
@@ -130,7 +130,7 @@ class OffsetDateTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): OffsetDateTime {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): OffsetDateTime {
         if (formatter != null) {
             return OffsetDateTime.parse(value, formatter)
         } else {
@@ -162,7 +162,7 @@ class OffsetTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): OffsetTime {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): OffsetTime {
         if (formatter != null) {
             return OffsetTime.parse(value, formatter)
         } else {
@@ -172,7 +172,7 @@ class OffsetTimeParser private constructor(
 }
 
 class CalendarParser(private val format: String, private val locale: Locale = Locale.getDefault()) : Parser<Calendar> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Calendar {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Calendar {
         val calendar = Calendar.getInstance(locale)
         calendar.time = SimpleDateFormat(format, locale).parse(value)
         return calendar

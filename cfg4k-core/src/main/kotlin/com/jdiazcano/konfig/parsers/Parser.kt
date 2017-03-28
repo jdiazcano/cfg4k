@@ -21,5 +21,5 @@ package com.jdiazcano.konfig.parsers
  * are needed.
  */
 interface Parser<out T> {
-    fun parse(value: String, type: Class<*> = Any::class.java, parser: Parser<*> = StringParser): T
+    fun parse(value: String, type: Class<*> = Any::class.java, parser: Parser<*>? = null): T
 }

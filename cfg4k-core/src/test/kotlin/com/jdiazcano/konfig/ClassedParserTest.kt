@@ -17,7 +17,7 @@ import org.jetbrains.spek.api.dsl.it
  */
 class ClassedParserTest: Spek({
     describe("A new parser is registered and it should parse it correctly with the new parser") {
-        Parsers.addClassedParser(Person::class.java, PrinterClassedParser())
+        Parsers.addParser(Person::class.java, PrinterClassedParser())
 
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("classedparser.properties"))
         val provider = ProxyConfigProvider(loader)
@@ -33,7 +33,7 @@ class ClassedParserTest: Spek({
 })
 
 class PrinterClassedParser : Parser<Printer> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Printer {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Printer {
         val split = value.split('-')
         return Printer(split[0], split[1].toInt())
     }

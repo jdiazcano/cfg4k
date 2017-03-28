@@ -19,15 +19,15 @@
 package com.jdiazcano.konfig.parsers
 
 class ListParser<out T : List<Any>>: Parser<T> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): T {
-        return toList(parser, type, value) as T
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): T {
+        return toList(parser!!, type, value) as T
     }
 
 }
 
 class SetParser<out T : Set<Any>>: Parser<T> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): T {
-        return toList(parser, type, value).toSet() as T
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): T {
+        return toList(parser!!, type, value).toSet() as T
     }
 }
 
