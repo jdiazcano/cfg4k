@@ -55,15 +55,11 @@ object Parsers {
         return this in parsers || (superclass != null && superclass in parsers)
     }
 
-    fun <T> Class<*>?.findParser(): Parser<T>? {
-        if (this == null) {
-            return null
-        }
-
+    fun Class<*>.findParser(): Parser<*> {
         if (this in parsers) {
-            return parsers[this] as Parser<T>
+            return parsers[this] as Parser<*>
         } else if (superclass != null && superclass in parsers) {
-            return parsers[superclass!!] as Parser<T>
+            return parsers[superclass!!] as Parser<*>
         }
 
         return throw ParserClassNotFound("Parser not found for class $this")

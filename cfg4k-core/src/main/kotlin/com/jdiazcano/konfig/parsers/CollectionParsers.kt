@@ -18,25 +18,29 @@
 
 package com.jdiazcano.konfig.parsers
 
+import com.jdiazcano.konfig.utils.ParserClassNotFound
+
 class ListParser<out T : List<Any>>: Parser<T> {
     override fun parse(value: String, type: Class<*>, parser: Parser<*>?): T {
-        return toList(parser!!, type, value) as T
+        if (parser == null) {
+            throw ParserClassNotFound("Parser class not found for type '${type.name}'")
+        } else {
+            return toList(parser, type, value) as T
+        }
     }
 
 }
 
 class SetParser<out T : Set<Any>>: Parser<T> {
     override fun parse(value: String, type: Class<*>, parser: Parser<*>?): T {
-        return toList(parser!!, type, value).toSet() as T
+        if (parser == null) {
+            throw ParserClassNotFound("Parser class not found for type '${type.name}'")
+        } else {
+            return toList(parser, type, value).toSet() as T
+        }
     }
 }
 
 private fun toList(parser: Parser<*>, type: Class<*>, value: String): List<Any?> {
-    return value.split(',').map {
-        if (type.isEnum) {
-            parser.parse(it.trim(), type)
-        } else {
-            parser.parse(it.trim())
-        }
-    }
+    return value.split(',').map { parser.parse(it, type) }
 }

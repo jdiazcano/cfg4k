@@ -21,5 +21,13 @@ package com.jdiazcano.konfig.parsers
  * are needed.
  */
 interface Parser<out T> {
+
+    /**
+     * Parses a string into a Type
+     *
+     * @param value The string that comes from the source
+     * @param type The class of the supertype of the class that we want to parse
+     * @param parser When it is a list, then a parser is passed to parse the items of the list/set/inside
+     */
     fun parse(value: String, type: Class<*> = Any::class.java, parser: Parser<*>? = null): T
 }
