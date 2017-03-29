@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/jdiazcano/cfg4k.svg?branch=master)](https://travis-ci.org/jdiazcano/cfg4k) [![Coverage Status](https://coveralls.io/repos/github/jdiazcano/cfg4k/badge.svg?branch=master)](https://coveralls.io/github/jdiazcano/cfg4k?branch=master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Release](https://jitpack.io/v/jdiazcano/cfg4k.svg)](https://jitpack.io/#jdiazcano/cfg4k)
 
-#Overview 
+# Overview 
 Cfg4k is a configuration library made for Kotlin in Kotlin!
 
 Features
@@ -10,7 +10,7 @@ Features
 * Easy to use
 * Performance matters, the new Bytebuddy provider will be able to compile your bindings at runtime
 
-#Quick start
+# Quick start
 1. Add the JitPack repository: 
 ```groovy
 repositories {
