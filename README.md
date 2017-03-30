@@ -17,9 +17,9 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 ```
-2. Add the dependency: `com.github.jdiazcano.cfg4k:cfg4k-core:0.2`. 
+2. Add the dependency: `com.github.jdiazcano.cfg4k:cfg4k-core:0.5.3`. 
 This is a multimodule dependency so the core will always be needed but you can add other support by adding other modules:
-    - `com.github.jdiazcano.cfg4k:cfg4k-bytebuddy:0.2` - Adds bytebuddy Provider instead of a normal Proxy provider, this is needed if you want more performance. Classes are compiled at runtime and then the execution is instant instead of proxying and checking with every call.
+    - `com.github.jdiazcano.cfg4k:cfg4k-bytebuddy:0.5.3` - Adds bytebuddy Provider instead of a normal Proxy provider, this is needed if you want more performance. Classes are compiled at runtime and then the execution is instant instead of proxying and checking with every call.
 3. Write code as in the example
 
 # Dependency explained
@@ -28,7 +28,7 @@ The dependency is from JitPack so it has a schema:
 1. `com.github.jdiazcano` = github user
 2. `cfg4k` = project name
 3. `cfg4k-bytebuddy` = module name (folder inside the project)
-4. `0.2` = version, here you can write a tag or branch (maybe followed by `-SNAPSHOT`* to get the latest version)
+4. `0.5.3` = version, here you can write a tag or branch (maybe followed by `-SNAPSHOT`* to get the latest version)
 
 \* Sometimes the SNAPSHOT build takes times in JitPack when building for the first time, be patient if it takes longer than expected. It is only the first time globally!
 
@@ -215,7 +215,7 @@ There are two steps in order to use a new parser.
 data class Point(val x: Int, val y: Int)
 
 object PointParser: Parser<Point> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>) = Point(value.split(',')[0], value.split(',')[1])
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = Point(value.split(',')[0], value.split(',')[1])
 }
 
 Parsers.addParser(Point::class.java, PointParser())
@@ -225,7 +225,7 @@ A more complicated example
 
 ```kotlin
 class PrinterClassedParser : Parser<Printer> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>): Printer {
+    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Printer {
         val split = value.split('-')
         return Printer(split[0], split[1].toInt())
     }
@@ -259,7 +259,7 @@ open class Person(val name: String, val age: Int) {
 
 }
 
-Parsers.addClassedParser(Person::class.java, PrinterClassedParser())
+Parsers.addParser(Person::class.java, PrinterClassedParser())
 ```
 
 Full example inside the sample module: https://github.com/jdiazcano/cfg4k/tree/master/sample
