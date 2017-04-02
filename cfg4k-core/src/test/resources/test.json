@@ -27,5 +27,19 @@
   "nested": {
     "a": "nestedb"
   },
+  "betterIntList": [
+    1,
+    2,
+    100
+  ],
+  "betterStringList": [
+    "a",
+    "b",
+    "c"
+  ],
+  "betterEnumList": [
+    "A",
+    "B",
+  ],
   "toString": "this should not be ever used"
 }

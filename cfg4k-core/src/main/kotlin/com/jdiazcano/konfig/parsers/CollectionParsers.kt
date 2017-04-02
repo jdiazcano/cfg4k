@@ -20,7 +20,20 @@ package com.jdiazcano.konfig.parsers
 
 import com.jdiazcano.konfig.utils.ParserClassNotFound
 
-class ListParser<out T : List<Any>>: Parser<T> {
+interface CollectionParser<out T> : Parser<T> {
+    val prefix: String
+    val suffix: String
+    val divider: String
+}
+
+// The defaults are from the JSON, I am not sure about YAML or HOCON, I guess it should be handled so the same toString
+// should be used inside all the "array" types inside hocon, yaml.
+// TODO() Check this
+class ListParser<out T : List<Any>>(
+        override val prefix: String = "JsonArray(value=[",
+        override val suffix: String = "])",
+        override val divider: String = ","
+): CollectionParser<T> {
     override fun parse(value: String, type: Class<*>, parser: Parser<*>?): T {
         if (parser == null) {
             throw ParserClassNotFound("Parser class not found for type '${type.name}'")
@@ -31,7 +44,11 @@ class ListParser<out T : List<Any>>: Parser<T> {
 
 }
 
-class SetParser<out T : Set<Any>>: Parser<T> {
+class SetParser<out T : Set<Any>>(
+        override val prefix: String = "JsonArray(value=[",
+        override val suffix: String = "])",
+        override val divider: String = ","
+): CollectionParser<T> {
     override fun parse(value: String, type: Class<*>, parser: Parser<*>?): T {
         if (parser == null) {
             throw ParserClassNotFound("Parser class not found for type '${type.name}'")
@@ -41,6 +58,7 @@ class SetParser<out T : Set<Any>>: Parser<T> {
     }
 }
 
-private fun toList(parser: Parser<*>, type: Class<*>, value: String): List<Any?> {
-    return value.split(',').map { parser.parse(it, type) }
+private fun CollectionParser<*>.toList(parser: Parser<*>, type: Class<*>, value: String): List<Any?> {
+    val splitString = value.removePrefix(prefix).removeSuffix(suffix).split(divider)
+    return splitString.map { parser.parse(it.trim(), type) }
 }

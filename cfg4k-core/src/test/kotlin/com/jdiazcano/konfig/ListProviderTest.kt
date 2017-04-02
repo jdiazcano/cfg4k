@@ -16,9 +16,11 @@
 
 package com.jdiazcano.konfig
 
+import com.jdiazcano.konfig.loaders.JsonConfigLoader
 import com.jdiazcano.konfig.loaders.PropertyConfigLoader
 import com.jdiazcano.konfig.providers.ProxyConfigProvider
 import com.jdiazcano.konfig.providers.bind
+import com.jdiazcano.konfig.providers.getProperty
 import com.jdiazcano.konfig.utils.typeOf
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -29,11 +31,19 @@ class ListProviderTest: Spek({
 
     describe("a property config loader") {
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("listtest.properties"))
+        val jsonLoader = JsonConfigLoader(javaClass.classLoader.getResource("test.json"))
         val provider = ProxyConfigProvider(loader)
+        val jsonProvider = ProxyConfigProvider(jsonLoader)
 
         it("Simple property test") {
             val testBinder: List<Int> = provider.getProperty("list", typeOf<List<Int>>())
             testBinder.should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
+            val betterIntList: List<Int> = jsonProvider.getProperty("betterIntList", typeOf<List<Int>>())
+            betterIntList.should.be.equal(listOf(1, 2, 100))
+            val betterStringList: List<String> = jsonProvider.getProperty("betterStringList", typeOf<List<String>>())
+            betterStringList.should.be.equal(listOf("a", "b", "c"))
+            val betterEnumList = jsonProvider.getProperty<List<Enumerito>>("betterEnumList")
+            betterEnumList.should.be.equal(listOf(Enumerito.A, Enumerito.B))
         }
 
         it("prefixed binding test") {
