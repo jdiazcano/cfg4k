@@ -2,7 +2,7 @@ ext.versions = [
         jetbrains: [
                 kotlin: '1.1.1',
                 spek: '1.1.19',
-                engine: '1.1.0-beta2'
+                engine: '1.1.0'
         ],
         bytebuddy: '1.6.12',
         klaxon: '0.31',
@@ -23,7 +23,7 @@ ext.libraries = [
                         test: "org.jetbrains.kotlin:kotlin-test:$versions.jetbrains.kotlin"
                 ],
                 spek: [
-                        api: "org.jetbrains.spek:spek-api:$versions.jetbrains.spek",
+                        api: "org.jetbrains.spek:spek-api:$versions.jetbrains.engine",
                         engine: "org.jetbrains.spek:spek-junit-platform-engine:$versions.jetbrains.engine"
                 ]
         ],

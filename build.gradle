@@ -20,14 +20,14 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.jetbrains.kotlin"
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M3'
+        classpath "org.junit.platform:junit-platform-gradle-plugin:$versions.junitrunner"
     }
 
 }
 
 
 plugins {
-    id 'com.github.kt3k.coveralls' version '2.7.1'
+    id 'com.github.kt3k.coveralls' version '2.8.1'
     id 'com.github.ben-manes.versions' version '0.14.0'
 }
 
@@ -84,6 +84,16 @@ subprojects {
         sourceDirs += ['src/main/kotlin']
     }
 
+    // Needed because there's something messy with kotlin version numbers and dependencies
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'org.jetbrains.kotlin') {
+                    details.useVersion "$versions.jetbrains.kotlin"
+                }
+            }
+        }
+    }
 
 }
 
