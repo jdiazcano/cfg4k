@@ -95,6 +95,15 @@ subprojects {
         }
     }
 
+    junitPlatform {
+        platformVersion "${versions.junitrunner}"
+        filters {
+            engines {
+                include 'spek'
+            }
+        }
+    }
+
 }
 
 def activeSubprojects = subprojects.findAll { it.name.startsWith("cfg4k") }
