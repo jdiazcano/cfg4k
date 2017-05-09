@@ -29,8 +29,13 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.net.URI
+import java.net.URL
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -92,6 +97,22 @@ class ConfigProviderTest: Spek({
 
             it("big decimal properties") {
                 provider.getProperty<BigDecimal>("bigDecimalProperty").should.be.equal(BigDecimal("1.1"))
+            }
+
+            it("file properties") {
+                provider.getProperty<File>("file").should.be.equal(File("myfile.txt"))
+            }
+
+            it("path properties") {
+                provider.getProperty<Path>("path").should.be.equal(Paths.get("mypath.txt"))
+            }
+
+            it("url properties") {
+                provider.getProperty<URL>("url").should.be.equal(URL("https://www.amazon.com"))
+            }
+
+            it("uri properties") {
+                provider.getProperty<URI>("uri").should.be.equal(URI("https://www.amazon.com"))
             }
 
             it("date property") {
@@ -227,6 +248,10 @@ class ConfigProviderTest: Spek({
                 testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
                 testBinder.bigDecimalProperty().should.be.equal(BigDecimal("1.1"))
                 testBinder.bigIntegerProperty().should.be.equal(BigInteger("1"))
+                testBinder.uri().should.be.equal(URI("https://www.amazon.com"))
+                testBinder.url().should.be.equal(URL("https://www.amazon.com"))
+                testBinder.file().should.be.equal(File("myfile.txt"))
+                testBinder.path().should.be.equal(Paths.get("mypath.txt"))
 
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")

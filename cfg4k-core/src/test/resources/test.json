@@ -39,7 +39,11 @@
   ],
   "betterEnumList": [
     "A",
-    "B",
+    "B"
   ],
+  "url": "https://www.amazon.com",
+  "uri": "https://www.amazon.com",
+  "path": "mypath.txt",
+  "file": "myfile.txt",
   "toString": "this should not be ever used"
 }

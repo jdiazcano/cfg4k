@@ -19,8 +19,12 @@
 package com.jdiazcano.konfig.parsers
 
 import com.jdiazcano.konfig.utils.ParserClassNotFound
+import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.net.URI
+import java.net.URL
+import java.nio.file.Path
 
 object Parsers {
     private val parsers: MutableMap<Class<out Any>, Parser<Any>> = mutableMapOf(
@@ -38,6 +42,10 @@ object Parsers {
             Enum::class.java to EnumParser<Nothing>(),
             List::class.java to ListParser<Nothing>(),
             Set::class.java to SetParser<Nothing>(),
+            File::class.java to FileParser(),
+            Path::class.java to PathParser(),
+            URL::class.java to URLParser(),
+            URI::class.java to URIParser(),
 
             /* These are needed for compatibility */
             java.lang.Integer::class.java to IntParser,

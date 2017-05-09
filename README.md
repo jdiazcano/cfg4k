@@ -118,6 +118,10 @@ These parsers are supported out of the box
 19. OffsetTime
 20. Calendar
 21. Date
+22. URI
+23. URL
+24. File
+25. Path
 
 # Customizing Cfg4k
 

@@ -16,8 +16,12 @@
 
 package com.jdiazcano.konfig
 
+import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.net.URI
+import java.net.URL
+import java.nio.file.Path
 
 interface TestBinder {
     fun integerProperty(): Int
@@ -33,6 +37,10 @@ interface TestBinder {
     fun floatList(): List<Float>
     fun bigIntegerProperty(): BigInteger
     fun bigDecimalProperty(): BigDecimal
+    fun uri(): URI
+    fun url(): URL
+    fun file(): File
+    fun path(): Path
 }
 
 enum class TestEnum {
