@@ -1,15 +1,15 @@
 ext.versions = [
         jetbrains: [
-                kotlin: '1.1.1',
+                kotlin: '1.1.3',
                 spek: '1.1.19',
-                engine: '1.1.0'
+                engine: '1.1.2'
         ],
-        bytebuddy: '1.6.12',
+        bytebuddy: '1.7.1',
         klaxon: '0.31',
         typesafe: '1.3.1',
-        jgit: '4.6.1.201703071140-r',
+        jgit: '4.8.0.201706111038-r',
         expekt: '0.5.0',
-        junitrunner: '1.0.0-M3',
+        junitrunner: '1.0.0-M4',
         snakeyaml: '1.18'
 ]
 
