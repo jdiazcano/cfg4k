@@ -2,7 +2,7 @@ package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.loaders.JsonConfigLoader
+import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -12,19 +12,16 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 class ByteBuddyConfigProviderReloadTest: Spek({
-    val text = """{
-  "a": "%reload1",
-  "c": "%reload2",
-  "nested": {
-    "a": "reloaded nestedb"
-  }
-}"""
+    val text = """a=%reload1
+c=%reload2
+nested.a=reloaded nestedb
+"""
     describe("a timed reloadable bytebuddy proxy with json config loader") {
         it("bytebuddy test") {
-            val file = File("timedreloadedfile.json")
+            val file = File("timedreloadedfile.properties")
             file.createNewFile()
             file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val provider = ByteBuddyConfigProvider(JsonConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
+            val provider = ByteBuddyConfigProvider(PropertyConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
             checkProvider(file, provider, text)
         }
 
@@ -48,7 +45,7 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
             lastReload = lastIteration // This is the last reload iteration (8-1)
         }
         if (overriden) {
-            file.writeText(text.replace("%reload1", "overrideb$lastReload").replace(",\n  \"c\": \"%reload2\"", ""))
+            file.writeText(text.replace("%reload1", "overrideb$lastReload").replace("c=%reload2\n", ""))
         } else {
             file.writeText(text.replace("%reload1", "b$lastReload").replace("%reload2", "d$lastReload"))
         }

@@ -1,26 +1,9 @@
-/*
- * Copyright 2015-2016 Javier Díaz-Cano Martín-Albo (javierdiazcanom@gmail.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package com.jdiazcano.cfg4k.json
 
-package com.jdiazcano.cfg4k
-
-import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.parsers.*
+import com.jdiazcano.cfg4k.providers.Providers.cached
 import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.providers.cache
 import com.jdiazcano.cfg4k.providers.getProperty
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.winterbe.expekt.should
@@ -42,8 +25,8 @@ import kotlin.test.assertFailsWith
 class ConfigProviderTest: Spek({
 
     val providers = listOf(
-            proxy(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))),
-            proxy(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))).cache()
+            proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),
+            cached(proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))))
     )
 
     providers.forEachIndexed { i, provider ->
@@ -240,7 +223,7 @@ class ConfigProviderTest: Spek({
                 testBinder.byteProperty().should.be.equal(2)
                 testBinder.a().should.be.equal("b")
                 testBinder.c().should.be.equal("d")
-                testBinder.list().should.be.equal(listOf(1, 2, 3))
+                testBinder.list().should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
                 testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
                 testBinder.bigDecimalProperty().should.be.equal(BigDecimal("1.1"))
                 testBinder.bigIntegerProperty().should.be.equal(BigInteger("1"))

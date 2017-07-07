@@ -1,9 +1,9 @@
 apply from: '../gradle/versions.gradle'
 
 dependencies {
+    compile project(":cfg4k-core")
     compile libraries.jetbrains.kotlin.stdlib
-    compile libraries.jetbrains.spek.api
-    compile libraries.jetbrains.kotlin.test
+    compile libraries.klaxon
 
     testCompile libraries.junitrunner
     testCompile libraries.expekt

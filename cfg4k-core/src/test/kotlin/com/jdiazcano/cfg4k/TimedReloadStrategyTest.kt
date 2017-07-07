@@ -16,7 +16,7 @@
 
 package com.jdiazcano.cfg4k
 
-import com.jdiazcano.cfg4k.loaders.JsonConfigLoader
+import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.*
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
 import com.winterbe.expekt.should
@@ -27,45 +27,42 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 class TimedReloadStrategyTest : Spek({
-    val text = """{
-  "a": "%reload1",
-  "c": "%reload2",
-  "nested": {
-    "a": "reloaded nestedb"
-  }
-}"""
-    describe("a timed reloadable json config loader") {
+    val text = """a=%reload1
+c=%reload2
+nested.a=reloaded nestedb
+"""
+    describe("a timed reloadable properties config loader") {
         it("defaultconfigprovider test") {
-            val file = File("timedreloadedfile.json")
+            val file = File("timedreloadedfile.properties")
             file.createNewFile()
             file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val provider = ProxyConfigProvider(JsonConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
+            val provider = ProxyConfigProvider(PropertyConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
             checkProvider(file, provider, text)
         }
 
         it("cacheddefaultconfigprovider test") {
-            val cachedfile = File("cachedtimedreloadedfile.json")
+            val cachedfile = File("cachedtimedreloadedfile.properties")
             cachedfile.createNewFile()
             cachedfile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val cachedProvider = CachedConfigProvider(ProxyConfigProvider(JsonConfigLoader(cachedfile.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS)))
+            val cachedProvider = CachedConfigProvider(ProxyConfigProvider(PropertyConfigLoader(cachedfile.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS)))
             checkProvider(cachedfile, cachedProvider, text)
         }
 
         it("overrideconfigprovider test") {
-            val overrideFile = File("override.json")
+            val overrideFile = File("override.properties")
             overrideFile.createNewFile()
-            overrideFile.writeText(text.replace("%reload1", "overrideb").replace(",\n  \"c\": \"%reload2\"", ""))
+            overrideFile.writeText(text.replace("%reload1", "overrideb").replace("c=%reload2\n", ""))
 
-            val normalFile = File("normal.json")
+            val normalFile = File("normal.properties")
             normalFile.createNewFile()
             normalFile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
             val provider = OverrideConfigProvider(
                     DefaultConfigProvider(
-                            JsonConfigLoader(overrideFile.toURI().toURL()),
+                            PropertyConfigLoader(overrideFile.toURI().toURL()),
                             TimedReloadStrategy(1, TimeUnit.SECONDS)
                     ),
                     DefaultConfigProvider(
-                            JsonConfigLoader(normalFile.toURI().toURL()),
+                            PropertyConfigLoader(normalFile.toURI().toURL()),
                             TimedReloadStrategy(1, TimeUnit.SECONDS)
                     )
             )
@@ -95,7 +92,7 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
             lastReload = lastIteration // This is the last reload iteration (8-1)
         }
         if (overriden) {
-            file.writeText(text.replace("%reload1", "overrideb$lastReload").replace(",\n  \"c\": \"%reload2\"", ""))
+            file.writeText(text.replace("%reload1", "overrideb$lastReload").replace("c=%reload2\n", ""))
         } else {
             file.writeText(text.replace("%reload1", "b$lastReload").replace("%reload2", "d$lastReload"))
         }

@@ -16,7 +16,6 @@
 
 package com.jdiazcano.cfg4k
 
-import com.jdiazcano.cfg4k.loaders.JsonConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.CachedConfigProvider
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
@@ -30,8 +29,7 @@ import org.jetbrains.spek.api.dsl.it
 class CachedConfigProviderTest: Spek({
 
     val loaders = listOf(
-            PropertyConfigLoader(javaClass.classLoader.getResource("test.properties")),
-            JsonConfigLoader(javaClass.classLoader.getResource("test.json"))
+            PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
     )
     loaders.forEach { loader ->
         describe("a property config loader [${loader.javaClass.name}]") {

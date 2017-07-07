@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.jdiazcano.cfg4k.loaders
+package com.jdiazcano.cfg4k.json
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.jdiazcano.cfg4k.binders.prefix
+import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import java.net.URL
 
 open class JsonConfigLoader(

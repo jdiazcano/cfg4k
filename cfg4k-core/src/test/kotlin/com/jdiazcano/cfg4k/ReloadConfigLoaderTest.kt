@@ -17,7 +17,6 @@
 package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
-import com.jdiazcano.cfg4k.loaders.JsonConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
 import com.winterbe.expekt.should
@@ -27,28 +26,23 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
 class ReloadConfigLoaderTest : Spek({
-    describe("a reloadable json config loader") {
-        val file = File("reloadedfile.json")
+    describe("a reloadable properties config loader") {
+        val file = File("reloadedfile.properties")
         file.createNewFile()
         file.writeText("""
-{
-  "a": "b",
-  "c": "d",
-  "integerProperty": 1,
-  "longProperty": 2,
-  "shortProperty": 1,
-  "doubleProperty": 1.1,
-  "floatProperty": 2.1,
-  "byteProperty": 2,
-  "list": "1,2,3",
-  "booleanProperty": true,
-  "nested": {
-    "a": "nestedb"
-  }
-}
-        """)
+a=b
+c=d
+integerProperty=1
+longProperty=2
+shortProperty=1
+doubleProperty=1.1
+floatProperty=2.1
+byteProperty=2
+list=1,2,3
+booleanProperty=true
+nested.a=nestedb""")
 
-        val loader = JsonConfigLoader(file.toURI().toURL())
+        val loader = PropertyConfigLoader(file.toURI().toURL())
         it("a value should be b") {
             loader.get("a").should.be.equal("b")
             loader.get("nested.a").should.be.equal("nestedb")
@@ -59,22 +53,17 @@ class ReloadConfigLoaderTest : Spek({
             file.delete()
             file.createNewFile()
             file.writeText("""
-{
-  "a": "reloadedb",
-  "c": "reloadedd",
-  "integerProperty": 1,
-  "longProperty": 2,
-  "shortProperty": 1,
-  "doubleProperty": 1.1,
-  "floatProperty": 2.1,
-  "byteProperty": 2,
-  "list": "1,2,3",
-  "booleanProperty": true,
-  "nested": {
-    "a": "reloaded nestedb"
-  }
-}
-            """)
+a=reloadedb
+c=reloadedd
+integerProperty=1
+longProperty=2
+shortProperty=1
+doubleProperty=1.1
+floatProperty=2.1
+byteProperty=2
+list=1,2,3
+booleanProperty=true
+nested.a=reloaded nestedb""")
 
             loader.reload()
             loader.get("a").should.be.equal("reloadedb")
@@ -84,28 +73,26 @@ class ReloadConfigLoaderTest : Spek({
         }
     }
 
-    describe("a reloadable json config loader") {
-        val file = File("reloadedfile.json")
+    describe("a reloadable properties config loader") {
+        val file = File("reloadedfile.properties")
         file.createNewFile()
         file.writeText("""
 {
-  "a": "b",
-  "c": "d",
-  "integerProperty": 1,
-  "longProperty": 2,
-  "shortProperty": 1,
-  "doubleProperty": 1.1,
-  "floatProperty": 2.1,
-  "byteProperty": 2,
-  "list": "1,2,3",
-  "booleanProperty": true,
-  "nested": {
-    "a": "nestedb"
-  }
+a=b
+c=d
+integerProperty=1
+longProperty=2
+shortProperty=1
+doubleProperty=1.1
+floatProperty=2.1
+byteProperty=2
+list=1,2,3
+booleanProperty=true
+nested.a=nestedb
 }
         """)
 
-        val loader = JsonConfigLoader(file.toURI().toURL())
+        val loader = PropertyConfigLoader(file.toURI().toURL())
         it("a value should be b") {
             loader.get("a").should.be.equal("b")
             loader.get("nested.a").should.be.equal("nestedb")
@@ -116,21 +103,17 @@ class ReloadConfigLoaderTest : Spek({
             file.delete()
             file.createNewFile()
             file.writeText("""
-{
-  "a": "reloadedb",
-  "c": "reloadedd",
-  "integerProperty": 1,
-  "longProperty": 2,
-  "shortProperty": 1,
-  "doubleProperty": 1.1,
-  "floatProperty": 2.1,
-  "byteProperty": 2,
-  "list": "1,2,3",
-  "booleanProperty": true,
-  "nested": {
-    "a": "reloaded nestedb"
-  }
-}
+a=reloadedb
+c=reloadedd
+integerProperty=1
+longProperty=2
+shortProperty=1
+doubleProperty=1.1
+floatProperty=2.1
+byteProperty=2
+list=1,2,3
+booleanProperty=true
+nested.a=reloaded nestedb
             """)
 
             loader.reload()

@@ -1,4 +1,3 @@
-import com.jdiazcano.cfg4k.loaders.JsonConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.git.CustomConfigSessionFactory
 import com.jdiazcano.cfg4k.loaders.git.GitConfigLoader
@@ -16,8 +15,8 @@ class GitConfigLoaderTest: Spek({
             val loader = GitConfigLoader(
                     "https://github.com/jdiazcano/cfg4k-git-test.git",
                     File("publictest"),
-                    "test.json",
-                    loaderGenerator = ::JsonConfigLoader
+                    "test.properties",
+                    loaderGenerator = ::PropertyConfigLoader
             )
             testLoader(loader)
         }
@@ -27,42 +26,48 @@ class GitConfigLoaderTest: Spek({
     describe("a git config loader 2") {
 
         it("should load the integer property") {
-            val loader = GitConfigLoader(
-                    "https://bitbucket.org/javierdiaz/cfg4k-git-test.git",
-                    File("userpasstest"),
-                    "test.properties",
-                    loaderGenerator = ::PropertyConfigLoader,
-                    credentials = UsernamePasswordCredentialsProvider(System.getenv("CFGK_GIT_USER"), System.getenv("CFGK_GIT_PASS"))
-            )
-            testLoader(loader)
+            if (System.getenv()["CI_NAME"]?:"" == "travis-ci") {
+                val loader = GitConfigLoader(
+                        "https://bitbucket.org/javierdiaz/cfg4k-git-test.git",
+                        File("userpasstest"),
+                        "test.properties",
+                        loaderGenerator = ::PropertyConfigLoader,
+                        credentials = UsernamePasswordCredentialsProvider(System.getenv("CFGK_GIT_USER"), System.getenv("CFGK_GIT_PASS"))
+                )
+                testLoader(loader)
+            }
         }
     }
 
     describe("a git config loader 3") {
 
         it("should load the integer property") {
-            val loader = GitConfigLoader(
-                    "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
-                    File("sshtest"),
-                    "test.json",
-                    loaderGenerator = ::JsonConfigLoader,
-                    ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa")
-            )
-            testLoader(loader)
+            if (System.getenv()["CI_NAME"]?:"" == "travis-ci") {
+                val loader = GitConfigLoader(
+                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
+                        File("sshtest"),
+                        "test.properties",
+                        loaderGenerator = ::PropertyConfigLoader,
+                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa")
+                )
+                testLoader(loader)
+            }
         }
 
     }
     describe("a git config loader 4") {
 
         it("should load the integer property") {
-            val loader = GitConfigLoader(
-                    "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
-                    File("sshknownhosttest"),
-                    "test.json",
-                    loaderGenerator = ::JsonConfigLoader,
-                    ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
-            )
-            testLoader(loader)
+            if (System.getenv()["CI_NAME"]?:"" == "travis-ci") {
+                val loader = GitConfigLoader(
+                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
+                        File("sshknownhosttest"),
+                        "test.properties",
+                        loaderGenerator = ::PropertyConfigLoader,
+                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
+                )
+                testLoader(loader)
+            }
         }
 
     }

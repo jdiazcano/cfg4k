@@ -16,7 +16,6 @@
 package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.loaders.EnvironmentConfigLoader
-import com.jdiazcano.cfg4k.loaders.JsonConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
 import com.winterbe.expekt.should
@@ -30,14 +29,6 @@ class ConfigLoaderTest: Spek({
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
         it("a value should be b") {
             loader.get("a").should.be.equal("b")
-        }
-    }
-
-    describe("a json config loader") {
-        val loader = JsonConfigLoader(javaClass.classLoader.getResource("test.json"))
-        it("a value should be b") {
-            loader.get("a").should.be.equal("b")
-            loader.get("nested.a").should.be.equal("nestedb")
         }
     }
 
