@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.loaders.EnvironmentConfigLoader
@@ -42,17 +41,19 @@ class ConfigLoaderTest: Spek({
         }
     }
 
-    /**
-     * If this test fails you need to add the next environment variables to your build/system/whatever
-     *
-     * JAVAHOME => myjavahome
-     * FOO_BAR => bar
-     * FOO_BAR_MORE => morebar
-     * NESTED_FOO_BAR => nestedbar
-     */
     describe("a environment config loader") {
-        val loader = EnvironmentConfigLoader()
+        beforeEachTest {
+            // The environment variables will be set in travis
+            if (System.getenv()["CI_NAME"]?:"" != "travis-ci") {
+                setEnv("JAVAHOME", "myjavahome")
+                setEnv("FOO_BAR", "bar")
+                setEnv("FOO_BAR_MORE", "morebar")
+                setEnv("NESTED_FOO_BAR", "nestedbar")
+            }
+        }
+
         it("variables should have the values of the javadoc comment") {
+            val loader = EnvironmentConfigLoader()
             loader.get("foo.bar").should.be.equal("bar")
             loader.get("javahome").should.be.equal("myjavahome")
             loader.get("foo.bar.more").should.be.equal("morebar")
@@ -78,3 +79,17 @@ class ConfigLoaderTest: Spek({
         }
     }
 })
+
+private fun setEnv(key: String, value: String) {
+    try {
+        val env = System.getenv()
+        val cl = env.javaClass
+        val field = cl.getDeclaredField("m")
+        field.isAccessible = true
+        val writableEnv = field.get(env) as MutableMap<String, String>
+        writableEnv.put(key, value)
+    } catch (e: Exception) {
+        throw IllegalStateException("Failed to set environment variable", e)
+    }
+
+}
