@@ -1,7 +1,7 @@
-import com.jdiazcano.konfig.loaders.JsonConfigLoader
-import com.jdiazcano.konfig.loaders.PropertyConfigLoader
-import com.jdiazcano.konfig.loaders.git.CustomConfigSessionFactory
-import com.jdiazcano.konfig.loaders.git.GitConfigLoader
+import com.jdiazcano.cfg4k.loaders.JsonConfigLoader
+import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
+import com.jdiazcano.cfg4k.loaders.git.CustomConfigSessionFactory
+import com.jdiazcano.cfg4k.loaders.git.GitConfigLoader
 import com.winterbe.expekt.should
 import org.eclipse.jgit.transport.*
 import org.jetbrains.spek.api.Spek

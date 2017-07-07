@@ -1,22 +1,16 @@
-package com.jdiazcano.hocon
+package com.jdiazcano.cfg4k.yaml
 
 import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.hocon.HoconConfigLoader
-import com.jdiazcano.cfg4k.providers.Providers
-import com.typesafe.config.ConfigFactory
+import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import java.io.File
 
-class HoconConfigLoaderTest: Spek({
+class YamlConfigLoaderTest: Spek({
 
     val loaders = listOf(
-            HoconConfigLoader(File(javaClass.classLoader.getResource("test.properties").toURI())),
-            HoconConfigLoader("test.properties"),
-            HoconConfigLoader(javaClass.classLoader.getResource("test.properties")),
-            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), { ConfigFactory.parseResources("test.properties")})
+            YamlConfigLoader(javaClass.classLoader.getResource("test.yml"))
     )
 
     loaders.forEachIndexed { i, loader ->
@@ -29,10 +23,11 @@ class HoconConfigLoaderTest: Spek({
                 loader.get("doubleProperty").should.be.equal("1.1")
                 loader.get("byteProperty").should.be.equal("2")
                 loader.get("booleanProperty").should.be.equal("true")
+                loader.get("nested.nesteda").should.be.equal("nestedb")
             }
 
             it("works with binding") {
-                val provider = Providers.proxy(loader)
+                val provider = proxy(loader)
 
                 val testBinder = provider.bind<TestBinder>("")
                 testBinder.booleanProperty().should.be.`true`

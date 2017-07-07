@@ -36,7 +36,7 @@ The dependency is from JitPack so it has a schema:
 
 ```kotlin
 import PropertyConfigLoader
-import com.jdiazcano.konfig.providers.ProxyConfigProvider
+import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 
 fun main(args: Array<String>) {
     val loader = PropertyConfigLoader(DatabaseConfig::class.java.getResource("/global.properties")) // Create loader

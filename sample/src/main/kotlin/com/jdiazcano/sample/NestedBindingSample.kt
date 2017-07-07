@@ -16,9 +16,9 @@
 
 package com.jdiazcano.sample
 
-import com.jdiazcano.konfig.providers.bind
-import com.jdiazcano.konfig.loaders.PropertyConfigLoader
-import com.jdiazcano.konfig.providers.ProxyConfigProvider
+import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
+import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 
 fun main(args: Array<String>) {
     val loader = PropertyConfigLoader(GlobalConfig::class.java.getResource("/global.properties")) // Create loader

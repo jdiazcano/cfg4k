@@ -6,8 +6,8 @@ buildscript {
     apply from: 'gradle/versions.gradle'
 
     ext {
-        artifactGroup = "com.jdiazcano.konfig"
-        artifactVersion = "0.2"
+        artifactGroup = "com.jdiazcano.cfg4k"
+        artifactVersion = "0.5.3"
     }
 
     repositories {
