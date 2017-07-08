@@ -43,6 +43,26 @@ interface TestBinder {
     fun path(): Path
 }
 
+interface PropertyTestBinder {
+    val integerProperty: Int
+    val a: String
+    val c: String
+    val booleanProperty: Boolean
+    val longProperty: Long
+    val shortProperty: Short
+    val doubleProperty: Double
+    val floatProperty: Float
+    val byteProperty: Byte
+    val list: List<Int>
+    val floatList: List<Float>
+    val bigIntegerProperty: BigInteger
+    val bigDecimalProperty: BigDecimal
+    val uri: URI
+    val url: URL
+    val file: File
+    val path: Path
+}
+
 enum class TestEnum {
     TEST, TEST1, TEST2
 }

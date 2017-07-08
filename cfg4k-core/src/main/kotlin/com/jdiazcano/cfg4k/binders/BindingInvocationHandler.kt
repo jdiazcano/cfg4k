@@ -20,6 +20,7 @@ import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import kotlin.test.assertTrue
 
 /**
  * InvocationHandler that handles the proxying between the interface and the call. This class is used in the
@@ -33,15 +34,16 @@ class BindingInvocationHandler(
     private val objectMethods: List<String> = Object::class.java.declaredMethods.map { it.name }
 
     override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any {
+        val name = getPropertyName(method.name)
         if (objectMethods.contains(method.name)) {
             return method.invoke(this, *(args?: arrayOf()))
         }
 
         val type = method.genericReturnType
         if (method.returnType.isParseable()) {
-            return provider.getProperty(prefix(prefix, method.name), type)
+            return provider.getProperty(prefix(prefix, name), type)
         } else {
-            return provider.bind(prefix(prefix, method.name), method.returnType)
+            return provider.bind(prefix(prefix, name), method.returnType)
         }
 
     }
@@ -50,6 +52,29 @@ class BindingInvocationHandler(
         return hashCode() == other?.hashCode()
     }
 
+}
+
+private val METHOD_NAME_REGEX = "^(get|is|has)?(.*)".toRegex()
+
+fun main(args: Array<String>) {
+    assertTrue { getPropertyName("getTest") == "test" }
+    assertTrue { getPropertyName("isomorphic") == "isomorphic" }
+    assertTrue { getPropertyName("isOmorphic") == "omorphic" }
+    assertTrue { getPropertyName("hash") == "hash" }
+    assertTrue { getPropertyName("hasTests") == "tests" }
+    assertTrue { getPropertyName("getИмя") == "имя" }
+    assertTrue { getPropertyName("getимя") == "getимя" }
+}
+
+fun getPropertyName(methodName: String): String {
+    return METHOD_NAME_REGEX.replace(methodName) { matchResult ->
+        val group = matchResult.groups[2]!!.value
+        if (Character.isUpperCase(group[0])) {
+            group.decapitalize()
+        } else {
+            methodName
+        }
+    }
 }
 
 fun prefix(before: String, after: String): String {

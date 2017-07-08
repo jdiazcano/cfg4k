@@ -29,14 +29,23 @@ nested.a=reloaded nestedb
 })
 
 private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
-    val bindedProperty = provider.bind<Normal>("")
-    bindedProperty.nested().a().should.be.equal("reloaded nestedb")
+    val bindedNormal = provider.bind<Normal>("")
+    bindedNormal.nested().a().should.be.equal("reloaded nestedb")
+
+    val bindedProperty = provider.bind<Properties>("")
+    bindedProperty.nested.a().should.be.equal("reloaded nestedb")
+
     if (overriden) {
-        bindedProperty.a().should.be.equal("overrideb")
+        bindedNormal.a().should.be.equal("overrideb")
+        bindedProperty.a.should.be.equal("overrideb")
     } else {
-        bindedProperty.a().should.be.equal("b")
+        bindedNormal.a().should.be.equal("b")
+        bindedProperty.a.should.be.equal("b")
     }
-    bindedProperty.c().should.be.equal("d")
+    bindedNormal.c().should.be.equal("d")
+    bindedProperty.c.should.be.equal("d")
+
+
     var lastReload = 1
     val lastIteration = 3
     for (i in 1..5) {
@@ -51,11 +60,11 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
         }
         Thread.sleep(1500)
         if (overriden) {
-            bindedProperty.a().should.be.equal("overrideb$lastReload")
-            bindedProperty.c().should.be.equal("d")
+            bindedNormal.a().should.be.equal("overrideb$lastReload")
+            bindedNormal.c().should.be.equal("d")
         } else {
-            bindedProperty.a().should.be.equal("b$lastReload")
-            bindedProperty.c().should.be.equal("d$lastReload")
+            bindedNormal.a().should.be.equal("b$lastReload")
+            bindedNormal.c().should.be.equal("d$lastReload")
         }
         lastReload++
     }
@@ -70,4 +79,10 @@ interface Normal {
     fun nested(): Nested
     fun a(): String
     fun c(): String
+}
+
+interface Properties {
+    val nested: Nested
+    val a: String
+    val c: String
 }

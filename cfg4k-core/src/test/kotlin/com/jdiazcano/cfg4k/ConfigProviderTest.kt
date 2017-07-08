@@ -252,6 +252,31 @@ class ConfigProviderTest: Spek({
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")
             }
+
+            it("property binding test") {
+                provider.reload()
+                val testBinder = provider.bind<PropertyTestBinder>("")
+                testBinder.booleanProperty.should.be.`true`
+                testBinder.integerProperty.should.be.equal(1)
+                testBinder.longProperty.should.be.equal(2)
+                testBinder.shortProperty.should.be.equal(1)
+                testBinder.floatProperty.should.be.equal(2.1F)
+                testBinder.doubleProperty.should.be.equal(1.1)
+                testBinder.byteProperty.should.be.equal(2)
+                testBinder.a.should.be.equal("b")
+                testBinder.c.should.be.equal("d")
+                testBinder.list.should.be.equal(listOf(1, 2, 3))
+                testBinder.floatList.should.be.equal(listOf(1.2F, 2.2F, 3.2F))
+                testBinder.bigDecimalProperty.should.be.equal(BigDecimal("1.1"))
+                testBinder.bigIntegerProperty.should.be.equal(BigInteger("1"))
+                testBinder.uri.should.be.equal(URI("https://www.amazon.com"))
+                testBinder.url.should.be.equal(URL("https://www.amazon.com"))
+                testBinder.file.should.be.equal(File("myfile.txt"))
+                testBinder.path.should.be.equal(Paths.get("mypath.txt"))
+
+                // toString should be the object tostring not the one that comes from the property
+                testBinder.toString().should.not.be.equal("this should not be ever used")
+            }
         }
     }
 })

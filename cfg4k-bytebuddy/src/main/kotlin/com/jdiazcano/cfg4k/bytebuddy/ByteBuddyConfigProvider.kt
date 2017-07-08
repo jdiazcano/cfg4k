@@ -17,6 +17,7 @@
 package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.binders.Binder
+import com.jdiazcano.cfg4k.binders.getPropertyName
 import com.jdiazcano.cfg4k.binders.prefix
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.providers.ConfigProvider
@@ -46,16 +47,17 @@ class ByteBuddyBinder : Binder {
         type.methods.forEach { method ->
 
             val returnType = method.genericReturnType
+            val methodName = method.name
+            val name = getPropertyName(methodName)
 
             val value: () -> T = {
                 if (method.returnType.isParseable()) {
-                    provider.getProperty(prefix(prefix, method.name), returnType)
+                    provider.getProperty(prefix(prefix, name), returnType)
                 } else {
-                    provider.bind(prefix(prefix, method.name), method.returnType) as T
+                    provider.bind(prefix(prefix, name), method.returnType) as T
                 }
             }
             subclass = subclass
-
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
                     .intercept(MethodDelegation
                             .withEmptyConfiguration()
