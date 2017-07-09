@@ -2,6 +2,7 @@ package com.jdiazcano.cfg4k.hocon
 
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.typesafe.config.Config
+import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigParseOptions
 import java.io.File
@@ -62,8 +63,18 @@ open class HoconConfigLoader : ConfigLoader {
         config = loader()
     }
 
-    override fun get(key: String): String {
-        return config.getString(key)
+    override fun get(key: String): String? {
+        try {
+            return config.getString(key)
+        } catch (e: ConfigException.WrongType) {
+            return config.getStringList(key).joinToString(
+                        separator = ",",
+                        prefix = "JsonArray(value=[",
+                        postfix = "])"
+                    )
+        } catch (e: ConfigException.Missing) {
+            return null
+        }
     }
 
 }

@@ -14,6 +14,7 @@ class NullableTypesProviderTest: Spek({
         val binded = provider.bind<NullTest>("cool")
         provider.getOrNull<String?>("cool.test").should.be.`null`
         binded.test.should.be.`null`
+        binded.anothertest().should.be.`null`
         binded.nottest.should.be.equal("1")
 
     }
@@ -22,4 +23,5 @@ class NullableTypesProviderTest: Spek({
 interface NullTest {
     val test: String?
     val nottest: String
+    fun anothertest(): String?
 }
