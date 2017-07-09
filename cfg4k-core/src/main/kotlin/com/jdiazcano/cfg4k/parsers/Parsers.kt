@@ -70,7 +70,7 @@ object Parsers {
             return parsers[superclass!!] as Parser<*>
         }
 
-        return throw ParserClassNotFound("Parser not found for class $this")
+        throw ParserClassNotFound("Parser not found for class $this")
     }
 
     fun addParser(type: Class<out Any>, parser: Parser<Any>) {

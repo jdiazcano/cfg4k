@@ -17,7 +17,6 @@
 package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.Binder
-import com.jdiazcano.cfg4k.utils.Typable
 import com.jdiazcano.cfg4k.utils.typeOf
 import java.lang.reflect.Type
 
@@ -36,7 +35,7 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Class of the property, it will be parsed to it.
      */
-    fun <T: Any> getProperty(name: String, type: Class<T>, default: T? = null): T
+    fun <T: Any> get(name: String, type: Class<T>, default: T? = null): T
 
     /**
      * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
@@ -45,7 +44,16 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Type of the property. (You can get the type with typeOf<Class>() method)
      */
-    fun <T: Any> getProperty(name: String, type: Typable, default: T? = null): T
+    fun <T: Any> get(name: String, type: Type, default: T? = null): T
+
+    /**
+     * Gets a property from the loader and parses it to the correct type. Normally only primitive and custom parsers
+     * will be here, generic types must be used with the Type parameter.
+     *
+     * @param name Name of the property
+     * @param type Class of the property, it will be parsed to it.
+     */
+    fun <T: Any?> getOrNull(name: String, type: Class<T>, default: T? = null): T?
 
     /**
      * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
@@ -54,7 +62,7 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Type of the property. (You can get the type with typeOf<Class>() method)
      */
-    fun <T: Any> getProperty(name: String, type: Type, default: T? = null): T
+    fun <T: Any?> getOrNull(name: String, type: Type, default: T? = null): T?
 
     /**
      * This method will be called when there is an order to reload the properties. This can happen in different scenarios
@@ -93,5 +101,7 @@ interface ConfigProvider {
 }
 
 inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
-inline fun <reified T : Any> ConfigProvider.getProperty(name: String, default: T? = null) = getProperty(name, typeOf<T>(), default)
+inline fun <reified T : Any> ConfigProvider.get(name: String, default: T? = null) = get(name, typeOf<T>(), default)
+inline fun <reified T : Any?> ConfigProvider.getOrNull(name: String, default: T? = null) = getOrNull(name, typeOf<T>(), default)
 fun ConfigProvider.cache() = CachedConfigProvider(this)
+

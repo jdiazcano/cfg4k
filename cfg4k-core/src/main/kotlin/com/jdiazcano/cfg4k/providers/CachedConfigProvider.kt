@@ -16,7 +16,7 @@
 
 package com.jdiazcano.cfg4k.providers
 
-import com.jdiazcano.cfg4k.utils.Typable
+import java.lang.reflect.Type
 
 /**
  * This config provider will cache the calls so binding and property lookup is not done everytime. Reloading this
@@ -30,21 +30,21 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
         configProvider.addReloadListener { cache.clear() }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
+    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
-            val property = configProvider.getProperty(name, type, default)
+            val property = configProvider.get(name, type, default)
             cache[name] = property
             return property
         }
     }
 
-    override fun <T: Any> getProperty(name: String, type: Typable, default: T?): T {
+    override fun <T: Any> get(name: String, type: Type, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
-            val property: T = configProvider.getProperty(name, type, default)
+            val property: T = configProvider.get(name, type, default)
             cache[name] = property
             return property
         }

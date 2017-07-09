@@ -4,7 +4,7 @@ import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parser
 import com.jdiazcano.cfg4k.parsers.Parsers
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
-import com.jdiazcano.cfg4k.providers.getProperty
+import com.jdiazcano.cfg4k.providers.get
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -23,11 +23,11 @@ class ClassedParserTest: Spek({
         val provider = ProxyConfigProvider(loader)
 
         it("a printer is parsed correctly") {
-            provider.getProperty<Printer>("persons.me").print().should.be.equal("Javi, 26")
+            provider.get<Printer>("persons.me").print().should.be.equal("Javi, 26")
         }
 
         it("a list of printers should be parsed too") {
-            provider.getProperty<List<Printer>>("persons.all").should.be.equal(listOf(Printer("Javi", 26), Printer("Peter", 20)))
+            provider.get<List<Printer>>("persons.all").should.be.equal(listOf(Printer("Javi", 26), Printer("Peter", 20)))
         }
     }
 })

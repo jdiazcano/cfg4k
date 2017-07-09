@@ -20,7 +20,7 @@ import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers.overriden
 import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.providers.getProperty
+import com.jdiazcano.cfg4k.providers.get
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -37,16 +37,16 @@ class OverrideConfigProviderTest : Spek({
     )
     describe("An overriding provider") {
         it("if the property exist in the first, should not go to the second loader") {
-            provider.getProperty("a", String::class.java).should.be.equal("overrideb")
-            provider.getProperty("a", String::class.java).should.be.equal("overrideb") // cached property!
-            provider.getProperty("c", String::class.java).should.be.equal("overrided")
+            provider.get("a", String::class.java).should.be.equal("overrideb")
+            provider.get("a", String::class.java).should.be.equal("overrideb") // cached property!
+            provider.get("c", String::class.java).should.be.equal("overrided")
         }
 
         it("if the property does not exist, then the second one should be tested") {
-            provider.getProperty<Int>("integerProperty").should.be.equal(1)
-            provider.getProperty<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B))
-            provider.getProperty<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B)) // cache
-            provider.getProperty<List<Int>>("list").should.be.equal(listOf(1, 2, 3))
+            provider.get<Int>("integerProperty").should.be.equal(1)
+            provider.get<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B))
+            provider.get<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B)) // cache
+            provider.get<List<Int>>("list").should.be.equal(listOf(1, 2, 3))
             provider.bind<TestBinder>("").floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
         }
     }

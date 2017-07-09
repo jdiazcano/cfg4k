@@ -52,7 +52,7 @@ class ByteBuddyBinder : Binder {
 
             val value: () -> T = {
                 if (method.returnType.isParseable()) {
-                    provider.getProperty(prefix(prefix, name), returnType)
+                    provider.get(prefix(prefix, name), returnType)
                 } else {
                     provider.bind(prefix(prefix, name), method.returnType) as T
                 }

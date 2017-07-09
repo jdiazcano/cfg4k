@@ -76,13 +76,13 @@ nested.a=reloaded nestedb
 private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
     val binded = provider.bind<Normal>("")
     if (overriden) {
-        provider.getProperty("a", String::class.java).should.be.equal("overrideb")
+        provider.get("a", String::class.java).should.be.equal("overrideb")
         binded.a().should.be.equal("overrideb")
     } else {
-        provider.getProperty("a", String::class.java).should.be.equal("b")
+        provider.get("a", String::class.java).should.be.equal("b")
         binded.a().should.be.equal("b")
     }
-    provider.getProperty("c", String::class.java).should.be.equal("d")
+    provider.get("c", String::class.java).should.be.equal("d")
     binded.c().should.be.equal("d")
     var lastReload = 1
     val lastIteration = 3
@@ -98,13 +98,13 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
         }
         Thread.sleep(1500)
         if (overriden) {
-            provider.getProperty("a", String::class.java).should.be.equal("overrideb$lastReload")
-            provider.getProperty("c", String::class.java).should.be.equal("d")
+            provider.get("a", String::class.java).should.be.equal("overrideb$lastReload")
+            provider.get("c", String::class.java).should.be.equal("d")
             binded.a().should.be.equal("overrideb$lastReload")
             binded.c().should.be.equal("d")
         } else {
-            provider.getProperty("a", String::class.java).should.be.equal("b$lastReload")
-            provider.getProperty("c", String::class.java).should.be.equal("d$lastReload")
+            provider.get("a", String::class.java).should.be.equal("b$lastReload")
+            provider.get("c", String::class.java).should.be.equal("d$lastReload")
             binded.a().should.be.equal("b$lastReload")
             binded.c().should.be.equal("d$lastReload")
         }

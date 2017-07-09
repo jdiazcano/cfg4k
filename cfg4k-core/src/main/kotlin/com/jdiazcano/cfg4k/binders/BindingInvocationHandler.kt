@@ -20,6 +20,8 @@ import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.kotlinFunction
 import kotlin.test.assertTrue
 
 /**
@@ -33,15 +35,31 @@ class BindingInvocationHandler(
 
     private val objectMethods: List<String> = Object::class.java.declaredMethods.map { it.name }
 
-    override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any {
+    override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any? {
         val name = getPropertyName(method.name)
+
+        val properties = method.declaringClass.kotlin.memberProperties.filter {
+            it.name == method.name || it.name == name
+        }
+        val isNullable = if (properties.isNotEmpty()) {
+            // we have a property
+            properties.first().returnType.isMarkedNullable
+        } else {
+            // this is a method
+            method.kotlinFunction?.returnType?.isMarkedNullable?:false
+        }
+
         if (objectMethods.contains(method.name)) {
             return method.invoke(this, *(args?: arrayOf()))
         }
 
         val type = method.genericReturnType
         if (method.returnType.isParseable()) {
-            return provider.getProperty(prefix(prefix, name), type)
+            if (isNullable) {
+                return provider.getOrNull(prefix(prefix, name), type)
+            } else {
+                return provider.get(prefix(prefix, name), type)
+            }
         } else {
             return provider.bind(prefix(prefix, name), method.returnType)
         }

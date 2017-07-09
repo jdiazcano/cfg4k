@@ -25,10 +25,10 @@ import org.jetbrains.spek.api.dsl.it
 class TypableTests : Spek({
     describe("Testing the toString of Typable") {
         it("Typable: typeOf<> toString should return its ") {
-            typeOf<List<String>>().toString().should.be.equal("GenericType { type: java.util.List<? extends java.lang.String> }")
-            typeOf<List<Int>>().toString().should.be.equal("GenericType { type: java.util.List<? extends java.lang.Integer> }")
-            typeOf<Int>().toString().should.be.equal("GenericType { type: class java.lang.Integer }")
-            typeOf<Map<String, List<Int>>>().toString().should.be.equal("GenericType { type: java.util.Map<java.lang.String, ? extends java.util.List<? extends java.lang.Integer>> }")
+            typeOf<List<String>>().toString().should.be.equal("java.util.List<? extends java.lang.String>")
+            typeOf<List<Int>>().toString().should.be.equal("java.util.List<? extends java.lang.Integer>")
+            typeOf<Int>().toString().should.be.equal("class java.lang.Integer")
+            typeOf<Map<String, List<Int>>>().toString().should.be.equal("java.util.Map<java.lang.String, ? extends java.util.List<? extends java.lang.Integer>>")
         }
     }
 })

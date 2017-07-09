@@ -138,21 +138,21 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
         configProvider.addReloadListener { cache.clear() }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
+    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
-            val property = configProvider.getProperty(name, type, default)
+            val property = configProvider.get(name, type, default)
             cache[name] = property
             return property
         }
     }
 
-    override fun <T: Any> getProperty(name: String, type: Typable, default: T?): T {
+    override fun <T: Any> get(name: String, type: Typable, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
-            val property: T = configProvider.getProperty(name, type, default)
+            val property: T = configProvider.get(name, type, default)
             cache[name] = property
             return property
         }
@@ -182,7 +182,7 @@ open class SystemPropertyConfigLoader : ConfigLoader {
     }
 
     override fun get(key: String): String {
-        return System.getProperty(key, "")
+        return System.get(key, "")
     }
 
 }

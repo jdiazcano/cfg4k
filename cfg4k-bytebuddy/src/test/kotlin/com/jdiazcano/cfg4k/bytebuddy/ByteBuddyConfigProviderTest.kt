@@ -1,7 +1,7 @@
 package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.providers.getProperty
+import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -15,31 +15,31 @@ class ByteBuddyConfigProviderTest: Spek({
         )
 
         it("integer properties") {
-            provider.getProperty("integerProperty", Int::class.java).should.be.equal(1)
+            provider.get("integerProperty", Int::class.java).should.be.equal(1)
         }
 
         it("long properties") {
-            provider.getProperty<Long>("longProperty").should.be.equal(2)
+            provider.get<Long>("longProperty").should.be.equal(2)
         }
 
         it("short properties") {
-            provider.getProperty("shortProperty", Short::class.java).should.be.equal(1)
+            provider.get("shortProperty", Short::class.java).should.be.equal(1)
         }
 
         it("float properties") {
-            provider.getProperty("floatProperty", Float::class.java).should.be.equal(2.1F)
+            provider.get("floatProperty", Float::class.java).should.be.equal(2.1F)
         }
 
         it("double properties") {
-            provider.getProperty("doubleProperty", Double::class.java).should.be.equal(1.1)
+            provider.get("doubleProperty", Double::class.java).should.be.equal(1.1)
         }
 
         it("byte properties") {
-            provider.getProperty("byteProperty", Byte::class.java).should.be.equal(2)
+            provider.get("byteProperty", Byte::class.java).should.be.equal(2)
         }
 
         it("boolean properties") {
-            provider.getProperty("booleanProperty", Boolean::class.java).should.be.`true`
+            provider.get("booleanProperty", Boolean::class.java).should.be.`true`
         }
 
         it("binding test") {

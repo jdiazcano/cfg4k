@@ -1,7 +1,7 @@
 package com.jdiazcano.cfg4k.json
 
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
-import com.jdiazcano.cfg4k.providers.getProperty
+import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.utils.typeOf
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -19,13 +19,13 @@ class JsonConfigLoaderTest: Spek({
     }
 
     it("Simple property test") {
-        val testBinder: List<Int> = provider.getProperty("list", typeOf<List<Int>>())
+        val testBinder: List<Int> = provider.get("list", typeOf<List<Int>>())
         testBinder.should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
-        val betterIntList: List<Int> = provider.getProperty("betterIntList", typeOf<List<Int>>())
+        val betterIntList: List<Int> = provider.get("betterIntList", typeOf<List<Int>>())
         betterIntList.should.be.equal(listOf(1, 2, 100))
-        val betterStringList: List<String> = provider.getProperty("betterStringList", typeOf<List<String>>())
+        val betterStringList: List<String> = provider.get("betterStringList", typeOf<List<String>>())
         betterStringList.should.be.equal(listOf("a", "b", "c"))
-        val betterEnumList = provider.getProperty<List<Enumerito>>("betterEnumList")
+        val betterEnumList = provider.get<List<Enumerito>>("betterEnumList")
         betterEnumList.should.be.equal(listOf(Enumerito.A, Enumerito.B))
     }
 })

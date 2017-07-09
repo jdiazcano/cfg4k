@@ -42,13 +42,13 @@ class RegisterNewParsersTest: Spek({
             providers.forEach { provider ->
                 it("a class is not registered") {
                     assertFailsWith<ParserClassNotFound> {
-                        provider.getProperty("harrypotter", Book::class.java)
+                        provider.get("harrypotter", Book::class.java)
                     }
                 }
 
                 it("class has been registered and now everything is cool") {
                     Parsers.addParser(Book::class.java, BookParser)
-                    provider.getProperty("harrypotter", Book::class.java).should.be.equal(Book(1, "Prisoner of azkaban"))
+                    provider.get("harrypotter", Book::class.java).should.be.equal(Book(1, "Prisoner of azkaban"))
                 }
             }
         }

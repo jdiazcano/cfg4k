@@ -21,7 +21,6 @@ package com.jdiazcano.cfg4k.providers
 import com.jdiazcano.cfg4k.binders.ProxyBinder
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.SettingNotFound
-import com.jdiazcano.cfg4k.utils.Typable
 import java.lang.reflect.Type
 
 class OverrideConfigProvider(
@@ -39,14 +38,14 @@ class OverrideConfigProvider(
         addReloadListener { cachedProviders.clear() }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Class<T>, default: T?): T {
+    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
         if (name in cachedProviders) {
-            return cachedProviders[name]!!.getProperty(name, type, default)
+            return cachedProviders[name]!!.get(name, type, default)
         } else {
             for (provider in providers) {
                 if (provider.contains(name)) {
                     cachedProviders[name] = provider
-                    return provider.getProperty(name, type, default)
+                    return provider.get(name, type, default)
                 }
             }
         }
@@ -58,18 +57,14 @@ class OverrideConfigProvider(
         }
     }
 
-    override fun <T : Any> getProperty(name: String, type: Typable, default: T?): T {
-        return getProperty(name, type.getType())
-    }
-
-    override fun <T : Any> getProperty(name: String, type: Type, default: T?): T {
+    override fun <T : Any> get(name: String, type: Type, default: T?): T {
         if (name in cachedProviders) {
-            return cachedProviders[name]!!.getProperty(name, type, default)
+            return cachedProviders[name]!!.get(name, type, default)
         } else {
             for (provider in providers) {
                 if (provider.contains(name)) {
                     cachedProviders[name] = provider
-                    return provider.getProperty(name, type, default)
+                    return provider.get(name, type, default)
                 }
             }
         }
@@ -79,6 +74,36 @@ class OverrideConfigProvider(
         } else {
             throw SettingNotFound("Setting $name was not found")
         }
+    }
+
+    override fun <T> getOrNull(name: String, type: Type, default: T?): T? {
+        if (name in cachedProviders) {
+            return cachedProviders[name]!!.getOrNull(name, type, default)
+        } else {
+            for (provider in providers) {
+                if (provider.contains(name)) {
+                    cachedProviders[name] = provider
+                    return provider.getOrNull(name, type, default)
+                }
+            }
+        }
+
+        return default
+    }
+
+    override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? {
+        if (name in cachedProviders) {
+            return cachedProviders[name]!!.getOrNull(name, type, default)
+        } else {
+            for (provider in providers) {
+                if (provider.contains(name)) {
+                    cachedProviders[name] = provider
+                    return provider.getOrNull(name, type, default)
+                }
+            }
+        }
+
+        return default
     }
 
     override fun contains(name: String): Boolean {

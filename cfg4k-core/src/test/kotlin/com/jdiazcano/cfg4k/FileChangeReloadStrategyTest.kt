@@ -3,7 +3,7 @@ package com.jdiazcano.cfg4k
 import com.jdiazcano.cfg4k.binders.ProxyBinder
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
-import com.jdiazcano.cfg4k.providers.getProperty
+import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.reloadstrategies.FileChangeReloadStrategy
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -22,18 +22,18 @@ class FileChangeReloadStrategyTest : Spek({
         )
 
         it("should have this config loaded") {
-            provider.getProperty<String>("foo").should.be.equal("bar")
+            provider.get<String>("foo").should.be.equal("bar")
         }
 
         it("should update the configuration") {
             Thread.sleep(5000) // We need to wait a little bit for the event watcher to be triggered
             file.toFile().writeText("foo=bar2")
             Thread.sleep(5000) // Another wait for that
-            provider.getProperty<String>("foo").should.be.equal("bar2")
+            provider.get<String>("foo").should.be.equal("bar2")
             provider.cancelReload()
             file.toFile().writeText("foo=bar3")
             Thread.sleep(5000) // Another wait for that
-            provider.getProperty<String>("foo").should.be.equal("bar2") // We hav ecanceled the reload so no more reloads
+            provider.get<String>("foo").should.be.equal("bar2") // We hav ecanceled the reload so no more reloads
             file.toFile().deleteOnExit()
         }
     }

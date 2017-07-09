@@ -44,4 +44,4 @@ interface Typable {
     fun getType(): Type
 }
 
-inline fun <reified T> typeOf() = object : GenericType<T>() {}
+inline fun <reified T> typeOf() = object : GenericType<T>() {}.getType()

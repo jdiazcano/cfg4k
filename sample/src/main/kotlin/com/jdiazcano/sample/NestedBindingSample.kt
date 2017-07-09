@@ -29,9 +29,9 @@ fun main(args: Array<String>) {
     println("Web url: ${globalConfig.web().url()}")
 
     // You can also just get static strings
-    println("String Web port: ${provider.getProperty("web.port", String::class.java)}")
+    println("String Web port: ${provider.get("web.port", String::class.java)}")
     // Or you can have it as Int, the library will parse it for you
-    println("Int Web port: ${provider.getProperty("web.port", Int::class.java)}")
+    println("Int Web port: ${provider.get("web.port", Int::class.java)}")
 }
 
 /**
