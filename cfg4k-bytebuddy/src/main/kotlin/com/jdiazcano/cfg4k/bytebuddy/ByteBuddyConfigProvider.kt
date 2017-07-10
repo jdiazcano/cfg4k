@@ -32,6 +32,8 @@ import java.lang.reflect.Modifier
 import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.kotlinFunction
 
 
 @Suppress("UNCHECKED_CAST")
@@ -50,9 +52,25 @@ class ByteBuddyBinder : Binder {
             val methodName = method.name
             val name = getPropertyName(methodName)
 
-            val value: () -> T = {
+            val kotlinClass = method.declaringClass.kotlin
+            val properties = kotlinClass.memberProperties.filter {
+                it.name == method.name || it.name == name
+            }
+            val isNullable = if (properties.isNotEmpty()) {
+                // we have a property
+                properties.first().returnType.isMarkedNullable
+            } else {
+                // this is a method
+                method.kotlinFunction?.returnType?.isMarkedNullable?:false
+            }
+
+            val value: (Boolean) -> T? = { nullable ->
                 if (method.returnType.isParseable()) {
-                    provider.get(prefix(prefix, name), returnType)
+                    if (nullable) {
+                        provider.getOrNull(prefix(prefix, name), returnType)
+                    } else {
+                        provider.get(prefix(prefix, name), returnType)
+                    }
                 } else {
                     provider.bind(prefix(prefix, name), method.returnType) as T
                 }
@@ -62,7 +80,7 @@ class ByteBuddyBinder : Binder {
                     .intercept(MethodDelegation
                             .withEmptyConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(object : Any() { @RuntimeType fun delegate() = value() }))
+                            .to(object : Any() { @RuntimeType fun delegate() = value(isNullable) }))
         }
         val instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
         return instance

@@ -44,6 +44,7 @@ class ByteBuddyConfigProviderTest: Spek({
 
         it("binding test") {
             val testBinder = provider.bind<TestBinder>("")
+            testBinder.nullProperty().should.be.`null`
             testBinder.booleanProperty().should.be.`true`
             testBinder.integerProperty().should.be.equal(1)
             testBinder.longProperty().should.be.equal(2)

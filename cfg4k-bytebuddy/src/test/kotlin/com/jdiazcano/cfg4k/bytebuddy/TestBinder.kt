@@ -1,6 +1,7 @@
 package com.jdiazcano.cfg4k.bytebuddy
 
 interface TestBinder {
+    fun nullProperty(): Int?
     fun integerProperty(): Int
     fun a(): String
     fun c(): String
