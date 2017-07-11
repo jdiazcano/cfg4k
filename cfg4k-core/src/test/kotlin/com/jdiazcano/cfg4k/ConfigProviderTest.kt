@@ -231,6 +231,7 @@ class ConfigProviderTest: Spek({
 
             it("binding test") {
                 val testBinder = provider.bind<TestBinder>("")
+                testBinder.integerWithDefault().should.be.equal(123456)
                 testBinder.booleanProperty().should.be.`true`
                 testBinder.integerProperty().should.be.equal(1)
                 testBinder.longProperty().should.be.equal(2)

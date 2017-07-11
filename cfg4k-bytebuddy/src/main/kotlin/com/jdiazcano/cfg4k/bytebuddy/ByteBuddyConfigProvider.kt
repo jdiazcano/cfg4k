@@ -16,15 +16,14 @@
 
 package com.jdiazcano.cfg4k.bytebuddy
 
-import com.jdiazcano.cfg4k.binders.Binder
-import com.jdiazcano.cfg4k.binders.getPropertyName
-import com.jdiazcano.cfg4k.binders.prefix
+import com.jdiazcano.cfg4k.binders.*
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers
+import com.jdiazcano.cfg4k.utils.SettingNotFound
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
 import net.bytebuddy.implementation.*
@@ -53,27 +52,37 @@ class ByteBuddyBinder : Binder {
             val name = getPropertyName(methodName)
 
             val kotlinClass = method.declaringClass.kotlin
-            val properties = kotlinClass.memberProperties.filter {
-                it.name == method.name || it.name == name
-            }
-            val isNullable = if (properties.isNotEmpty()) {
-                // we have a property
-                properties.first().returnType.isMarkedNullable
-            } else {
-                // this is a method
-                method.kotlinFunction?.returnType?.isMarkedNullable?:false
-            }
+            val isNullable = kotlinClass.isMethodNullable(method, name)
 
             val value: (Boolean) -> T? = { nullable ->
+                var returning: T?
                 if (method.returnType.isParseable()) {
                     if (nullable) {
-                        provider.getOrNull(prefix(prefix, name), returnType)
+                        val value = provider.getOrNull<T?>(prefix(prefix, name), returnType)
+                        if (value != null) {
+                            returning = value
+                        } else {
+                            try {
+                                returning = kotlinClass.getDefaultMethod(method.name)?.invoke(kotlinClass.objectInstance, kotlinClass.objectInstance) as T?
+                            } catch (e: Exception) {
+                                returning = null
+                            }
+                        }
                     } else {
-                        provider.get(prefix(prefix, name), returnType)
+                        try {
+                            returning = provider.get(prefix(prefix, name), returnType)
+                        } catch (notFound: SettingNotFound) {
+                            try {
+                                returning = kotlinClass.getDefaultMethod(method.name)?.invoke(kotlinClass.objectInstance, kotlinClass.objectInstance) as T?
+                            } catch (e: Exception) {
+                                throw notFound
+                            }
+                        }
                     }
                 } else {
-                    provider.bind(prefix(prefix, name), method.returnType) as T
+                    returning = provider.bind(prefix(prefix, name), method.returnType) as T
                 }
+                returning
             }
             subclass = subclass
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)

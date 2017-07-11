@@ -18,9 +18,12 @@ package com.jdiazcano.cfg4k.binders
 
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.providers.ConfigProvider
+import com.jdiazcano.cfg4k.utils.SettingNotFound
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
+import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.jvmName
 import kotlin.reflect.jvm.kotlinFunction
 import kotlin.test.assertTrue
 
@@ -38,17 +41,10 @@ class BindingInvocationHandler(
     override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any? {
         val name = getPropertyName(method.name)
 
-        val properties = method.declaringClass.kotlin.memberProperties.filter {
-            it.name == method.name || it.name == name
-        }
-        val isNullable = if (properties.isNotEmpty()) {
-            // we have a property
-            properties.first().returnType.isMarkedNullable
-        } else {
-            // this is a method
-            method.kotlinFunction?.returnType?.isMarkedNullable?:false
-        }
+        val kotlinClass = method.declaringClass.kotlin
+        val isNullable = kotlinClass.isMethodNullable(method, name)
 
+        // If method is toString()/equals() etc, we just return it
         if (objectMethods.contains(method.name)) {
             return method.invoke(this, *(args?: arrayOf()))
         }
@@ -56,9 +52,26 @@ class BindingInvocationHandler(
         val type = method.genericReturnType
         if (method.returnType.isParseable()) {
             if (isNullable) {
-                return provider.getOrNull(prefix(prefix, name), type)
+                val value = provider.getOrNull<Any?>(prefix(prefix, name), type)
+                if (value != null) {
+                    return value
+                } else {
+                    try {
+                        return kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
+                    } catch (e: Exception) {
+                        return null
+                    }
+                }
             } else {
-                return provider.get(prefix(prefix, name), type)
+                try {
+                    return provider.get(prefix(prefix, name), type)
+                } catch (notFound: SettingNotFound) {
+                    try {
+                        return kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
+                    } catch (e: Exception) {
+                        throw notFound
+                    }
+                }
             }
         } else {
             return provider.bind(prefix(prefix, name), method.returnType)
@@ -72,17 +85,24 @@ class BindingInvocationHandler(
 
 }
 
-private val METHOD_NAME_REGEX = "^(get|is|has)?(.*)".toRegex()
-
-fun main(args: Array<String>) {
-    assertTrue { getPropertyName("getTest") == "test" }
-    assertTrue { getPropertyName("isomorphic") == "isomorphic" }
-    assertTrue { getPropertyName("isOmorphic") == "omorphic" }
-    assertTrue { getPropertyName("hash") == "hash" }
-    assertTrue { getPropertyName("hasTests") == "tests" }
-    assertTrue { getPropertyName("getИмя") == "имя" }
-    assertTrue { getPropertyName("getимя") == "getимя" }
+fun KClass<*>.getDefaultMethod(methodName: String): Method? {
+    return Class.forName(jvmName + "\$DefaultImpls").methods.filter { it.name == methodName }.firstOrNull()
 }
+
+fun KClass<*>.isMethodNullable(method: Method, propertyName: String = ""): Boolean {
+    val properties = memberProperties.filter {
+        it.name == propertyName || it.name == method.name
+    }
+    return if (properties.isNotEmpty()) {
+        // we have a property
+        properties.first().returnType.isMarkedNullable
+    } else {
+        // this is a method
+        method.kotlinFunction?.returnType?.isMarkedNullable?:false
+    }
+}
+
+private val METHOD_NAME_REGEX = "^(get|is|has)?(.*)".toRegex()
 
 fun getPropertyName(methodName: String): String {
     return METHOD_NAME_REGEX.replace(methodName) { matchResult ->

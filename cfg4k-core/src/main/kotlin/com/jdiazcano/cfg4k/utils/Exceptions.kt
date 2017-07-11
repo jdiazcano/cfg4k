@@ -20,7 +20,7 @@ package com.jdiazcano.cfg4k.utils
  * This exception will be thrown when a parser is not defined for a specific class. If you see this error you need to
  * call the methods "addParser" "addClassedParser" of the Provider
  */
-class SettingNotFound(message: String) : Exception(message)
+class SettingNotFound(message: String) : RuntimeException(message)
 
 /**
  * Thrown when the settings have not been initialised/loaded into memory and you try to access them.

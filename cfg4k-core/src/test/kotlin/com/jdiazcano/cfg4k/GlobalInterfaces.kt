@@ -24,6 +24,7 @@ import java.net.URL
 import java.nio.file.Path
 
 interface TestBinder {
+    fun integerWithDefault(): Int = 123456
     fun integerProperty(): Int
     fun a(): String
     fun c(): String

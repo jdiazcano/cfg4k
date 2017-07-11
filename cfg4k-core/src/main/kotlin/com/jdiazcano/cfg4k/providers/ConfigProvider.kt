@@ -17,6 +17,7 @@
 package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.Binder
+import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.typeOf
 import java.lang.reflect.Type
 
