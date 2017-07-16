@@ -31,3 +31,4 @@ after_success:
   - ./gradlew junitTest report jacocoRootReport coveralls
   - ssh-add -D
   - rm ~/.ssh/id_rsa
+  - ssh-agent -k
