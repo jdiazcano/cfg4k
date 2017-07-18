@@ -28,7 +28,7 @@ interface CollectionParser<out T> : Parser<T> {
 
 // The defaults are from the JSON, I am not sure about YAML or HOCON, I guess it should be handled so the same toString
 // should be used inside all the "array" types inside hocon, yaml.
-// TODO() Check this
+// TODO() Check this THIS WILL BE MOSTLY GONE WITH THE NEW CONFIGOBJECT
 class ListParser<out T : List<Any>>(
         override val prefix: String = "JsonArray(value=[",
         override val suffix: String = "])",

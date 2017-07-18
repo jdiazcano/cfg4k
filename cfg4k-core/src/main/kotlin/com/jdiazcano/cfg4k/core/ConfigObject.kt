@@ -50,5 +50,24 @@ fun Int.toConfig() = ConfigObject(this.toString())
 fun Long.toConfig() = ConfigObject(this.toString())
 fun Double.toConfig() = ConfigObject(this.toString())
 fun Float.toConfig() = ConfigObject(this.toString())
+fun Map<String, Any>.toConfig() = parseObject(this)
+fun List<*>.toConfig() = parseArray(this)
 
-// TODO do this for lists and maps String, *
+private fun parseObject(parsed: Map<*, *>): ConfigObject {
+    return ConfigObject(parsed.map { (key, value) ->
+        when (value) {
+            is List<*> -> key to parseArray(value)
+            is Map<*, *> -> key to parseObject(value)
+            else -> key to ConfigObject(value.toString())
+        }
+    }.toMap())
+}
+
+private fun parseArray(array: List<*>): ConfigObject {
+    return ConfigObject(array.map { item ->
+        when (item) {
+            is Map<*, *> -> parseObject(item)
+            else -> ConfigObject(item.toString())
+        }
+    })
+}

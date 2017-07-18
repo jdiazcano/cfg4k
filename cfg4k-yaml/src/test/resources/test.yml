@@ -11,6 +11,9 @@ floatList: 1.2,2.2,3.2
 booleanProperty: true
 enumList: A,B
 toString: this should not be ever used
+fruits:
+  - apple
+  - orange
 nested:
   nesteda: nestedb
   nestedc: nestedd
