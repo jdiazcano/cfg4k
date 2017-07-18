@@ -2,7 +2,6 @@ package com.jdiazcano.cfg4k.json
 
 import com.beust.klaxon.Parser
 import com.jdiazcano.cfg4k.core.ConfigObject
-import com.jdiazcano.cfg4k.core.ConfigObjectType
 import com.jdiazcano.cfg4k.core.toConfig
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -39,29 +38,29 @@ class JsonToConfigObjectMapperTest: Spek({
     describe("a parser that can map to config object") {
         val configObject = parser.asConfigObjectFromJson(json)
 
-        configObject.type.should.be.equal(ConfigObjectType.OBJECT)
-        configObject.properties["int"].should.be.equal(1.toConfig())
-        configObject.properties["str"].should.be.equal("string".toConfig())
-        configObject.properties["obj"].should.be.equal(ConfigObject(
+        configObject.isObject().should.be.`true`
+        configObject.asObject()["int"].should.be.equal(1.toConfig())
+        configObject.asObject()["str"].should.be.equal("string".toConfig())
+        configObject.asObject()["obj"].should.be.equal(ConfigObject(
                 mapOf("objstr" to "objstring".toConfig(),
                         "objint" to "11".toConfig())
         ))
-        val listConfigObject = configObject.properties["listobj"]
+        val listConfigObject = configObject.asObject()["listobj"]
         listConfigObject.should.not.be.`null`
         listConfigObject?.let {
-            it.type.should.be.equal(ConfigObjectType.ARRAY)
-            it.list.size.should.be.equal(2)
-            it.list.forEachIndexed { index, obj ->
-                obj.type.should.be.equal(ConfigObjectType.OBJECT)
-                obj.properties["liststr"].should.be.equal("objstring$index".toConfig())
-                obj.properties["listint"].should.be.equal(index.toConfig())
-                obj.properties["objinlist"]!!.type.should.be.equal(ConfigObjectType.OBJECT)
-                obj.properties["objinlist"]!!.properties["test"].should.be.equal(index.toConfig())
+            it.isArray().should.be.`true`
+            it.asList().size.should.be.equal(2)
+            it.asList().forEachIndexed { index, obj ->
+                obj.isObject().should.be.`true`
+                obj.asObject()["liststr"].should.be.equal("objstring$index".toConfig())
+                obj.asObject()["listint"].should.be.equal(index.toConfig())
+                obj.asObject()["objinlist"]!!.isObject().should.be.`true`
+                obj.asObject()["objinlist"]!!.asObject()["test"].should.be.equal(index.toConfig())
             }
         }
-        val listItemsObject = configObject.properties["listitems"]
-        listItemsObject!!.type.should.be.equal(ConfigObjectType.ARRAY)
-        listItemsObject.list.size.should.be.equal(5)
-        listItemsObject.list.forEachIndexed { index, configObject -> configObject.should.be.equal(index.toConfig()) }
+        val listItemsObject = configObject.asObject()["listitems"]
+        listItemsObject!!.isArray().should.be.`true`
+        listItemsObject.asList().size.should.be.equal(5)
+        listItemsObject.asList().forEachIndexed { index, configObject -> configObject.should.be.equal(index.toConfig()) }
     }
 })

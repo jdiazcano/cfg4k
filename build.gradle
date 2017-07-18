@@ -41,7 +41,7 @@ idea {
 
 project.ext {
     artifactGroup = "com.jdiazcano.cfg4k"
-    artifactVersion = "0.6.0"
+    artifactVersion = "0.7.0-SNAPSHOT"
 }
 
 repositories {
@@ -200,3 +200,4 @@ coveralls {
 }
 
 task publish(dependsOn: activeSubprojects.collect { it.tasks.findByPath("bintrayUpload") }) {}
+task publishLocal(dependsOn: activeSubprojects.collect { it.tasks.findByPath("publishToMavenLocal") }) {}

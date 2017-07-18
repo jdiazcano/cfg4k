@@ -16,7 +16,7 @@ class ProviderWithHocon: Spek({
         bind.host.should.be.`null`
         bind.ssl.port.should.be.`null`
         bind.ssl.keyStore.should.be.equal("goodKeyStore")
-        bind.watch.should.be.equal(listOf("hello"))
+        bind.watch.should.be.equal(listOf("hello", "bye"))
     }
 })
 

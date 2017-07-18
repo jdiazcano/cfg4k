@@ -1,25 +1,20 @@
 package com.jdiazcano.cfg4k.core
 
-class ConfigObject {
-    val type: ConfigObjectType
+import com.sun.org.apache.xpath.internal.operations.Bool
 
-    lateinit var value: String
-    lateinit var list: List<ConfigObject>
-    lateinit var properties: Map<String, ConfigObject>
+class ConfigObject(value: Any) {
+    val value: Any
 
-    constructor(value: String) {
-        this.value = value
-        this.type = ConfigObjectType.PRIMITIVE
-    }
+    // Possible types: String
+    // Possible types: List<ConfigObject>
+    // Possible types: Map<String, ConfigObject>
 
-    constructor(list: List<ConfigObject>) {
-        this.list = list
-        this.type = ConfigObjectType.ARRAY
-    }
-
-    constructor(properties: Map<String, ConfigObject>) {
-        this.properties = properties
-        this.type = ConfigObjectType.OBJECT
+    init {
+        this.value = when (value) {
+            is List<*>   -> value
+            is Map<*, *> -> value
+            else -> value.toString()
+        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -28,40 +23,25 @@ class ConfigObject {
 
         other as ConfigObject
 
-        if (type != other.type) return false
-        return when (type) {
-            ConfigObjectType.ARRAY -> list == other.list
-            ConfigObjectType.PRIMITIVE -> value == other.value
-            ConfigObjectType.OBJECT -> properties == other.properties
-        }
+        return value == other.value
     }
 
     override fun hashCode(): Int {
-        var result = type.hashCode()
-        result = 31 * result + when (type) {
-            ConfigObjectType.ARRAY -> list.hashCode()
-            ConfigObjectType.PRIMITIVE -> value.hashCode()
-            ConfigObjectType.OBJECT -> properties.hashCode()
-        }
+        var result = 31 * value.hashCode()
         return result
     }
 
     override fun toString(): String {
-        val stringValue = when (type) {
-            ConfigObjectType.ARRAY -> "list=$list"
-            ConfigObjectType.PRIMITIVE -> "value=$value"
-            ConfigObjectType.OBJECT -> "properties=$properties"
-        }
-        return "ConfigObject(type=$type, $stringValue)"
+        return "ConfigObject(value=$value)"
     }
 
+    fun isObject() = value is Map<*, *>
+    fun isArray() = value is List<*>
+    fun isPrimitive() = !isObject() && !isArray()
 
-}
-
-enum class ConfigObjectType {
-    PRIMITIVE,
-    ARRAY,
-    OBJECT,
+    fun asObject() = value as Map<String, ConfigObject>
+    fun asList() = value as List<ConfigObject>
+    fun asString() = value.toString()
 }
 
 // Add converters for primitive types
