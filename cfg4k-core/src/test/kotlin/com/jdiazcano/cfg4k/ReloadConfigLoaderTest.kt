@@ -16,6 +16,7 @@
 
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
@@ -44,8 +45,8 @@ nested.a=nestedb""")
 
         val loader = PropertyConfigLoader(file.toURI().toURL())
         it("a value should be b") {
-            loader.get("a").should.be.equal("b")
-            loader.get("nested.a").should.be.equal("nestedb")
+            loader.get("a").should.be.equal("b".toConfig())
+            loader.get("nested.a").should.be.equal("nestedb".toConfig())
         }
 
 
@@ -66,8 +67,8 @@ booleanProperty=true
 nested.a=reloaded nestedb""")
 
             loader.reload()
-            loader.get("a").should.be.equal("reloadedb")
-            loader.get("nested.a").should.be.equal("reloaded nestedb")
+            loader.get("a").should.be.equal("reloadedb".toConfig())
+            loader.get("nested.a").should.be.equal("reloaded nestedb".toConfig())
 
             file.delete()
         }
@@ -94,8 +95,8 @@ nested.a=nestedb
 
         val loader = PropertyConfigLoader(file.toURI().toURL())
         it("a value should be b") {
-            loader.get("a").should.be.equal("b")
-            loader.get("nested.a").should.be.equal("nestedb")
+            loader.get("a").should.be.equal("b".toConfig())
+            loader.get("nested.a").should.be.equal("nestedb".toConfig())
         }
 
 
@@ -117,8 +118,8 @@ nested.a=reloaded nestedb
             """)
 
             loader.reload()
-            loader.get("a").should.be.equal("reloadedb")
-            loader.get("nested.a").should.be.equal("reloaded nestedb")
+            loader.get("a").should.be.equal("reloadedb".toConfig())
+            loader.get("nested.a").should.be.equal("reloaded nestedb".toConfig())
 
             file.delete()
         }
@@ -133,8 +134,8 @@ c=d""".trim())
 
         val loader = PropertyConfigLoader(file.toURI().toURL())
         it("values should be equals like in the string") {
-            loader.get("a").should.be.equal("b")
-            loader.get("c").should.be.equal("d")
+            loader.get("a").should.be.equal("b".toConfig())
+            loader.get("c").should.be.equal("d".toConfig())
         }
 
 
@@ -147,8 +148,8 @@ c=reloadedd
             """.trim())
 
             loader.reload()
-            loader.get("a").should.be.equal("reloadedb")
-            loader.get("c").should.be.equal("reloadedd")
+            loader.get("a").should.be.equal("reloadedb".toConfig())
+            loader.get("c").should.be.equal("reloadedd".toConfig())
 
             file.delete()
         }
@@ -165,16 +166,16 @@ c=reloadedd
         it("the first time should be 1 and 2") {
             loader = SystemPropertyConfigLoader()
             loader?.let {
-                it.get("first").should.be.equal("1")
-                it.get("second").should.be.equal("1")
+                it.get("first").should.be.equal("1".toConfig())
+                it.get("second").should.be.equal("1".toConfig())
             }
         }
 
         it("the first time should be 1 and 2") {
             loader?.let {
                 it.reload()
-                it.get("first").should.be.equal("2")
-                it.get("second").should.be.equal("2")
+                it.get("first").should.be.equal("2".toConfig())
+                it.get("second").should.be.equal("2".toConfig())
             }
 
         }

@@ -16,6 +16,8 @@
 
 package com.jdiazcano.cfg4k.loaders
 
+import com.jdiazcano.cfg4k.core.ConfigObject
+
 /**
  * A config loader only defines a get method which will return a string with the value
  */
@@ -27,7 +29,7 @@ interface ConfigLoader {
      * @param key The key of the value that we are looking for
      * @return The value of the key
      */
-    fun get(key: String): String?
+    fun get(key: String): ConfigObject?
 
     fun reload()
 }

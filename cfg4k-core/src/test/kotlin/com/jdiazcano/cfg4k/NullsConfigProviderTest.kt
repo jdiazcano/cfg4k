@@ -16,6 +16,7 @@
 
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.*
 import com.jdiazcano.cfg4k.providers.Providers.proxy
@@ -78,7 +79,7 @@ class NullsConfigProviderTest: Spek({
 
     describe("test the loader") {
         it ("should have cool properties") {
-            loader.get("valueNonNullable.integerProperty").should.be.equal("1")
+            loader.get("valueNonNullable.integerProperty").should.be.equal("1".toConfig())
             loader.get("doesntExist2").should.be.`null`
         }
     }

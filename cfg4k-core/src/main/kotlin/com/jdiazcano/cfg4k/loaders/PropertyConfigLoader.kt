@@ -25,28 +25,39 @@ open class PropertyConfigLoader(
         private val url: URL
 ): ConfigLoader {
 
-    val properties = Properties()
+    lateinit var root: ConfigObject
 
     init {
         loadProperties()
     }
 
     private fun loadProperties() {
-        properties.clear()
-        url.openStream().use {
-            properties.load(it)
-        }
+        root = url.asProperties().toConfig()
     }
 
     override fun reload() {
         loadProperties()
     }
 
-    override fun get(key: String): String? = properties.getProperty(key)
+    override fun get(key: String): ConfigObject? {
+        val split = key.split('.')
+        val last = split.last()
+        if (split.size == 1) {
+            return root.asObject()[last]
+        } else {
+            var root: ConfigObject? = root
+            for (index in 0..split.size-2) {
+                if (!(root?.isObject() ?: true)) {
+                    throw IllegalArgumentException("Trying to get a key from a primitive/array")
+                }
+
+                root = root?.asObject()?.get(split[index])
+            }
+            return root?.asObject()?.get(last)
+        }
+    }
 
 }
-
-fun String.toURL() = URL(this)
 
 fun URL.asProperties(): Properties {
     val properties = Properties()
@@ -59,14 +70,15 @@ fun URL.asProperties(): Properties {
 fun Properties.toConfig(): ConfigObject {
     val map = mutableMapOf<String, Any>()
     map { (key, value) ->
-        val keys = key.toString().split('.')
+        val keyAsString = key.toString()
+        val keys = keyAsString.split('.')
 
         if (keys.size == 1) {
-            if (map[key.toString()] != null) {
+            if (map[keyAsString] != null) {
                 throw IllegalArgumentException("$key is defined twice")
             }
 
-            map[key.toString()] = value
+            map[keyAsString] = value
         } else {
             val valueMap = keys.dropLast(1).fold(map) { m, k ->
                 if (m[k] != null && m[k] !is Map<*, *>) {

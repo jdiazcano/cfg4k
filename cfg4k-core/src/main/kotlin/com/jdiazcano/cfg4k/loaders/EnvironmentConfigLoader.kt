@@ -1,5 +1,8 @@
 package com.jdiazcano.cfg4k.loaders
 
+import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.toConfig
+
 /**
  * EnvironmentConfigLoader will try to match the key to an environment variable. This will apply a series of
  * transformations before matching. Once the match is done, it will be cached until the next time. Once reload is called
@@ -14,10 +17,10 @@ open class EnvironmentConfigLoader : ConfigLoader {
         addTransformer( { key -> key.replace('.', '-') } )
     }
 
-    override fun get(key: String): String {
+    override fun get(key: String): ConfigObject {
         // If we already have it in cache, we have to use it
         if (properties.containsKey(key)) {
-            return properties[key]!!
+            return properties[key]!!.toConfig()
         }
 
         transformations.forEach {
@@ -25,11 +28,11 @@ open class EnvironmentConfigLoader : ConfigLoader {
             val value = System.getenv()[transformed]
             if (value != null) {
                 properties[key] = value
-                return value
+                return value.toConfig()
             }
         }
 
-        return ""
+        return "".toConfig()
     }
 
     override fun reload() {

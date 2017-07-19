@@ -15,6 +15,7 @@
  */
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.EnvironmentConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
@@ -28,7 +29,7 @@ class ConfigLoaderTest: Spek({
     describe("a property config loader") {
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
         it("a value should be b") {
-            loader.get("a").should.be.equal("b")
+            loader.get("a").should.be.equal("b".toConfig())
         }
     }
 
@@ -45,13 +46,13 @@ class ConfigLoaderTest: Spek({
 
         it("variables should have the values of the javadoc comment") {
             val loader = EnvironmentConfigLoader()
-            loader.get("foo.bar").should.be.equal("bar")
-            loader.get("javahome").should.be.equal("myjavahome")
-            loader.get("foo.bar.more").should.be.equal("morebar")
-            loader.get("nested.foo.bar").should.be.equal("nestedbar")
-            loader.get("nested.foo.bar").should.be.equal("nestedbar") // This should be a cached property!
+            loader.get("foo.bar").should.be.equal("bar".toConfig())
+            loader.get("javahome").should.be.equal("myjavahome".toConfig())
+            loader.get("foo.bar.more").should.be.equal("morebar".toConfig())
+            loader.get("nested.foo.bar").should.be.equal("nestedbar".toConfig())
+            loader.get("nested.foo.bar").should.be.equal("nestedbar".toConfig()) // This should be a cached property!
 
-            loader.get("this.will.be.not.found").should.be.equal("")
+            loader.get("this.will.be.not.found").should.be.equal("".toConfig())
 
             loader.reload() // This is mostly for coverage, I haven't seen that environment can be reloaded
         }
@@ -65,8 +66,8 @@ class ConfigLoaderTest: Spek({
 
         it("settings should have the above values") {
             val loader = SystemPropertyConfigLoader()
-            loader.get("this.is.a.test").should.be.equal("testvalue")
-            loader.get("another.test").should.be.equal("bestest")
+            loader.get("this.is.a.test").should.be.equal("testvalue".toConfig())
+            loader.get("another.test").should.be.equal("bestest".toConfig())
         }
     }
 })

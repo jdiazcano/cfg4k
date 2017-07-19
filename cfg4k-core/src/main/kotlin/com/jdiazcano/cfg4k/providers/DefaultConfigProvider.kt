@@ -46,7 +46,7 @@ open class DefaultConfigProvider(
         if (type.isParseable()) {
             val value = configLoader.get(name)
             if (value != null) {
-                return type.findParser().parse(value) as T
+                return type.findParser().parse(value.asString()) as T
             } else {
                 if (default != null) {
                     return default
@@ -68,7 +68,7 @@ open class DefaultConfigProvider(
             if (rawType.isParseable()) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
-                return rawType.findParser().parse(value, classType, superType?.findParser()) as T
+                return rawType.findParser().parse(value.asString(), classType, superType?.findParser()) as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {
@@ -85,7 +85,7 @@ open class DefaultConfigProvider(
         if (type.isParseable()) {
             val value = configLoader.get(name)
             if (value != null) {
-                return type.findParser().parse(value) as T
+                return type.findParser().parse(value.asString()) as T
             } else {
                 return default
             }
@@ -103,7 +103,7 @@ open class DefaultConfigProvider(
             if (rawType.isParseable()) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
-                return rawType.findParser().parse(value, classType, superType?.findParser()) as T
+                return rawType.findParser().parse(value.asString(), classType, superType?.findParser()) as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {
