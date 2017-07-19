@@ -16,6 +16,8 @@
 
 package com.jdiazcano.cfg4k.loaders
 
+import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.toConfig
 import java.net.URL
 import java.util.*
 
@@ -42,4 +44,40 @@ open class PropertyConfigLoader(
 
     override fun get(key: String): String? = properties.getProperty(key)
 
+}
+
+fun String.toURL() = URL(this)
+
+fun URL.asProperties(): Properties {
+    val properties = Properties()
+    openStream().use {
+        properties.load(it)
+    }
+    return properties
+}
+
+fun Properties.toConfig(): ConfigObject {
+    val map = mutableMapOf<String, Any>()
+    map { (key, value) ->
+        val keys = key.toString().split('.')
+
+        if (keys.size == 1) {
+            if (map[key.toString()] != null) {
+                throw IllegalArgumentException("$key is defined twice")
+            }
+
+            map[key.toString()] = value
+        } else {
+            val valueMap = keys.dropLast(1).fold(map) { m, k ->
+                if (m[k] != null && m[k] !is Map<*, *>) {
+                    throw IllegalArgumentException("")
+                }
+
+                // TODO Think if on how to make arrays. I think it should be discouraged but...
+                m.getOrPut(k) { mutableMapOf<String, Any>() } as MutableMap<String, Any>
+            }
+            valueMap[keys.last()] = value
+        }
+    }
+    return map.toConfig()
 }
