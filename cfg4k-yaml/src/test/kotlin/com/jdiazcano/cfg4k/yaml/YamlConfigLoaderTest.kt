@@ -1,5 +1,6 @@
 package com.jdiazcano.cfg4k.yaml
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.winterbe.expekt.should
@@ -16,14 +17,14 @@ class YamlConfigLoaderTest: Spek({
     loaders.forEachIndexed { i, loader ->
         describe("loader[$i]") {
             it("loader properties") {
-                loader.get("integerProperty").should.be.equal("1")
-                loader.get("longProperty").should.be.equal("2")
-                loader.get("shortProperty").should.be.equal("1")
-                loader.get("floatProperty").should.be.equal("2.1")
-                loader.get("doubleProperty").should.be.equal("1.1")
-                loader.get("byteProperty").should.be.equal("2")
-                loader.get("booleanProperty").should.be.equal("true")
-                loader.get("nested.nesteda").should.be.equal("nestedb")
+                loader.get("integerProperty").should.be.equal(1.toConfig())
+                loader.get("longProperty").should.be.equal(2.toConfig())
+                loader.get("shortProperty").should.be.equal(1.toConfig())
+                loader.get("floatProperty").should.be.equal(2.1.toConfig())
+                loader.get("doubleProperty").should.be.equal(1.1.toConfig())
+                loader.get("byteProperty").should.be.equal("2".toConfig())
+                loader.get("booleanProperty").should.be.equal("true".toConfig())
+                loader.get("nested.nesteda").should.be.equal("nestedb".toConfig())
             }
 
             it("works with binding") {

@@ -1,12 +1,11 @@
 package com.jdiazcano.cfg4k.yaml
 
-import com.jdiazcano.cfg4k.loaders.ConfigLoader
+import com.jdiazcano.cfg4k.core.toConfig
+import com.jdiazcano.cfg4k.loaders.DefaultConfigLoader
 import org.yaml.snakeyaml.Yaml
-import com.jdiazcano.cfg4k.binders.prefix
 import java.net.URL
 
-class YamlConfigLoader(private val url: URL): ConfigLoader {
-    val properties: MutableMap<String, String> = mutableMapOf()
+class YamlConfigLoader(private val url: URL): DefaultConfigLoader() {
 
     init {
         loadProperties()
@@ -14,26 +13,8 @@ class YamlConfigLoader(private val url: URL): ConfigLoader {
 
     private fun loadProperties() {
         url.openStream().use {
-            val load = Yaml().load(it)
-            if (load is Map<*, *>) {
-                properties.clear()
-                properties.putAll(flatten(load))
-            }
-        }
-    }
-
-    private fun flatten(map: Map<*, *>, prefix: String = ""): MutableMap<String, String> {
-        val properties = mutableMapOf<String, String>()
-        reduceInternal(properties, map, prefix)
-        return properties
-    }
-
-    private fun reduceInternal(properties: MutableMap<String, String>, map: Map<*, *>, prefix: String = "") {
-        map.forEach { key, value ->
-            when (value) {
-                is Map<*, *> -> reduceInternal(properties, value, prefix(prefix, key.toString()))
-                else -> properties[prefix(prefix, key.toString())] = value.toString()
-            }
+            val load = Yaml().load(it) as Map<String, Any>
+            root = load.toConfig()
         }
     }
 
@@ -41,5 +22,4 @@ class YamlConfigLoader(private val url: URL): ConfigLoader {
         loadProperties()
     }
 
-    override fun get(key: String) = properties[key]
 }

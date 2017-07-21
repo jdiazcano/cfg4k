@@ -1,3 +1,4 @@
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.git.CustomConfigSessionFactory
 import com.jdiazcano.cfg4k.loaders.git.GitConfigLoader
@@ -76,6 +77,6 @@ class GitConfigLoaderTest: Spek({
 private fun testLoader(loader: GitConfigLoader) {
     // There is no point on testing more properties because if one is loaded, the rest will be loaded too
     // everything is tested in the providers anyways so these loaders are all ok.
-    loader.get("integerProperty").should.be.equal("1")
+    loader.get("integerProperty").should.be.equal("1".toConfig())
     loader.close()
 }

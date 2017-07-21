@@ -49,6 +49,11 @@ enum class Enumerito {
     A, B, C
 }
 
+interface Doge {
+    fun wow(): String
+    fun doge(): String
+}
+
 interface NestedBinder {
     fun nested(): TestBinder
     fun normal(): Int

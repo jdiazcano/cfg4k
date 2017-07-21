@@ -6,8 +6,14 @@ shortProperty: 1
 doubleProperty: 1.1
 floatProperty: 2.1
 byteProperty: 2
-list: 1,2,3
-floatList: 1.2,2.2,3.2
+list:
+  - 1
+  - 2
+  - 3
+floatList:
+  - 1.2
+  - 2.2
+  - 3.2
 booleanProperty: true
 enumList: A,B
 toString: this should not be ever used

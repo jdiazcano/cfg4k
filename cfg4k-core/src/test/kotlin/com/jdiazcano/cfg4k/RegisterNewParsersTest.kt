@@ -16,6 +16,7 @@
 
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parser
 import com.jdiazcano.cfg4k.parsers.Parsers
@@ -57,9 +58,9 @@ class RegisterNewParsersTest: Spek({
 
 data class Book(val id: Long, val title: String)
 object BookParser : Parser<Book> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Book {
-        val (id, title) = value.split(", ")
-        return Book(id.toLong(), title)
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): Book {
+        val obj = value.asObject()
+        return Book(obj["id"]!!.asString().toLong(), obj["title"]!!.asString())
     }
 
 }

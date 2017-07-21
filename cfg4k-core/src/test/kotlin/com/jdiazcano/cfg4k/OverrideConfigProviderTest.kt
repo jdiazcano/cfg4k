@@ -44,10 +44,6 @@ class OverrideConfigProviderTest : Spek({
 
         it("if the property does not exist, then the second one should be tested") {
             provider.get<Int>("integerProperty").should.be.equal(1)
-            provider.get<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B))
-            provider.get<List<Enumerito>>("enumList").should.be.equal(listOf(Enumerito.A, Enumerito.B)) // cache
-            provider.get<List<Int>>("list").should.be.equal(listOf(1, 2, 3))
-            provider.bind<TestBinder>("").floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
         }
     }
 })

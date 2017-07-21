@@ -61,8 +61,6 @@ class CachedConfigProviderTest: Spek({
                     testBinder.byteProperty().should.be.equal(2)
                     testBinder.a().should.be.equal("b")
                     testBinder.c().should.be.equal("d")
-                    testBinder.list().should.be.equal(listOf(1, 2, 3))
-                    testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
 
                     val secondTestBinder = provider.bind<TestBinder>("")
                     when (provider) {
@@ -79,8 +77,6 @@ class CachedConfigProviderTest: Spek({
                                 byteProperty().should.be.equal(secondTestBinder.byteProperty())
                                 a().should.be.equal(secondTestBinder.a())
                                 c().should.be.equal(secondTestBinder.c())
-                                list().should.be.equal(secondTestBinder.list())
-                                floatList().should.be.equal(secondTestBinder.floatList())
                             }
                         }
                         else -> IllegalArgumentException("Unrecognised provider")

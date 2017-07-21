@@ -4,12 +4,13 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.jdiazcano.cfg4k.core.ConfigObject
+import java.io.InputStream
 
 /**
  * Parse a json string as a ConfigObject
  */
-fun Parser.asConfigObjectFromJson(json: String): ConfigObject {
-    val parsed = parse(StringBuilder(json)) as JsonObject
+fun Parser.asConfigObjectFromJson(input: InputStream): ConfigObject {
+    val parsed = parse(input) as JsonObject
     return parseObject(parsed)
 }
 

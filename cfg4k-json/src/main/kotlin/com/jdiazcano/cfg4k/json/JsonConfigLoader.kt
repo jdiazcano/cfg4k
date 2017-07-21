@@ -15,18 +15,15 @@
  */
 package com.jdiazcano.cfg4k.json
 
-import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.jdiazcano.cfg4k.binders.prefix
-import com.jdiazcano.cfg4k.loaders.ConfigLoader
+import com.jdiazcano.cfg4k.loaders.DefaultConfigLoader
 import java.net.URL
 
 open class JsonConfigLoader(
         private val url: URL
-): ConfigLoader {
+): DefaultConfigLoader() {
 
     protected val parser = Parser()
-    protected val properties = mutableMapOf<String, String>()
 
     init {
         loadProperties()
@@ -38,26 +35,8 @@ open class JsonConfigLoader(
 
     protected fun loadProperties() {
         url.openStream().use {
-            val json = parser.parse(it) as JsonObject
-            properties.clear()
-            properties.putAll(reduce(json))
+            root = parser.asConfigObjectFromJson(it)
         }
     }
 
-    override fun get(key: String) = properties[key]
-
-    private fun reduce(json: JsonObject, prefix: String = ""): MutableMap<String, String> {
-        val properties = mutableMapOf<String, String>()
-        reduceInternal(properties, json, prefix)
-        return properties
-    }
-
-    private fun reduceInternal(properties: MutableMap<String, String>, json: JsonObject, prefix: String = "") {
-        json.forEach { key, value ->
-            when (value) {
-                is JsonObject -> reduceInternal(properties, value, prefix(prefix, key))
-                else -> properties[prefix(prefix, key)] = value.toString()
-            }
-        }
-    }
 }

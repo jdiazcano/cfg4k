@@ -16,35 +16,36 @@
 
 package com.jdiazcano.cfg4k.parsers
 
+import com.jdiazcano.cfg4k.core.ConfigObject
+
 object IntParser: Parser<Int> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value.toInt()
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toInt()
 }
 
 object LongParser: Parser<Long> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value.toLong()
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toLong()
 }
 
 object ShortParser: Parser<Short> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value.toShort()
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toShort()
 }
 
 object BooleanParser: Parser<Boolean> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value.toBoolean()
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toBoolean()
 }
 
 object FloatParser: Parser<Float> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value.toFloat()
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toFloat()
 }
 
 object DoubleParser: Parser<Double> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value.toDouble()
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toDouble()
 }
 
 object ByteParser: Parser<Byte> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value.toByte()
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toByte()
 }
 
 object StringParser: Parser<String> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = value
-
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString()
 }

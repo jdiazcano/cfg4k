@@ -18,7 +18,9 @@ package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.Binder
 import com.jdiazcano.cfg4k.binders.ProxyBinder
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
+import com.jdiazcano.cfg4k.parsers.ListParser
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
@@ -46,7 +48,7 @@ open class DefaultConfigProvider(
         if (type.isParseable()) {
             val value = configLoader.get(name)
             if (value != null) {
-                return type.findParser().parse(value.asString()) as T
+                return type.findParser().parse(value) as T
             } else {
                 if (default != null) {
                     return default
@@ -68,7 +70,11 @@ open class DefaultConfigProvider(
             if (rawType.isParseable()) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
-                return rawType.findParser().parse(value.asString(), classType, superType?.findParser()) as T
+                return rawType.findParser().parse(value, classType, superType?.findParser()) as T
+            } else if (Collection::class.java.isAssignableFrom(rawType)) {
+                val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                val classType = superType ?: rawType
+                return ListParser<T>().parse(value, classType, superType?.findParser()) as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {
@@ -80,12 +86,16 @@ open class DefaultConfigProvider(
         }
     }
 
+    override fun load(name: String): ConfigObject? {
+        return configLoader.get(name)
+    }
+
     override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? {
         // There is no way that this has a generic parsers because the class actually removes that possibility
         if (type.isParseable()) {
             val value = configLoader.get(name)
             if (value != null) {
-                return type.findParser().parse(value.asString()) as T
+                return type.findParser().parse(value) as T
             } else {
                 return default
             }
@@ -103,7 +113,7 @@ open class DefaultConfigProvider(
             if (rawType.isParseable()) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
-                return rawType.findParser().parse(value.asString(), classType, superType?.findParser()) as T
+                return rawType.findParser().parse(value, classType, superType?.findParser()) as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {

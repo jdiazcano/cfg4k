@@ -7,8 +7,30 @@
   "doubleProperty": 1.1,
   "floatProperty": 2.1,
   "byteProperty": 2,
-  "list": "1,2,3,4,5,6,7",
-  "floatList": "1.2,2.2,3.2",
+  "list": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "floatList": [
+    1.2,
+    2.2,
+    3.2
+  ],
+  "complexList": [
+    {
+      "wow": "such0",
+      "doge": 0
+    },
+    {
+      "wow": "such1",
+      "doge": 1
+    }
+  ],
   "booleanProperty": true,
   "bigIntegerProperty": 1,
   "bigDecimalProperty": 1.1,

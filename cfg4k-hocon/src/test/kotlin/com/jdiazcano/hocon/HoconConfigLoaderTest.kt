@@ -1,5 +1,6 @@
 package com.jdiazcano.hocon
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.hocon.HoconConfigLoader
 import com.jdiazcano.cfg4k.providers.Providers
@@ -22,13 +23,13 @@ class HoconConfigLoaderTest: Spek({
     loaders.forEachIndexed { i, loader ->
         describe("loader[$i]") {
             it("loader properties") {
-                loader.get("integerProperty").should.be.equal("1")
-                loader.get("longProperty").should.be.equal("2")
-                loader.get("shortProperty").should.be.equal("1")
-                loader.get("floatProperty").should.be.equal("2.1")
-                loader.get("doubleProperty").should.be.equal("1.1")
-                loader.get("byteProperty").should.be.equal("2")
-                loader.get("booleanProperty").should.be.equal("true")
+                loader.get("integerProperty").should.be.equal("1".toConfig())
+                loader.get("longProperty").should.be.equal("2".toConfig())
+                loader.get("shortProperty").should.be.equal("1".toConfig())
+                loader.get("floatProperty").should.be.equal("2.1".toConfig())
+                loader.get("doubleProperty").should.be.equal("1.1".toConfig())
+                loader.get("byteProperty").should.be.equal("2".toConfig())
+                loader.get("booleanProperty").should.be.equal("true".toConfig())
             }
 
             it("works with binding") {
@@ -44,8 +45,6 @@ class HoconConfigLoaderTest: Spek({
                 testBinder.byteProperty().should.be.equal(2)
                 testBinder.a().should.be.equal("b")
                 testBinder.c().should.be.equal("d")
-                testBinder.list().should.be.equal(listOf(1, 2, 3))
-                testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
 
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")

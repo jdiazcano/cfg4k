@@ -54,8 +54,6 @@ class ByteBuddyConfigProviderTest: Spek({
             testBinder.byteProperty().should.be.equal(2)
             testBinder.a().should.be.equal("b")
             testBinder.c().should.be.equal("d")
-            testBinder.list().should.be.equal(listOf(1, 2, 3))
-            testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
 
             // toString should be the object tostring not the one that comes from the property
             testBinder.toString().should.not.be.equal("this should not be ever used")

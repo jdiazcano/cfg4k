@@ -17,6 +17,7 @@
 package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.Binder
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.typeOf
 import java.lang.reflect.Type
@@ -64,6 +65,8 @@ interface ConfigProvider {
      * @param type Type of the property. (You can get the type with typeOf<Class>() method)
      */
     fun <T: Any?> getOrNull(name: String, type: Type, default: T? = null): T?
+
+    fun load(name: String): ConfigObject?
 
     /**
      * This method will be called when there is an order to reload the properties. This can happen in different scenarios

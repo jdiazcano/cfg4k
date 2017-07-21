@@ -19,6 +19,7 @@
 package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.ProxyBinder
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import java.lang.reflect.Type
@@ -55,6 +56,10 @@ class OverrideConfigProvider(
         } else {
             throw SettingNotFound("Setting $name was not found")
         }
+    }
+
+    override fun load(name: String): ConfigObject? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun <T : Any> get(name: String, type: Type, default: T?): T {

@@ -6,6 +6,7 @@ import com.jdiazcano.cfg4k.core.toConfig
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
+import java.io.ByteArrayInputStream
 
 class JsonToConfigObjectMapperTest: Spek({
     val parser = Parser()
@@ -36,7 +37,7 @@ class JsonToConfigObjectMapperTest: Spek({
 "listitems": [ 0, 1, 2, 3, 4 ]
 }"""
     describe("a parser that can map to config object") {
-        val configObject = parser.asConfigObjectFromJson(json)
+        val configObject = parser.asConfigObjectFromJson(ByteArrayInputStream(json.toByteArray()))
 
         configObject.isObject().should.be.`true`
         configObject.asObject()["int"].should.be.equal(1.toConfig())

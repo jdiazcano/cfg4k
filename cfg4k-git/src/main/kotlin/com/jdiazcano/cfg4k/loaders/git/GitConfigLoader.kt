@@ -1,5 +1,6 @@
 package com.jdiazcano.cfg4k.loaders.git
 
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.utils.SettingsNotInitialisedException
@@ -72,7 +73,7 @@ class GitConfigLoader(
         initialised = true
     }
 
-    override fun get(key: String): String? {
+    override fun get(key: String): ConfigObject? {
         if (!initialised) {
             throw SettingsNotInitialisedException("Settings have not been initialised. Git repository is being cloned")
         }

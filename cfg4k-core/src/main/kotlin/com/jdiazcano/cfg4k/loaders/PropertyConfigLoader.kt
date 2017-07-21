@@ -23,9 +23,7 @@ import java.util.*
 
 open class PropertyConfigLoader(
         private val url: URL
-): ConfigLoader {
-
-    lateinit var root: ConfigObject
+): DefaultConfigLoader() {
 
     init {
         loadProperties()
@@ -37,24 +35,6 @@ open class PropertyConfigLoader(
 
     override fun reload() {
         loadProperties()
-    }
-
-    override fun get(key: String): ConfigObject? {
-        val split = key.split('.')
-        val last = split.last()
-        if (split.size == 1) {
-            return root.asObject()[last]
-        } else {
-            var root: ConfigObject? = root
-            for (index in 0..split.size-2) {
-                if (!(root?.isObject() ?: true)) {
-                    throw IllegalArgumentException("Trying to get a key from a primitive/array")
-                }
-
-                root = root?.asObject()?.get(split[index])
-            }
-            return root?.asObject()?.get(last)
-        }
     }
 
 }

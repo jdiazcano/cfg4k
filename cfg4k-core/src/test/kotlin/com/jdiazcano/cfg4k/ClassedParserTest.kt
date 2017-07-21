@@ -1,5 +1,6 @@
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parser
 import com.jdiazcano.cfg4k.parsers.Parsers
@@ -23,19 +24,14 @@ class ClassedParserTest: Spek({
         val provider = ProxyConfigProvider(loader)
 
         it("a printer is parsed correctly") {
-            provider.get<Printer>("persons.me").print().should.be.equal("Javi, 26")
-        }
-
-        it("a list of printers should be parsed too") {
-            provider.get<List<Printer>>("persons.all").should.be.equal(listOf(Printer("Javi", 26), Printer("Peter", 20)))
+            provider.get<Printer>("persons.me").should.be.equal(Printer("Javi", 26))
         }
     }
 })
 
 class PrinterClassedParser : Parser<Printer> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Printer {
-        val split = value.split('-')
-        return Printer(split[0], split[1].toInt())
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): Printer {
+        return Printer(value.asObject()["name"]!!.asString(), value.asObject()["age"]!!.asString().toInt())
     }
 }
 

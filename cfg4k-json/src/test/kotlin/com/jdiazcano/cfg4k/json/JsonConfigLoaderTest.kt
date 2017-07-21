@@ -1,6 +1,8 @@
 package com.jdiazcano.cfg4k.json
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
+import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.utils.typeOf
 import com.winterbe.expekt.should
@@ -13,8 +15,8 @@ class JsonConfigLoaderTest: Spek({
     val provider = ProxyConfigProvider(loader)
     describe("a json config loader") {
         it("a value should be b") {
-            loader.get("a").should.be.equal("b")
-            loader.get("nested.a").should.be.equal("nestedb")
+            loader.get("a").should.be.equal("b".toConfig())
+            loader.get("nested.a").should.be.equal("nestedb".toConfig())
         }
     }
 
@@ -27,5 +29,13 @@ class JsonConfigLoaderTest: Spek({
         betterStringList.should.be.equal(listOf("a", "b", "c"))
         val betterEnumList = provider.get<List<Enumerito>>("betterEnumList")
         betterEnumList.should.be.equal(listOf(Enumerito.A, Enumerito.B))
+        val x = provider.bind<Keepo>("").complexList
+        x.size.should.be.equal(2)
+        x[0].wow().should.be.equal("such0")
+        x[1].wow().should.be.equal("such1")
     }
 })
+
+interface Keepo {
+    val complexList: List<Doge>
+}
