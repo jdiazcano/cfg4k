@@ -19,6 +19,7 @@ interface TestBinder {
     fun byteProperty(): Byte
     fun list(): List<Int>
     fun floatList(): List<Float>
+    fun complexSet(): Set<Doge>
     fun bigIntegerProperty(): BigInteger
     fun bigDecimalProperty(): BigDecimal
     fun uri(): URI
@@ -51,7 +52,7 @@ enum class Enumerito {
 
 interface Doge {
     fun wow(): String
-    fun doge(): String
+    fun doge(): Int
 }
 
 interface NestedBinder {

@@ -33,6 +33,8 @@ class JsonConfigLoaderTest: Spek({
         x.size.should.be.equal(2)
         x[0].wow().should.be.equal("such0")
         x[1].wow().should.be.equal("such1")
+        x[0].doge().should.be.equal(0)
+        x[1].doge().should.be.equal(1)
     }
 })
 

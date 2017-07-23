@@ -31,6 +31,16 @@
       "doge": 1
     }
   ],
+  "complexSet": [
+    {
+      "wow": "such0",
+      "doge": 0
+    },
+    {
+      "wow": "such1",
+      "doge": 1
+    }
+  ],
   "booleanProperty": true,
   "bigIntegerProperty": 1,
   "bigDecimalProperty": 1.1,

@@ -1,5 +1,6 @@
 package com.jdiazcano.cfg4k.core
 
+import com.jdiazcano.cfg4k.loaders.findNumbers
 import com.sun.org.apache.xpath.internal.operations.Bool
 
 class ConfigObject(value: Any) {
@@ -27,8 +28,7 @@ class ConfigObject(value: Any) {
     }
 
     override fun hashCode(): Int {
-        var result = 31 * value.hashCode()
-        return result
+        return 31 * value.hashCode()
     }
 
     override fun toString(): String {
@@ -42,6 +42,16 @@ class ConfigObject(value: Any) {
     fun asObject() = value as Map<String, ConfigObject>
     fun asList() = value as List<ConfigObject>
     fun asString() = value.toString()
+
+    internal fun child(key: String): ConfigObject? {
+        val (number, cleanKey) = findNumbers(key)
+
+        if (number == null) {
+            return asObject()[cleanKey]
+        } else {
+            return asObject()[cleanKey]?.asList()?.get(number)
+        }
+    }
 }
 
 // Add converters for primitive types

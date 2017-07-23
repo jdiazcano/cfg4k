@@ -43,6 +43,14 @@ class YamlConfigLoaderTest: Spek({
                 testBinder.list().should.be.equal(listOf(1, 2, 3))
                 testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
 
+                testBinder.complexList.size.should.be.equal(2)
+                testBinder.complexList[0].age().should.be.equal(1)
+                testBinder.complexList[1].age().should.be.equal(100)
+                testBinder.complexList[0].name.should.be.equal("pepe")
+                testBinder.complexList[1].name.should.be.equal("thefrog")
+
+                testBinder.complexSet.size.should.be.equal(2)
+
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")
             }
@@ -63,4 +71,12 @@ interface TestBinder {
     fun byteProperty(): Byte
     fun list(): List<Int>
     fun floatList(): List<Float>
+
+    val complexList: List<User>
+    val complexSet: List<User>
+}
+
+interface User {
+    val name: String
+    fun age(): Int
 }

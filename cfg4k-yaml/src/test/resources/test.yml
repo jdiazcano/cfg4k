@@ -20,6 +20,16 @@ toString: this should not be ever used
 fruits:
   - apple
   - orange
+complexList:
+  - name: pepe
+    age: 1
+  - name: thefrog
+    age: 100
+complexSet:
+  - firstKey: firstValue0
+    secondKey: secondValue0
+  - firstKey: firstValue1
+    secondKey: secondValue1
 nested:
   nesteda: nestedb
   nestedc: nestedd

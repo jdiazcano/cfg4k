@@ -27,7 +27,7 @@ class HoconConfigMapperTest: Spek({
         val app = ktor.asObject()["application"]!!
         app.isObject().should.be.`true`
         app.asObject()["modules"].should.be.equal(ConfigObject(listOf(
-                "org.jetbrains.ktor.samples.hello.HelloApplicationKt.main".toConfig()
+                "com.jdiazcano.hocon.KtorConfig".toConfig()
         )))
     }
 })

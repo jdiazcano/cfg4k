@@ -16,10 +16,8 @@
 
 package com.jdiazcano.cfg4k.binders
 
-import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.providers.ConfigProvider
-import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
 import java.lang.reflect.InvocationHandler
@@ -29,7 +27,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmName
 import kotlin.reflect.jvm.kotlinFunction
-import kotlin.test.assertTrue
 
 /**
  * InvocationHandler that handles the proxying between the interface and the call. This class is used in the
@@ -57,8 +54,24 @@ class BindingInvocationHandler(
         if (method.returnType.isParseable()) {
             return findParseableValue(isNullable, name, type, kotlinClass, method, proxy)
         } else if (List::class.java.isAssignableFrom(method.returnType)) {
+            //TODO refactor this: There should be some kind of register for types instead of copypasta code
             val listObject = provider.load(prefix(prefix, name))
             val list = arrayListOf<Any?>()
+            listObject?.asList()?.forEachIndexed { index, configObject ->
+                if (configObject.isObject()) {
+                    val targetType = TargetType(type)
+                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                    list.add(provider.bind(prefix(prefix, "$index$name"), superType as Class<Any>))
+                } else if (configObject.isPrimitive()) {
+                    val targetType = TargetType(type)
+                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                    list.add(findParseableValue(isNullable, "$index$name", superType!!, kotlinClass, method, proxy))
+                }
+            }
+            return list
+        } else if (Set::class.java.isAssignableFrom(method.returnType)) {
+            val listObject = provider.load(prefix(prefix, name))
+            val list = mutableSetOf<Any?>()
             listObject?.asList()?.forEachIndexed { index, configObject ->
                 if (configObject.isObject()) {
                     val targetType = TargetType(type)
@@ -77,6 +90,7 @@ class BindingInvocationHandler(
 
     }
 
+    // TODO refactor this sos it accepts a ConfigObject instead of a name
     private fun findParseableValue(isNullable: Boolean, name: String, type: Type, kotlinClass: KClass<out Any>, method: Method, proxy: Any?): Any? {
         if (isNullable) {
             val value = provider.getOrNull<Any?>(prefix(prefix, name), type)

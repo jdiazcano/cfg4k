@@ -225,6 +225,13 @@ class ConfigProviderTest: Spek({
                 testBinder.c().should.be.equal("d")
                 testBinder.list().should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
                 testBinder.floatList().should.be.equal(listOf(1.2F, 2.2F, 3.2F))
+
+                val doges = listOf(createDoge(0), createDoge(1))
+                testBinder.complexSet().forEachIndexed { index, item ->
+                    item.doge().should.be.equal(doges[index].doge())
+                    item.wow().should.be.equal(doges[index].wow())
+                }
+
                 testBinder.bigDecimalProperty().should.be.equal(BigDecimal("1.1"))
                 testBinder.bigIntegerProperty().should.be.equal(BigInteger("1"))
                 testBinder.uri().should.be.equal(URI("https://www.amazon.com"))
@@ -238,3 +245,13 @@ class ConfigProviderTest: Spek({
         }
     }
 })
+
+
+private fun createDoge(index: Int): Doge {
+    return object : Doge {
+        override fun wow() = "such$index"
+
+        override fun doge() = index
+
+    }
+}

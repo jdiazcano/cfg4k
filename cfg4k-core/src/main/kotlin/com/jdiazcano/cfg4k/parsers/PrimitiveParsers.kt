@@ -49,3 +49,7 @@ object ByteParser: Parser<Byte> {
 object StringParser: Parser<String> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString()
 }
+
+object ClassParser: Parser<Class<*>> {
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = Class.forName(value.asString())
+}
