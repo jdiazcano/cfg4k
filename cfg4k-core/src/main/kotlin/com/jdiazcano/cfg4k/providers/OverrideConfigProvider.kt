@@ -59,7 +59,18 @@ class OverrideConfigProvider(
     }
 
     override fun load(name: String): ConfigObject? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (name in cachedProviders) {
+            return cachedProviders[name]!!.load(name)
+        } else {
+            for (provider in providers) {
+                if (provider.contains(name)) {
+                    cachedProviders[name] = provider
+                    return provider.load(name)
+                }
+            }
+        }
+
+        return null
     }
 
     override fun <T : Any> get(name: String, type: Type, default: T?): T {
