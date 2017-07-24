@@ -31,8 +31,6 @@ import java.lang.reflect.Modifier
 import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.kotlinFunction
 
 
 @Suppress("UNCHECKED_CAST")

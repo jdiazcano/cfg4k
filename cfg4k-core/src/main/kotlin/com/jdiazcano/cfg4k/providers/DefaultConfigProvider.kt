@@ -74,6 +74,7 @@ open class DefaultConfigProvider(
             } else if (Collection::class.java.isAssignableFrom(rawType)) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
+                //TODO wtf is this
                 return ListParser<T>().parse(value, classType, superType?.findParser()) as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")

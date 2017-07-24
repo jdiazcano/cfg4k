@@ -16,13 +16,19 @@
 
 package com.jdiazcano.cfg4k.binders
 
-import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
+import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
+import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Type
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmName
@@ -51,67 +57,59 @@ class BindingInvocationHandler(
         }
 
         val type = method.genericReturnType
-        if (method.returnType.isParseable()) {
-            return findParseableValue(isNullable, name, type, kotlinClass, method, proxy)
-        } else if (List::class.java.isAssignableFrom(method.returnType)) {
-            //TODO refactor this: There should be some kind of register for types instead of copypasta code
-            val listObject = provider.load(prefix(prefix, name))
-            val list = arrayListOf<Any?>()
-            listObject?.asList()?.forEachIndexed { index, configObject ->
-                if (configObject.isObject()) {
-                    val targetType = TargetType(type)
-                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                    list.add(provider.bind(prefix(prefix, "$index$name"), superType as Class<Any>))
-                } else if (configObject.isPrimitive()) {
-                    val targetType = TargetType(type)
-                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                    list.add(findParseableValue(isNullable, "$index$name", superType!!, kotlinClass, method, proxy))
+        val configObject = provider.load(prefix(prefix, name))
+        if (configObject == null) {
+            try {
+                return kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
+            } catch (e: Exception) { // There's no default
+                if (isNullable) {
+                    return null
+                } else {
+                    throw SettingNotFound("Setting $name not found")
                 }
             }
-            return list
-        } else if (Set::class.java.isAssignableFrom(method.returnType)) {
-            val listObject = provider.load(prefix(prefix, name))
-            val list = mutableSetOf<Any?>()
-            listObject?.asList()?.forEachIndexed { index, configObject ->
-                if (configObject.isObject()) {
-                    val targetType = TargetType(type)
-                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                    list.add(provider.bind(prefix(prefix, "$index$name"), superType as Class<Any>))
-                } else if (configObject.isPrimitive()) {
-                    val targetType = TargetType(type)
-                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                    list.add(findParseableValue(isNullable, "$index$name", superType!!, kotlinClass, method, proxy))
-                }
-            }
-            return list
         } else {
-            return provider.bind(prefix(prefix, name), method.returnType)
+            if (configObject.isArray()) {
+                val targetType = TargetType(type)
+                val rawType = targetType.rawTargetType()
+                val collection = createCollection(rawType)
+                toMutableCollection(configObject, type, collection, name, isNullable, kotlinClass, method, proxy)
+                return collection
+            } else if (configObject.isPrimitive()) {
+                val targetType = TargetType(type)
+                val rawType = targetType.rawTargetType()
+                val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                val classType = superType ?: rawType
+                return classType.findParser().parse(configObject, classType, superType?.findParser())
+            } else { // it is an object
+                return provider.bind(prefix(prefix, name), method.returnType)
+            }
         }
 
     }
 
-    // TODO refactor this sos it accepts a ConfigObject instead of a name
-    private fun findParseableValue(isNullable: Boolean, name: String, type: Type, kotlinClass: KClass<out Any>, method: Method, proxy: Any?): Any? {
-        if (isNullable) {
-            val value = provider.getOrNull<Any?>(prefix(prefix, name), type)
-            if (value != null) {
-                return value
-            } else {
-                try {
-                    return kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
-                } catch (e: Exception) {
-                    return null
-                }
-            }
-        } else {
-            try {
-                return provider.get(prefix(prefix, name), type)
-            } catch (notFound: SettingNotFound) {
-                try {
-                    return kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
-                } catch (e: Exception) {
-                    throw notFound
-                }
+    private fun createCollection(rawType: Class<*>): MutableCollection<Any?> {
+        return if (ArrayList::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
+            else if (LinkedList::class.java.isAssignableFrom(rawType)) { mutableListOf<Any?>() }
+            else if (LinkedHashSet::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
+            else if (HashSet::class.java.isAssignableFrom(rawType)) { hashSetOf<Any?>() }
+            else if (List::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
+            else if (Set::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
+            else { TODO() }
+    }
+
+    private fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCollection<Any?>, name: String, isNullable: Boolean, kotlinClass: KClass<out Any>, method: Method, proxy: Any?) {
+        configObject.asList().forEachIndexed { index, innerObject ->
+            if (innerObject.isObject()) {
+                val targetType = TargetType(type)
+                val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                list.add(provider.bind(prefix(prefix, "$index$name"), superType as Class<Any>))
+            } else if (innerObject.isPrimitive()) {
+                val targetType = TargetType(type)
+                val rawType = targetType.rawTargetType()
+                val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                val classType = superType ?: rawType
+                list.add(classType.findParser().parse(innerObject, classType, superType?.findParser()))
             }
         }
     }

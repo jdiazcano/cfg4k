@@ -30,7 +30,7 @@ open class PropertyConfigLoader(
     }
 
     private fun loadProperties() {
-        root = url.asProperties().toConfig()
+        root.value = url.asProperties().toConfig().value
     }
 
     override fun reload() {

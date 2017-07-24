@@ -1,5 +1,6 @@
 package com.jdiazcano.cfg4k.utils
 
+//TODO do we want to keep this method? unflattening a map is not something commonly done
 fun Map<String, String>.unflatten(splitBy: Char = '-'): MutableMap<String, Any> {
     val map = mutableMapOf<String, Any>()
     map { (key, value) ->
@@ -18,6 +19,7 @@ fun Map<String, String>.unflatten(splitBy: Char = '-'): MutableMap<String, Any> 
                 }
 
                 // TODO Think if on how to make arrays. I think it should be discouraged but...
+                // Yeah, without rich syntax like hocon, yaml or json it will not be supported
                 m.getOrPut(k) { mutableMapOf<String, Any>() } as MutableMap<String, Any>
             }
             valueMap[keys.last()] = value

@@ -41,8 +41,6 @@ object Parsers {
             BigInteger::class.java to BigIntegerParser,
             Enum::class.java to EnumParser<Nothing>(),
             Class::class.java to ClassParser,
-            //List::class.java to ListParser<Nothing>(),
-            //Set::class.java to SetParser<Nothing>(),
             File::class.java to FileParser(),
             Path::class.java to PathParser(),
             URL::class.java to URLParser(),

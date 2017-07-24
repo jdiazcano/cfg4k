@@ -1,5 +1,6 @@
 package com.jdiazcano.cfg4k.binders
 
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 
 
@@ -16,5 +17,5 @@ interface Binder {
      * @param prefix The prefix of the configuration, if this is not empty, configs starting with the prefix will be used
      * @param type The interface that will be implemented and it will be returned
      */
-    fun <T: Any> bind(provider: ConfigProvider, prefix: String, type: Class<T>): T
+    fun <T : Any> bind(configProvider: ConfigProvider, prefix: String, type: Class<T>): T
 }

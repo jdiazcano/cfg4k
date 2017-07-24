@@ -1,11 +1,16 @@
 package com.jdiazcano.cfg4k.loaders
 
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.toConfig
 
 abstract class DefaultConfigLoader: ConfigLoader {
-    lateinit var root: ConfigObject
+    var root: ConfigObject = "".toConfig()
 
     override fun get(key: String): ConfigObject? {
+        if (key == "") {
+            return root
+        }
+
         val split = key.split('.')
         val last = split.last()
 
