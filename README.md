@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jdiazcano/cfg4k.svg?branch=master)](https://travis-ci.org/jdiazcano/cfg4k) [![Coverage Status](https://coveralls.io/repos/github/jdiazcano/cfg4k/badge.svg?branch=master)](https://coveralls.io/github/jdiazcano/cfg4k?branch=master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Release](https://jitpack.io/v/jdiazcano/cfg4k.svg)](https://jitpack.io/#jdiazcano/cfg4k)
+[![Build Status](https://travis-ci.org/jdiazcano/cfg4k.svg?branch=master)](https://travis-ci.org/jdiazcano/cfg4k) [![Coverage Status](https://coveralls.io/repos/github/jdiazcano/cfg4k/badge.svg?branch=master)](https://coveralls.io/github/jdiazcano/cfg4k?branch=master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [ ![Download](https://api.bintray.com/packages/jdiazcano/cfg4k/cfg4k-core/images/download.svg) ](https://bintray.com/jdiazcano/cfg4k/)
 
 # Overview 
 Cfg4k is a configuration library made for Kotlin in Kotlin!
@@ -11,26 +11,14 @@ Features
 * Performance matters, the new Bytebuddy provider will be able to compile your bindings at runtime
 
 # Quick start
-1. Add the JitPack repository: 
+1. Add the Bintray repository: 
 ```groovy
 repositories {
-    maven { url 'https://jitpack.io' }
+    jcenter()
 }
 ```
-2. Add the dependency: `com.github.jdiazcano.cfg4k:cfg4k-core:0.5.3`. 
-This is a multimodule dependency so the core will always be needed but you can add other support by adding other modules:
-    - `com.github.jdiazcano.cfg4k:cfg4k-bytebuddy:0.5.3` - Adds bytebuddy Provider instead of a normal Proxy provider, this is needed if you want more performance. Classes are compiled at runtime and then the execution is instant instead of proxying and checking with every call.
-3. Write code as in the example
 
-# Dependency explained
-The dependency is from JitPack so it has a schema:
-
-1. `com.github.jdiazcano` = github user
-2. `cfg4k` = project name
-3. `cfg4k-bytebuddy` = module name (folder inside the project)
-4. `0.5.3` = version, here you can write a tag or branch (maybe followed by `-SNAPSHOT`* to get the latest version)
-
-\* Sometimes the SNAPSHOT build takes times in JitPack when building for the first time, be patient if it takes longer than expected. It is only the first time globally!
+2. Add the dependency for the module(s) that you are going to use
 
 # Example
 
@@ -41,12 +29,11 @@ import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 fun main(args: Array<String>) {
     val loader = PropertyConfigLoader(DatabaseConfig::class.java.getResource("/global.properties")) // Create loader
     val provider = ProxyConfigProvider(loader)                                                      // Create provider
-    val databaseConfigKotlin = provider.bind<DatabaseConfig>("database")                            // bind and use
-    val databaseConfigJava   = provider.bind("database", DatabaseConfig::class.java)                // bind and use
+    val databaseConfig = provider.bind<DatabaseConfig>("database")                            // bind and use
 
-    println("Name: ${databaseConfigKotlin.name()}")
-    println("Url: ${databaseConfigKotlin.url()}")
-    println("Port: ${databaseConfigJava.port()}")
+    println("Name: ${databaseConfig.name()}")
+    println("Url: ${databaseConfig.url()}")
+    println("Port: ${databaseConfig.port()}")
 }
 
 /**
@@ -61,10 +48,13 @@ interface DatabaseConfig {
     fun name(): String
 
     // if you have an unused property you know it and you can delete it
-    fun unused(): String
+    val unused: String
 
     @Deprecated("You can even deprecate properties!")
     fun deprecated(): Boolean
+    
+    val youCanuseValuesToo: String
+    val andNullables: Int?
 }
 ```
 
@@ -122,6 +112,7 @@ These parsers are supported out of the box
 23. URL
 24. File
 25. Path
+26. Class<*>
 
 # Customizing Cfg4k
 
@@ -210,7 +201,7 @@ class TimedReloadStrategy(val time: Long, val unit: TimeUnit) : ReloadStrategy {
 ```
 
 ## Parsers
-There are two steps in order to use a new parser.
+There are two steps in order to use a new parser (this is mostly used for parsing basic types and interfaces should be used instead of parsers!).
 
 1. Create your class by implementing Parser
 2. Register your parser in the `Parsers` class `addParser(), addClassedParser(), addParseredParser()`
@@ -219,51 +210,20 @@ There are two steps in order to use a new parser.
 data class Point(val x: Int, val y: Int)
 
 object PointParser: Parser<Point> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?) = Point(value.split(',')[0], value.split(',')[1])
+    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = Point(value.split(',')[0], value.split(',')[1])
 }
 
 Parsers.addParser(Point::class.java, PointParser())
 ```
 
-A more complicated example
-
+Alternative:
 ```kotlin
-class PrinterClassedParser : Parser<Printer> {
-    override fun parse(value: String, type: Class<*>, parser: Parser<*>?): Printer {
-        val split = value.split('-')
-        return Printer(split[0], split[1].toInt())
-    }
+interface Point {
+    val x: Int
+    val y: Int
 }
 
-class Printer(name: String, age: Int) : Person(name, age) {
-    fun print() = super.toString()
-}
-
-open class Person(val name: String, val age: Int) {
-    override fun toString() = "$name, $age"
-
-    // Override and equals needed for comparing in tests
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other?.javaClass != javaClass) return false
-
-        other as Person
-
-        if (name != other.name) return false
-        if (age != other.age) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + age
-        return result
-    }
-
-}
-
-Parsers.addParser(Person::class.java, PrinterClassedParser())
+//And use it! that's everything you need!
 ```
 
 Full example inside the sample module: https://github.com/jdiazcano/cfg4k/tree/master/sample
