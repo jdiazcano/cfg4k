@@ -73,7 +73,7 @@ class BindingInvocationHandler(
                 val targetType = TargetType(type)
                 val rawType = targetType.rawTargetType()
                 val collection = createCollection(rawType)
-                toMutableCollection(configObject, type, collection, name, isNullable, kotlinClass, method, proxy)
+                toMutableCollection(configObject, type, collection, name, provider, prefix)
                 return collection
             } else if (configObject.isPrimitive()) {
                 val targetType = TargetType(type)
@@ -88,36 +88,36 @@ class BindingInvocationHandler(
 
     }
 
-    private fun createCollection(rawType: Class<*>): MutableCollection<Any?> {
-        return if (ArrayList::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
-            else if (LinkedList::class.java.isAssignableFrom(rawType)) { mutableListOf<Any?>() }
-            else if (LinkedHashSet::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
-            else if (HashSet::class.java.isAssignableFrom(rawType)) { hashSetOf<Any?>() }
-            else if (List::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
-            else if (Set::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
-            else { TODO() }
-    }
-
-    private fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCollection<Any?>, name: String, isNullable: Boolean, kotlinClass: KClass<out Any>, method: Method, proxy: Any?) {
-        configObject.asList().forEachIndexed { index, innerObject ->
-            if (innerObject.isObject()) {
-                val targetType = TargetType(type)
-                val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                list.add(provider.bind(prefix(prefix, "$index$name"), superType as Class<Any>))
-            } else if (innerObject.isPrimitive()) {
-                val targetType = TargetType(type)
-                val rawType = targetType.rawTargetType()
-                val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                val classType = superType ?: rawType
-                list.add(classType.findParser().parse(innerObject, classType, superType?.findParser()))
-            }
-        }
-    }
-
     override fun equals(other: Any?): Boolean {
         return hashCode() == other?.hashCode()
     }
 
+}
+
+fun createCollection(rawType: Class<*>): MutableCollection<Any?> {
+    return if (ArrayList::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
+    else if (LinkedList::class.java.isAssignableFrom(rawType)) { mutableListOf<Any?>() }
+    else if (LinkedHashSet::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
+    else if (HashSet::class.java.isAssignableFrom(rawType)) { hashSetOf<Any?>() }
+    else if (List::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
+    else if (Set::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
+    else { TODO() }
+}
+
+fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCollection<Any?>, name: String, provider: ConfigProvider, prefix: String) {
+    configObject.asList().forEachIndexed { index, innerObject ->
+        if (innerObject.isObject()) {
+            val targetType = TargetType(type)
+            val superType = targetType.getParameterizedClassArguments().firstOrNull()
+            list.add(provider.bind(prefix(prefix, "$index$name"), superType as Class<Any>))
+        } else if (innerObject.isPrimitive()) {
+            val targetType = TargetType(type)
+            val rawType = targetType.rawTargetType()
+            val superType = targetType.getParameterizedClassArguments().firstOrNull()
+            val classType = superType ?: rawType
+            list.add(classType.findParser().parse(innerObject, classType, superType?.findParser()))
+        }
+    }
 }
 
 fun KClass<*>.getDefaultMethod(methodName: String): Method? {

@@ -2,8 +2,10 @@ apply from: '../gradle/versions.gradle'
 
 dependencies {
     compile project(":cfg4k-core")
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$versions.jetbrains.kotlin"
+    compile project(":cfg4k-json")
+    compile project(":cfg4k-bytebuddy")
 
-    // No needed but the build needs to find a test engine!!!
-    testRuntime "org.jetbrains.spek:spek-junit-platform-engine:$versions.jetbrains.engine"
+    compile libraries.junitrunner
+    compile libraries.expekt
+    runtime libraries.jetbrains.spek.engine
 }

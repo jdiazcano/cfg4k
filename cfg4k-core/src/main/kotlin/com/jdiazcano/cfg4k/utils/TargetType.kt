@@ -21,7 +21,7 @@ import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import java.util.*
 
-internal class TargetType(private val targetType: Type) {
+class TargetType(private val targetType: Type) {
     private var rawTargetType: Class<*>? = null
     private var parameterizedClassArguments: List<Class<*>>? = null
 

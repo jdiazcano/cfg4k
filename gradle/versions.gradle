@@ -20,6 +20,7 @@ ext.libraries = [
         jetbrains: [
                 kotlin: [
                         stdlib: "org.jetbrains.kotlin:kotlin-stdlib:$versions.jetbrains.kotlin",
+                        reflect: "org.jetbrains.kotlin:kotlin-reflect:$versions.jetbrains.kotlin",
                         test: "org.jetbrains.kotlin:kotlin-test:$versions.jetbrains.kotlin"
                 ],
                 spek: [

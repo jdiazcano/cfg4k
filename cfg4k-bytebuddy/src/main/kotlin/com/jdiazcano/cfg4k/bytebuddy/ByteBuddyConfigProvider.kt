@@ -18,12 +18,13 @@ package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.binders.*
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
+import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
-import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers
 import com.jdiazcano.cfg4k.utils.SettingNotFound
+import com.jdiazcano.cfg4k.utils.TargetType
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
 import net.bytebuddy.implementation.*
@@ -41,8 +42,9 @@ open class ByteBuddyConfigProvider(
 
 @Suppress("UNCHECKED_CAST")
 class ByteBuddyBinder : Binder {
-    override fun <T : Any> bind(provider: ConfigProvider, prefix: String, type: Class<T>): T {
+    override fun <T : Any> bind(configProvider: ConfigProvider, prefix: String, type: Class<T>): T {
         var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
+        var instance: Any? = null
         type.methods.forEach { method ->
 
             val returnType = method.genericReturnType
@@ -52,35 +54,38 @@ class ByteBuddyBinder : Binder {
             val kotlinClass = method.declaringClass.kotlin
             val isNullable = kotlinClass.isMethodNullable(method, name)
 
+
             val value: (Boolean) -> T? = { nullable ->
-                var returning: T?
-                if (method.returnType.isParseable()) {
-                    if (nullable) {
-                        val value = provider.getOrNull<T?>(prefix(prefix, name), returnType)
-                        if (value != null) {
-                            returning = value
+                var returning: Any?
+                val configObject = configProvider.load(prefix(prefix, name))
+                if (configObject == null) {
+                    try {
+                        returning = kotlinClass.getDefaultMethod(method.name)?.invoke(instance, instance)
+                    } catch (e: Exception) { // There's no default
+                        if (isNullable) {
+                            returning = null
                         } else {
-                            try {
-                                returning = kotlinClass.getDefaultMethod(method.name)?.invoke(kotlinClass.objectInstance, kotlinClass.objectInstance) as T?
-                            } catch (e: Exception) {
-                                returning = null
-                            }
-                        }
-                    } else {
-                        try {
-                            returning = provider.get(prefix(prefix, name), returnType)
-                        } catch (notFound: SettingNotFound) {
-                            try {
-                                returning = kotlinClass.getDefaultMethod(method.name)?.invoke(kotlinClass.objectInstance, kotlinClass.objectInstance) as T?
-                            } catch (e: Exception) {
-                                throw notFound
-                            }
+                            throw SettingNotFound("Setting $name not found")
                         }
                     }
                 } else {
-                    returning = provider.bind(prefix(prefix, name), method.returnType) as T
+                    if (configObject.isArray()) {
+                        val targetType = TargetType(returnType)
+                        val rawType = targetType.rawTargetType()
+                        val collection = createCollection(rawType)
+                        toMutableCollection(configObject, returnType, collection, name, configProvider, prefix)
+                        returning = collection
+                    } else if (configObject.isPrimitive()) {
+                        val targetType = TargetType(returnType)
+                        val rawType = targetType.rawTargetType()
+                        val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                        val classType = superType ?: rawType
+                        returning = classType.findParser().parse(configObject, classType, superType?.findParser())
+                    } else { // it is an object
+                        returning = configProvider.bind(prefix(prefix, name), method.returnType)
+                    }
                 }
-                returning
+                returning as T?
             }
             subclass = subclass
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
@@ -89,7 +94,7 @@ class ByteBuddyBinder : Binder {
                             .filter(not(isDeclaredBy(Any::class.java)))
                             .to(object : Any() { @RuntimeType fun delegate() = value(isNullable) }))
         }
-        val instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
+        instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
         return instance
     }
 }
