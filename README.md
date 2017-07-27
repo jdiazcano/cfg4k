@@ -8,13 +8,13 @@ Features
 * Interface binding
 * Huge flexibility, custom sources
 * Easy to use
-* Performance matters, the new Bytebuddy provider will be able to compile your bindings at runtime
+* Bytebuddy provider will be able to compile your bindings at runtime
 
 # Quick start
-1. Add the Bintray repository: 
+1. Add the Bintray repository (Requested jcenter sync): 
 ```groovy
 repositories {
-    jcenter()
+    maven { url "https://dl.bintray.com/jdiazcano/cfg4k" }
 }
 ```
 
