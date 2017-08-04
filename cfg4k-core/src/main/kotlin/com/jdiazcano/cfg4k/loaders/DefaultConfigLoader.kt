@@ -3,9 +3,11 @@ package com.jdiazcano.cfg4k.loaders
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
 
-abstract class DefaultConfigLoader: ConfigLoader {
-    var root: ConfigObject = "".toConfig()
+fun DefaultConfigLoader(map: Map<String, Any>) = DefaultConfigLoader(map.toConfig())
 
+fun DefaultConfigLoader(vararg pairs: Pair<String, Any>) = DefaultConfigLoader(mapOf(*pairs).toConfig())
+
+open class DefaultConfigLoader(var root: ConfigObject = "".toConfig()): ConfigLoader {
     override fun get(key: String): ConfigObject? {
         if (key == "") {
             return root
@@ -31,6 +33,8 @@ abstract class DefaultConfigLoader: ConfigLoader {
             return root?.child(last)
         }
     }
+
+    override fun reload() {}
 
 
 }
