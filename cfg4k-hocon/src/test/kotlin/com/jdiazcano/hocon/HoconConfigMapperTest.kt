@@ -2,7 +2,7 @@ package com.jdiazcano.hocon
 
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
-import com.jdiazcano.cfg4k.hocon.asConfigObject
+import com.jdiazcano.cfg4k.hocon.toConfig
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigParseOptions
 import com.winterbe.expekt.should
@@ -12,7 +12,7 @@ import org.jetbrains.spek.api.dsl.describe
 class HoconConfigMapperTest : Spek({
     describe("a hocon loader that can map") {
         val conf = ConfigFactory.parseResourcesAnySyntax("hocon.conf", ConfigParseOptions.defaults())
-        val configObject = conf.asConfigObject()
+        val configObject = conf.toConfig()
 
         configObject.isObject().should.be.`true`
         val ktor = configObject.asObject()["ktor"]!!

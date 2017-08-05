@@ -4,7 +4,7 @@ import com.jdiazcano.cfg4k.core.ConfigObject
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigList
 
-fun Config.asConfigObject(): ConfigObject {
+fun Config.toConfig(): ConfigObject {
     return parseObject(root())
 }
 

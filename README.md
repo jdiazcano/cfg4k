@@ -14,11 +14,14 @@ Features
 1. Add the Bintray repository (Requested jcenter sync): 
 ```groovy
 repositories {
-    maven { url "https://dl.bintray.com/jdiazcano/cfg4k" }
+    jcenter()
 }
 ```
 
 2. Add the dependency for the module(s) that you are going to use
+```
+compile 'com.jdiazcano.cfg4k:cfg4k-core:0.7.1'
+```
 
 # Example
 
@@ -62,23 +65,24 @@ interface DatabaseConfig {
 
 ## Providers
 1. DefaultConfigProvider: Base class for all the other providers. It has the basic functionality for a Provider. (You can obviously ignore it if implementing a new provider)
-4. CachedConfigProvider: This provider will cache the calls into a map and use the cached one once the same call is done again. When the method `reload` is called this cache will be cleared.
-5. OverrideConfigProvider: With this provider you can input a list of Loaders in order of precedence and it will return the first one that is not null/empty. So you can override properties for example: `EnvironmentConfigLoader -> JsonConfigLoader` it would pick first from Environment and then from Json.
+1. CachedConfigProvider: This provider will cache the calls into a map and use the cached one once the same call is done again. When the method `reload` is called this cache will be cleared.
+1. OverrideConfigProvider: With this provider you can input a list of Loaders in order of precedence and it will return the first one that is not null/empty. So you can override properties for example: `EnvironmentConfigLoader -> JsonConfigLoader` it would pick first from Environment and then from Json.
 
 ## Binders
 1. ProxyBinder: Uses Java `InvocationHandler` in order to implement the interface and intercept the calls to return the correct value.
-2. ByteBuddyBinder: Uses `ByteBuddy` to create a class that implements the interface and returns the value.
+1. ByteBuddyBinder: Uses `ByteBuddy` to create a class that implements the interface and returns the value.
 
 ## Loaders
+1. DefaultConfigLoader: This loader can take static map or vararg of pairs to create a loader from it.
 1. JsonConfigLoader: Load the properties from a Json file, an URL must be provided.
-2. PropertyConfigLoader: Load the properties from a Java properties file.
-3. EnvironmentConfigLoader: Load the properties from the Environment Variables. This will transform the environment variables so they can be used inside the project and stay consistent with the rest of the properties. For example having the variable `GLOBAL_URL` will result in the property `global.url`
+1. PropertyConfigLoader: Load the properties from a Java properties file.
+1. EnvironmentConfigLoader: Load the properties from the Environment Variables. This will transform the environment variables so they can be used inside the project and stay consistent with the rest of the properties. For example having the variable `GLOBAL_URL` will result in the property `global.url`
     1. `_` will become `.`
-    2. `-` will become `.`
-    3. The property name will become lowercase
-4. HoconConfigLoader: Load the properties from a Hocon file. This has many advantages over Json or Property (it is a superset of both) so I recommend this loader but not before taking a look at the project: https://github.com/typesafehub/config#using-hocon-the-json-superset
-5. YamlConfigLoader: Load the properties from a Yaml file.
-6. GitConfigLoader: Load the properties from a Git repository, possible giving the branch name or folder to denote different environments.
+    1. `-` will become `.`
+    1. The property name will become lowercase
+1. HoconConfigLoader: Load the properties from a Hocon file. This has many advantages over Json or Property (it is a superset of both) so I recommend this loader but not before taking a look at the project: https://github.com/typesafehub/config#using-hocon-the-json-superset
+1. YamlConfigLoader: Load the properties from a Yaml file.
+1. GitConfigLoader: Load the properties from a Git repository, possible giving the branch name or folder to denote different environments.
 
 ## Reload strategies
 1. TimedReloadStrategy: This will reload the properties on a time basis.
@@ -88,31 +92,31 @@ interface DatabaseConfig {
 These parsers are supported out of the box
 
 1. Int
-2. Long
-3. Double
-4. Short
-5. Float
-6. Double
-7. Byte
-8. String
-9. Boolean
-10. List<Any>
-11. Set<Any>
-12. Enum
-13. BigInteger
-14. BigDecimal
-15. LocalDateTime
-16. LocalDate
-17. ZonedDateTime
-18. OffsetDateTime
-19. OffsetTime
-20. Calendar
-21. Date
-22. URI
-23. URL
-24. File
-25. Path
-26. Class<*>
+1. Long
+1. Double
+1. Short
+1. Float
+1. Double
+1. Byte
+1. String
+1. Boolean
+1. List<Any>
+1. Set<Any>
+1. Enum
+1. BigInteger
+1. BigDecimal
+1. LocalDateTime
+1. LocalDate
+1. ZonedDateTime
+1. OffsetDateTime
+1. OffsetTime
+1. Calendar
+1. Date
+1. URI
+1. URL
+1. File
+1. Path
+1. Class<*>
 
 # Customizing Cfg4k
 
@@ -165,15 +169,15 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
 More examples in the package `providers`
 
 ## Loaders
-You can create your own config loader by implementing the `ConfigLoader` interface
+You can create your own config loader by implementing the `ConfigLoader` interface (or extending `DefaultConfigLoader` which provides the base code for "get")
 ```kotlin
 open class SystemPropertyConfigLoader : ConfigLoader {
     override fun reload() {
         // Nothing to do, the System.properties do the reload for us!
     }
 
-    override fun get(key: String): String {
-        return System.get(key, "")
+    override fun get(key: String): ConfigObject {
+        return System.get(key, "").toConfig()
     }
 
 }
@@ -204,7 +208,7 @@ class TimedReloadStrategy(val time: Long, val unit: TimeUnit) : ReloadStrategy {
 There are two steps in order to use a new parser (this is mostly used for parsing basic types and interfaces should be used instead of parsers!).
 
 1. Create your class by implementing Parser
-2. Register your parser in the `Parsers` class `addParser(), addClassedParser(), addParseredParser()`
+1. Register your parser in the `Parsers` class `addParser(), addClassedParser(), addParseredParser()`
 
 ```kotlin
 data class Point(val x: Int, val y: Int)

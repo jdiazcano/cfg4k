@@ -32,11 +32,11 @@ fun HoconConfigLoader(config: Config, loader: () -> Config = { config }): HoconC
 open class HoconConfigLoader(protected val loader: () -> Config) : DefaultConfigLoader() {
 
     init {
-        root = loader().asConfigObject()
+        root = loader().toConfig()
     }
 
     override fun reload() {
-        root = loader().asConfigObject()
+        root = loader().toConfig()
     }
 
 }
