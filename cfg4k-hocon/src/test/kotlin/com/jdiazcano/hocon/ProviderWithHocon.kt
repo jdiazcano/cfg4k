@@ -7,7 +7,7 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 
-class ProviderWithHocon: Spek({
+class ProviderWithHocon : Spek({
     describe("a hocon loader and provider test") {
         val loader = HoconConfigLoader("hocon.conf")
         val provider = Providers.proxy(loader)

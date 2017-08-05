@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import java.io.ByteArrayInputStream
 
-class JsonToConfigObjectMapperTest: Spek({
+class JsonToConfigObjectMapperTest : Spek({
     val parser = Parser()
     val json =
             """{

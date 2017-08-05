@@ -24,4 +24,4 @@ import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 class ProxyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
-): DefaultConfigProvider(configLoader, reloadStrategy, ProxyBinder())
+) : DefaultConfigProvider(configLoader, reloadStrategy, ProxyBinder())

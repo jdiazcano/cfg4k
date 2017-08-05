@@ -23,7 +23,7 @@ class LocalDateTimeParser private constructor(
             format: String,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.format = format
     }
 
@@ -31,7 +31,7 @@ class LocalDateTimeParser private constructor(
             formatter: DateTimeFormatter,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.formatter = formatter
     }
 
@@ -55,7 +55,7 @@ class LocalDateParser private constructor(
             format: String,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-            ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.format = format
     }
 
@@ -63,7 +63,7 @@ class LocalDateParser private constructor(
             formatter: DateTimeFormatter,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.formatter = formatter
     }
 
@@ -87,7 +87,7 @@ class ZonedDateTimeParser private constructor(
             format: String,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.format = format
     }
 
@@ -95,7 +95,7 @@ class ZonedDateTimeParser private constructor(
             formatter: DateTimeFormatter,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.formatter = formatter
     }
 
@@ -119,7 +119,7 @@ class OffsetDateTimeParser private constructor(
             format: String,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.format = format
     }
 
@@ -127,7 +127,7 @@ class OffsetDateTimeParser private constructor(
             formatter: DateTimeFormatter,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.formatter = formatter
     }
 
@@ -151,7 +151,7 @@ class OffsetTimeParser private constructor(
             format: String,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.format = format
     }
 
@@ -159,7 +159,7 @@ class OffsetTimeParser private constructor(
             formatter: DateTimeFormatter,
             locale: Locale = Locale.getDefault(),
             zone: ZoneId = ZoneId.systemDefault()
-    ): this(locale, zone) {
+    ) : this(locale, zone) {
         this.formatter = formatter
     }
 

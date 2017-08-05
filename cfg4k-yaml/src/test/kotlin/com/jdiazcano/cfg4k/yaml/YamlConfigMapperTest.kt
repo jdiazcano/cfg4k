@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.yaml.snakeyaml.Yaml
 
-class YamlConfigMapperTest: Spek({
+class YamlConfigMapperTest : Spek({
     describe("should work too") {
         it("should work") {
             val config = javaClass.classLoader.getResource("test.yml").openStream().use {

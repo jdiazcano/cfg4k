@@ -21,7 +21,7 @@ import java.net.URL
 
 open class JsonConfigLoader(
         private val url: URL
-): DefaultConfigLoader() {
+) : DefaultConfigLoader() {
 
     protected val parser = Parser()
 

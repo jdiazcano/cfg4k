@@ -26,7 +26,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class CachedConfigProviderTest: Spek({
+class CachedConfigProviderTest : Spek({
 
     val loaders = listOf(
             PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))

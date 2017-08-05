@@ -25,7 +25,7 @@ class SettingNotFound(message: String) : RuntimeException(message)
 /**
  * Thrown when the settings have not been initialised/loaded into memory and you try to access them.
  */
-class SettingsNotInitialisedException(message: String): Exception(message)
+class SettingsNotInitialisedException(message: String) : Exception(message)
 
 /**
  * This exception will be thrown when a parser is not defined for a specific class. If you see this error you need to

@@ -11,7 +11,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class ByteBuddyConfigProviderReloadTest: Spek({
+class ByteBuddyConfigProviderReloadTest : Spek({
     val text = """a=%reload1
 c=%reload2
 nested.a=reloaded nestedb
@@ -44,7 +44,6 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
     }
     bindedNormal.c().should.be.equal("d")
     bindedProperty.c.should.be.equal("d")
-
 
     var lastReload = 1
     val lastIteration = 3

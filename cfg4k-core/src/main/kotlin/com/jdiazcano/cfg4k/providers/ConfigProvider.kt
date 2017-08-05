@@ -37,7 +37,7 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Class of the property, it will be parsed to it.
      */
-    fun <T: Any> get(name: String, type: Class<T>, default: T? = null): T
+    fun <T : Any> get(name: String, type: Class<T>, default: T? = null): T
 
     /**
      * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
@@ -46,7 +46,7 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Type of the property. (You can get the type with typeOf<Class>() method)
      */
-    fun <T: Any> get(name: String, type: Type, default: T? = null): T
+    fun <T : Any> get(name: String, type: Type, default: T? = null): T
 
     /**
      * Gets a property from the loader and parses it to the correct type. Normally only primitive and custom parsers
@@ -55,7 +55,7 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Class of the property, it will be parsed to it.
      */
-    fun <T: Any?> getOrNull(name: String, type: Class<T>, default: T? = null): T?
+    fun <T : Any?> getOrNull(name: String, type: Class<T>, default: T? = null): T?
 
     /**
      * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
@@ -64,7 +64,7 @@ interface ConfigProvider {
      * @param name Name of the property
      * @param type Type of the property. (You can get the type with typeOf<Class>() method)
      */
-    fun <T: Any?> getOrNull(name: String, type: Type, default: T? = null): T?
+    fun <T : Any?> getOrNull(name: String, type: Type, default: T? = null): T?
 
     fun load(name: String): ConfigObject?
 
@@ -99,7 +99,7 @@ interface ConfigProvider {
      * @param prefix The prefix of the configuration, if this is not empty, configs starting with the prefix will be used
      * @param type The interface that will be implemented and it will be returned
      */
-    fun <T: Any> bind(prefix: String, type: Class<T>): T {
+    fun <T : Any> bind(prefix: String, type: Class<T>): T {
         return binder.bind(this, prefix, type)
     }
 }

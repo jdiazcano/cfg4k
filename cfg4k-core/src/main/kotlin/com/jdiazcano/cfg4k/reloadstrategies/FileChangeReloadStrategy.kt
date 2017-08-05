@@ -34,9 +34,9 @@ class FileChangeReloadStrategy(val file: Path) : ReloadStrategy {
     private var watching = false
     private lateinit var thread: Thread
 
-    constructor(file: String): this(Paths.get(file))
+    constructor(file: String) : this(Paths.get(file))
 
-    constructor(file: File): this(file.toPath())
+    constructor(file: File) : this(file.toPath())
 
     init {
         if (file.toFile().isDirectory) {

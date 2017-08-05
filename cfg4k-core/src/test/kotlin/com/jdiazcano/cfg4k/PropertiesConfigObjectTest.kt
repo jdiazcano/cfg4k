@@ -9,7 +9,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import kotlin.test.assertFailsWith
 
-class PropertiesConfigObjectTest: Spek({
+class PropertiesConfigObjectTest : Spek({
     describe("a properties loader") {
         it("should load correctly") {
             val configObject = javaClass.getResource("/nestedtest.properties").asProperties().toConfig()

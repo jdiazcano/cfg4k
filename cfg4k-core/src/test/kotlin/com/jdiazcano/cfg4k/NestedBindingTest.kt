@@ -24,7 +24,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class NestedBindingTest: Spek({
+class NestedBindingTest : Spek({
     describe("nested properties") {
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("nestedtest.properties"))
         val provider = ProxyConfigProvider(loader)

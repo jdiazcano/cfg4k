@@ -8,7 +8,7 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 
-class NullableTypesProviderTest: Spek({
+class NullableTypesProviderTest : Spek({
     describe("a nullable property test") {
         val provider = Providers.proxy(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties")))
         val binded = provider.bind<NullTest>("cool")

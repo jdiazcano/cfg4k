@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class ConfigObjectTest: Spek({
+class ConfigObjectTest : Spek({
     describe("equality of config objects") {
         it("should be equals as int") {
             val one = 1.toConfig()

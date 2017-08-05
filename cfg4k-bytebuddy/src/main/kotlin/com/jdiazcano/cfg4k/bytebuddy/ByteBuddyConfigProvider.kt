@@ -16,7 +16,13 @@
 
 package com.jdiazcano.cfg4k.bytebuddy
 
-import com.jdiazcano.cfg4k.binders.*
+import com.jdiazcano.cfg4k.binders.Binder
+import com.jdiazcano.cfg4k.binders.concatPrefix
+import com.jdiazcano.cfg4k.binders.createCollection
+import com.jdiazcano.cfg4k.binders.getDefaultMethod
+import com.jdiazcano.cfg4k.binders.getPropertyName
+import com.jdiazcano.cfg4k.binders.isMethodNullable
+import com.jdiazcano.cfg4k.binders.toMutableCollection
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
@@ -33,12 +39,11 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
 
-
 @Suppress("UNCHECKED_CAST")
 open class ByteBuddyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
-): DefaultConfigProvider(configLoader, reloadStrategy, ByteBuddyBinder())
+) : DefaultConfigProvider(configLoader, reloadStrategy, ByteBuddyBinder())
 
 @Suppress("UNCHECKED_CAST")
 class ByteBuddyBinder : Binder {
@@ -54,15 +59,14 @@ class ByteBuddyBinder : Binder {
             val kotlinClass = method.declaringClass.kotlin
             val isNullable = kotlinClass.isMethodNullable(method, name)
 
-
             val value: (Boolean) -> T? = { nullable ->
                 var returning: Any?
-                val configObject = configProvider.load(prefix(prefix, name))
+                val configObject = configProvider.load(concatPrefix(prefix, name))
                 if (configObject == null) {
                     try {
                         returning = kotlinClass.getDefaultMethod(method.name)?.invoke(instance, instance)
                     } catch (e: Exception) { // There's no default
-                        if (isNullable) {
+                        if (nullable) {
                             returning = null
                         } else {
                             throw SettingNotFound("Setting $name not found")
@@ -82,7 +86,7 @@ class ByteBuddyBinder : Binder {
                         val classType = superType ?: rawType
                         returning = classType.findParser().parse(configObject, classType, superType?.findParser())
                     } else { // it is an object
-                        returning = configProvider.bind(prefix(prefix, name), method.returnType)
+                        returning = configProvider.bind(concatPrefix(prefix, name), method.returnType)
                     }
                 }
                 returning as T?
@@ -92,7 +96,9 @@ class ByteBuddyBinder : Binder {
                     .intercept(MethodDelegation
                             .withEmptyConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(object : Any() { @RuntimeType fun delegate() = value(isNullable) }))
+                            .to(object : Any() {
+                                @RuntimeType fun delegate() = value(isNullable)
+                            }))
         }
         instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
         return instance

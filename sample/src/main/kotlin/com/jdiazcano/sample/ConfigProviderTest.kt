@@ -26,7 +26,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-class ConfigProviderTest: Spek({
+class ConfigProviderTest : Spek({
 
     val providers = listOf(
             Providers.bytebuddy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),

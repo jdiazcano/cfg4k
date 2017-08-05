@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.test.assertFailsWith
 
-class ConfigProviderTest: Spek({
+class ConfigProviderTest : Spek({
 
     val providers = listOf(
             proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),
@@ -245,7 +245,6 @@ class ConfigProviderTest: Spek({
         }
     }
 })
-
 
 private fun createDoge(index: Int): Doge {
     return object : Doge {

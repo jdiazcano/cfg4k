@@ -24,7 +24,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class EnumBindingTest: Spek({
+class EnumBindingTest : Spek({
 
     describe("a property config loader") {
         val loader = PropertyConfigLoader(javaClass.classLoader.getResource("enumtest.properties"))

@@ -9,7 +9,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
-class GitConfigLoaderTest: Spek({
+class GitConfigLoaderTest : Spek({
     describe("a git config loader 1") {
 
         it("should load the integer property") {

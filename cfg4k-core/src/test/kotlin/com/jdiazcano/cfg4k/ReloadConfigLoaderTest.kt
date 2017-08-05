@@ -49,7 +49,6 @@ nested.a=nestedb""")
             loader.get("nested.a").should.be.equal("nestedb".toConfig())
         }
 
-
         it("now we should have a reloaded values") {
             file.delete()
             file.createNewFile()
@@ -99,7 +98,6 @@ nested.a=nestedb
             loader.get("nested.a").should.be.equal("nestedb".toConfig())
         }
 
-
         it("now we should have a reloaded values") {
             file.delete()
             file.createNewFile()
@@ -137,7 +135,6 @@ c=d""".trim())
             loader.get("a").should.be.equal("b".toConfig())
             loader.get("c").should.be.equal("d".toConfig())
         }
-
 
         it("now we should have a reloaded values") {
             file.delete()
@@ -180,6 +177,5 @@ c=reloadedd
 
         }
     }
-
 
 })

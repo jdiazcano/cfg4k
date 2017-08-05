@@ -9,7 +9,7 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 
-class HoconConfigMapperTest: Spek({
+class HoconConfigMapperTest : Spek({
     describe("a hocon loader that can map") {
         val conf = ConfigFactory.parseResourcesAnySyntax("hocon.conf", ConfigParseOptions.defaults())
         val configObject = conf.asConfigObject()

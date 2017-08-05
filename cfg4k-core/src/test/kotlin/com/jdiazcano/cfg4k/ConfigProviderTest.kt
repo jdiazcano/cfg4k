@@ -39,7 +39,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.test.assertFailsWith
 
-class ConfigProviderTest: Spek({
+class ConfigProviderTest : Spek({
 
     val providers = listOf(
             proxy(PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))),

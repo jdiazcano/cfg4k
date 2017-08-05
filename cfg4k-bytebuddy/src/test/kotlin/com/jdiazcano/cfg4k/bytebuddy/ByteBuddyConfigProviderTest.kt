@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class ByteBuddyConfigProviderTest: Spek({
+class ByteBuddyConfigProviderTest : Spek({
     describe("a bytebuddyconfigprovider should ") {
         val provider = ByteBuddyConfigProvider(
                 PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))

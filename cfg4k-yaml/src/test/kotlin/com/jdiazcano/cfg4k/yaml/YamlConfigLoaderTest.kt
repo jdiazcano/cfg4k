@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class YamlConfigLoaderTest: Spek({
+class YamlConfigLoaderTest : Spek({
 
     val loaders = listOf(
             YamlConfigLoader(javaClass.classLoader.getResource("test.yml"))

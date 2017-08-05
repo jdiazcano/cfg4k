@@ -18,16 +18,16 @@ package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.Binder
 import com.jdiazcano.cfg4k.binders.ProxyBinder
+import com.jdiazcano.cfg4k.binders.createCollection
+import com.jdiazcano.cfg4k.binders.toMutableCollection
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
-import com.jdiazcano.cfg4k.parsers.ListParser
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
-import com.jdiazcano.cfg4k.utils.Typable
 import java.lang.reflect.Type
 
 @Suppress("UNCHECKED_CAST")
@@ -35,7 +35,7 @@ open class DefaultConfigProvider(
         private val configLoader: ConfigLoader,
         private val reloadStrategy: ReloadStrategy? = null,
         override val binder: Binder = ProxyBinder()
-): ConfigProvider {
+) : ConfigProvider {
 
     private val listeners: MutableList<() -> Unit> = mutableListOf()
 
@@ -43,7 +43,7 @@ open class DefaultConfigProvider(
         reloadStrategy?.register(this)
     }
 
-    override fun <T: Any> get(name: String, type: Class<T>, default: T?): T {
+    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
         // There is no way that this has a generic parsers because the class actually removes that possibility
         if (type.isParseable()) {
             val value = configLoader.get(name)
@@ -61,7 +61,7 @@ open class DefaultConfigProvider(
         }
     }
 
-    override fun <T: Any> get(name: String, type: Type, default: T?): T {
+    override fun <T : Any> get(name: String, type: Type, default: T?): T {
         val targetType = TargetType(type)
         val rawType = targetType.rawTargetType()
 
@@ -71,11 +71,12 @@ open class DefaultConfigProvider(
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
                 return rawType.findParser().parse(value, classType, superType?.findParser()) as T
-            } else if (Collection::class.java.isAssignableFrom(rawType)) {
+            } else if (value.isArray()) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
-                //TODO wtf is this
-                return ListParser<T>().parse(value, classType, superType?.findParser()) as T
+                val collection = createCollection(rawType)
+                toMutableCollection(value, classType, collection, name, this, name)
+                return collection as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {

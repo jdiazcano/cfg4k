@@ -10,7 +10,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-class JsonConfigLoaderTest: Spek({
+class JsonConfigLoaderTest : Spek({
     val loader = JsonConfigLoader(javaClass.classLoader.getResource("test.json"))
     val provider = ProxyConfigProvider(loader)
     describe("a json config loader") {

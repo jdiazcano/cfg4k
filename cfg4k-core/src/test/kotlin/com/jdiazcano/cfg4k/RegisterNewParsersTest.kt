@@ -29,7 +29,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import kotlin.test.assertFailsWith
 
-class RegisterNewParsersTest: Spek({
+class RegisterNewParsersTest : Spek({
 
     describe("a property config loader") {
         val loaders = listOf(

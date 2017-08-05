@@ -5,7 +5,7 @@ import com.jdiazcano.cfg4k.loaders.DefaultConfigLoader
 import org.yaml.snakeyaml.Yaml
 import java.net.URL
 
-class YamlConfigLoader(private val url: URL): DefaultConfigLoader() {
+class YamlConfigLoader(private val url: URL) : DefaultConfigLoader() {
 
     init {
         loadProperties()

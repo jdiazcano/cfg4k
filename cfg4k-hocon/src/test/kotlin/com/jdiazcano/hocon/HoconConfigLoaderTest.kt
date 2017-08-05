@@ -11,13 +11,13 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
-class HoconConfigLoaderTest: Spek({
+class HoconConfigLoaderTest : Spek({
 
     val loaders = listOf(
             HoconConfigLoader(File(javaClass.classLoader.getResource("test.properties").toURI())),
             HoconConfigLoader("test.properties"),
             HoconConfigLoader(javaClass.classLoader.getResource("test.properties")),
-            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), { ConfigFactory.parseResources("test.properties")})
+            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), { ConfigFactory.parseResources("test.properties") })
     )
 
     loaders.forEachIndexed { i, loader ->

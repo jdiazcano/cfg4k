@@ -40,7 +40,7 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
         }
     }
 
-    override fun <T: Any> get(name: String, type: Type, default: T?): T {
+    override fun <T : Any> get(name: String, type: Type, default: T?): T {
         if (cache.containsKey(name)) {
             return cache[name] as T
         } else {
@@ -50,7 +50,7 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
         }
     }
 
-    override fun <T: Any> bind(prefix: String, type: Class<T>): T {
+    override fun <T : Any> bind(prefix: String, type: Class<T>): T {
         // This is using %pre. in order to not collide with general properties
         val cachePrefix = "%pre.$prefix"
         if (cache.containsKey(cachePrefix)) {

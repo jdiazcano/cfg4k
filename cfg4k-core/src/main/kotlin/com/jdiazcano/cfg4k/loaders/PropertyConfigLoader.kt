@@ -23,7 +23,7 @@ import java.util.*
 
 open class PropertyConfigLoader(
         private val url: URL
-): DefaultConfigLoader() {
+) : DefaultConfigLoader() {
 
     init {
         loadProperties()

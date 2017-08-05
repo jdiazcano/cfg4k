@@ -2,7 +2,6 @@ package com.jdiazcano.cfg4k.binders
 
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 
-
 /**
  * Interface that defines the method for binding an interface for a configuration.
  */

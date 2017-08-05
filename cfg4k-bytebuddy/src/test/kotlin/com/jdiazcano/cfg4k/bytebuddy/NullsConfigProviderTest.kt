@@ -10,7 +10,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import kotlin.test.assertFailsWith
 
-class NullsConfigProviderTest: Spek({
+class NullsConfigProviderTest : Spek({
 
     val loader = PropertyConfigLoader(javaClass.classLoader.getResource("nulltest.properties"))
     val providers = listOf(

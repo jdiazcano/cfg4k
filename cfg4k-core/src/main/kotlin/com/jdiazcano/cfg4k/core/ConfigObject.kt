@@ -12,7 +12,7 @@ class ConfigObject(value: Any) {
 
     init {
         this.value = when (value) {
-            is List<*>   -> value
+            is List<*> -> value
             is Map<*, *> -> value
             else -> value.toString()
         }
@@ -56,6 +56,7 @@ class ConfigObject(value: Any) {
 
 // Add converters for primitive types
 fun String.toConfig() = ConfigObject(this)
+
 fun Int.toConfig() = ConfigObject(this.toString())
 fun Long.toConfig() = ConfigObject(this.toString())
 fun Double.toConfig() = ConfigObject(this.toString())

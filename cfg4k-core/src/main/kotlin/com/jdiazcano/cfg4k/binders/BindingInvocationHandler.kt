@@ -19,7 +19,6 @@ package com.jdiazcano.cfg4k.binders
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
-import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
 import java.lang.reflect.InvocationHandler
@@ -41,7 +40,7 @@ import kotlin.reflect.jvm.kotlinFunction
 class BindingInvocationHandler(
         private val provider: ConfigProvider,
         private val prefix: String
-): InvocationHandler {
+) : InvocationHandler {
 
     private val objectMethods: List<String> = Object::class.java.declaredMethods.map { it.name }
 
@@ -53,11 +52,11 @@ class BindingInvocationHandler(
 
         // If method is toString()/equals() etc, we just return it
         if (objectMethods.contains(method.name)) {
-            return method.invoke(this, *(args?: arrayOf()))
+            return method.invoke(this, *(args ?: arrayOf()))
         }
 
         val type = method.genericReturnType
-        val configObject = provider.load(prefix(prefix, name))
+        val configObject = provider.load(concatPrefix(prefix, name))
         if (configObject == null) {
             try {
                 return kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
@@ -82,7 +81,7 @@ class BindingInvocationHandler(
                 val classType = superType ?: rawType
                 return classType.findParser().parse(configObject, classType, superType?.findParser())
             } else { // it is an object
-                return provider.bind(prefix(prefix, name), method.returnType)
+                return provider.bind(concatPrefix(prefix, name), method.returnType)
             }
         }
 
@@ -95,13 +94,21 @@ class BindingInvocationHandler(
 }
 
 fun createCollection(rawType: Class<*>): MutableCollection<Any?> {
-    return if (ArrayList::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
-    else if (LinkedList::class.java.isAssignableFrom(rawType)) { mutableListOf<Any?>() }
-    else if (LinkedHashSet::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
-    else if (HashSet::class.java.isAssignableFrom(rawType)) { hashSetOf<Any?>() }
-    else if (List::class.java.isAssignableFrom(rawType)) { arrayListOf<Any?>() }
-    else if (Set::class.java.isAssignableFrom(rawType)) { mutableSetOf<Any?>() }
-    else { TODO() }
+    return if (ArrayList::class.java.isAssignableFrom(rawType)) {
+        arrayListOf<Any?>()
+    } else if (LinkedList::class.java.isAssignableFrom(rawType)) {
+        mutableListOf<Any?>()
+    } else if (LinkedHashSet::class.java.isAssignableFrom(rawType)) {
+        mutableSetOf<Any?>()
+    } else if (HashSet::class.java.isAssignableFrom(rawType)) {
+        hashSetOf<Any?>()
+    } else if (List::class.java.isAssignableFrom(rawType)) {
+        arrayListOf<Any?>()
+    } else if (Set::class.java.isAssignableFrom(rawType)) {
+        mutableSetOf<Any?>()
+    } else {
+        TODO()
+    }
 }
 
 fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCollection<Any?>, name: String, provider: ConfigProvider, prefix: String) {
@@ -109,7 +116,7 @@ fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCol
         if (innerObject.isObject()) {
             val targetType = TargetType(type)
             val superType = targetType.getParameterizedClassArguments().firstOrNull()
-            list.add(provider.bind(prefix(prefix, "$index$name"), superType as Class<Any>))
+            list.add(provider.bind(concatPrefix(prefix, "$name[$index]"), superType as Class<Any>))
         } else if (innerObject.isPrimitive()) {
             val targetType = TargetType(type)
             val rawType = targetType.rawTargetType()
@@ -133,7 +140,7 @@ fun KClass<*>.isMethodNullable(method: Method, propertyName: String = ""): Boole
         properties.first().returnType.isMarkedNullable
     } else {
         // this is a method
-        method.kotlinFunction?.returnType?.isMarkedNullable?:false
+        method.kotlinFunction?.returnType?.isMarkedNullable ?: false
     }
 }
 
@@ -150,7 +157,7 @@ fun getPropertyName(methodName: String): String {
     }
 }
 
-fun prefix(before: String, after: String): String {
+fun concatPrefix(before: String, after: String): String {
     return buildString {
         append(before)
         if (before.isNotEmpty()) {

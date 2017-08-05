@@ -5,7 +5,7 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 
-class PropertyNameTest: Spek({
+class PropertyNameTest : Spek({
     it("should strip the get is or has from the methods that needs") {
         getPropertyName("getTest").should.be.equal("test")
         getPropertyName("isomorphic").should.be.equal("isomorphic")
