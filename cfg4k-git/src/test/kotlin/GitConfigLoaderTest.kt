@@ -3,7 +3,7 @@ import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.git.CustomConfigSessionFactory
 import com.jdiazcano.cfg4k.loaders.git.GitConfigLoader
 import com.winterbe.expekt.should
-import org.eclipse.jgit.transport.*
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

@@ -17,7 +17,12 @@
 package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
-import com.jdiazcano.cfg4k.providers.*
+import com.jdiazcano.cfg4k.providers.CachedConfigProvider
+import com.jdiazcano.cfg4k.providers.ConfigProvider
+import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
+import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
+import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
+import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

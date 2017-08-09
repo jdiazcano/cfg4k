@@ -18,8 +18,13 @@ package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
-import com.jdiazcano.cfg4k.providers.*
+import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
+import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers.proxy
+import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.providers.cache
+import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.providers.getOrNull
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

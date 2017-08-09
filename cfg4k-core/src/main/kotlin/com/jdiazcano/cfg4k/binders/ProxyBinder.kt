@@ -1,6 +1,5 @@
 package com.jdiazcano.cfg4k.binders
 
-import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import java.lang.reflect.Proxy
 

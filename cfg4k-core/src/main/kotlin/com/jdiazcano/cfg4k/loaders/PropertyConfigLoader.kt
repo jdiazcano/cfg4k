@@ -19,7 +19,7 @@ package com.jdiazcano.cfg4k.loaders
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
 import java.net.URL
-import java.util.*
+import java.util.Properties
 
 open class PropertyConfigLoader(
         private val url: URL

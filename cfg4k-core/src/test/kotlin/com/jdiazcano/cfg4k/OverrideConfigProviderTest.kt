@@ -19,7 +19,6 @@ package com.jdiazcano.cfg4k
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers.overriden
-import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

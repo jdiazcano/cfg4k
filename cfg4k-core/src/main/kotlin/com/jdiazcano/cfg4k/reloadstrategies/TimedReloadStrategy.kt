@@ -17,7 +17,7 @@
 package com.jdiazcano.cfg4k.reloadstrategies
 
 import com.jdiazcano.cfg4k.providers.ConfigProvider
-import java.util.*
+import java.util.Timer
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timer
 

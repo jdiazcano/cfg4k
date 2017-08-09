@@ -1,8 +1,8 @@
 package com.jdiazcano.cfg4k.bytebuddy
 
+import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
-import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

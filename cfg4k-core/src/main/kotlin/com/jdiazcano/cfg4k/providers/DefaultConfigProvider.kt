@@ -22,8 +22,8 @@ import com.jdiazcano.cfg4k.binders.createCollection
 import com.jdiazcano.cfg4k.binders.toMutableCollection
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
-import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
+import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
 import com.jdiazcano.cfg4k.utils.SettingNotFound

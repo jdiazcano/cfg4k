@@ -19,7 +19,7 @@ package com.jdiazcano.cfg4k.utils
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import java.util.*
+import java.util.ArrayList
 
 class TargetType(private val targetType: Type) {
     private var rawTargetType: Class<*>? = null

@@ -1,7 +1,6 @@
 package com.jdiazcano.cfg4k.core
 
 import com.jdiazcano.cfg4k.loaders.findNumbers
-import com.sun.org.apache.xpath.internal.operations.Bool
 
 class ConfigObject(value: Any) {
     var value: Any

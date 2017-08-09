@@ -26,18 +26,18 @@ import com.jdiazcano.cfg4k.binders.toMutableCollection
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
-import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers
+import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
-import net.bytebuddy.implementation.*
-import java.lang.reflect.Modifier
+import net.bytebuddy.implementation.MethodDelegation
 import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
+import java.lang.reflect.Modifier
 
 @Suppress("UNCHECKED_CAST")
 open class ByteBuddyConfigProvider(

@@ -1,9 +1,9 @@
 package com.jdiazcano.hocon
 
 import com.jdiazcano.cfg4k.core.toConfig
-import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.hocon.HoconConfigLoader
 import com.jdiazcano.cfg4k.providers.Providers
+import com.jdiazcano.cfg4k.providers.bind
 import com.typesafe.config.ConfigFactory
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

@@ -2,9 +2,16 @@ package com.jdiazcano.cfg4k.parsers
 
 import com.jdiazcano.cfg4k.core.ConfigObject
 import java.text.SimpleDateFormat
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class DateParser(private val format: String, private val locale: Locale = Locale.getDefault()) : Parser<Date> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): Date {

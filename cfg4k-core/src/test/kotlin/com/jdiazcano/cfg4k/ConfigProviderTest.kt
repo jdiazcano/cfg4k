@@ -17,7 +17,14 @@
 package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
-import com.jdiazcano.cfg4k.parsers.*
+import com.jdiazcano.cfg4k.parsers.CalendarParser
+import com.jdiazcano.cfg4k.parsers.DateParser
+import com.jdiazcano.cfg4k.parsers.LocalDateParser
+import com.jdiazcano.cfg4k.parsers.LocalDateTimeParser
+import com.jdiazcano.cfg4k.parsers.OffsetDateTimeParser
+import com.jdiazcano.cfg4k.parsers.OffsetTimeParser
+import com.jdiazcano.cfg4k.parsers.Parsers
+import com.jdiazcano.cfg4k.parsers.ZonedDateTimeParser
 import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.cache
@@ -34,9 +41,15 @@ import java.net.URI
 import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import kotlin.test.assertFailsWith
 
 class ConfigProviderTest : Spek({

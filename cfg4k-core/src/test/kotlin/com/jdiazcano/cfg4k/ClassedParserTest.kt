@@ -16,7 +16,7 @@ import org.jetbrains.spek.api.dsl.it
  * of an use case different than Enums but at some point someone will face it and here is the test (besides enums) that
  * prove they work!
  */
-class ClassedParserTest: Spek({
+class ClassedParserTest : Spek({
     describe("A new parser is registered and it should parse it correctly with the new parser") {
         Parsers.addParser(Person::class.java, PrinterClassedParser())
 
