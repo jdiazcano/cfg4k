@@ -68,15 +68,17 @@ private fun parseObject(parsed: Map<*, *>): ConfigObject {
         when (value) {
             is List<*> -> key to parseArray(value)
             is Map<*, *> -> key to parseObject(value)
+            is ConfigObject -> key to value
             else -> key to ConfigObject(value.toString())
         }
-    }.toMap())
+    }.toMap(hashMapOf()))
 }
 
 private fun parseArray(array: List<*>): ConfigObject {
     return ConfigObject(array.map { item ->
         when (item) {
             is Map<*, *> -> parseObject(item)
+            is ConfigObject -> item
             else -> ConfigObject(item.toString())
         }
     })

@@ -9,6 +9,7 @@
 # Java
 **/build
 **/classes
+ktlint
 
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
