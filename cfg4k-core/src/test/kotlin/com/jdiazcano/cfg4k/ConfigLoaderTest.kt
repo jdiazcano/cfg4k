@@ -52,7 +52,7 @@ class ConfigLoaderTest : Spek({
             loader.get("nested.foo.bar").should.be.equal("nestedbar".toConfig())
             loader.get("nested.foo.bar").should.be.equal("nestedbar".toConfig()) // This should be a cached property!
 
-            loader.get("this.will.be.not.found").should.be.equal("".toConfig())
+            loader.get("this.will.be.not.found").should.be.`null`
 
             loader.reload() // This is mostly for coverage, I haven't seen that environment can be reloaded
         }
@@ -72,7 +72,7 @@ class ConfigLoaderTest : Spek({
     }
 })
 
-private fun setEnv(key: String, value: String) {
+internal fun setEnv(key: String, value: String) {
     try {
         val env = System.getenv()
         val cl = env.javaClass

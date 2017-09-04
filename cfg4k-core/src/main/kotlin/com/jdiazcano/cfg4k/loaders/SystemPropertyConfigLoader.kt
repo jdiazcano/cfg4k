@@ -8,8 +8,8 @@ open class SystemPropertyConfigLoader : ConfigLoader {
         // Nothing to do, the System.properties do the reload for us!
     }
 
-    override fun get(key: String): ConfigObject {
-        return System.getProperty(key, "").toConfig()
+    override fun get(key: String): ConfigObject? {
+        return System.getProperty(key, null)?.toConfig()
     }
 
 }

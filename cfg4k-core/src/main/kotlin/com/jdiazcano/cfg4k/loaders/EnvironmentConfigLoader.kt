@@ -17,7 +17,7 @@ open class EnvironmentConfigLoader : ConfigLoader {
         addTransformer({ key -> key.replace('.', '-') })
     }
 
-    override fun get(key: String): ConfigObject {
+    override fun get(key: String): ConfigObject? {
         // If we already have it in cache, we have to use it
         if (properties.containsKey(key)) {
             return properties[key]!!.toConfig()
@@ -32,7 +32,7 @@ open class EnvironmentConfigLoader : ConfigLoader {
             }
         }
 
-        return "".toConfig()
+        return null
     }
 
     override fun reload() {
