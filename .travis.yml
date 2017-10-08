@@ -20,7 +20,7 @@ cache:
 
 before_install:
   - mkdir -p ~/.ssh
-  - openssl aes-256-cbc -K $encrypted_39d25670321c_key -iv $encrypted_39d25670321c_iv -in encripted_rsa -out ~/.ssh/id_rsa -d
+  - openssl aes-256-cbc -K $encrypted_31e6c9a72288_key -iv $encrypted_31e6c9a72288_iv -in encrypted_cfg4k -out ~/.ssh/id_rsa -d
   - chmod 600 ~/.ssh/id_rsa
   - eval "$(ssh-agent -s)"
   - ssh-add ~/.ssh/id_rsa

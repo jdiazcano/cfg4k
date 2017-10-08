@@ -1,16 +1,17 @@
 ext.versions = [
         jetbrains: [
-                kotlin: '1.1.3',
-                spek: '1.1.19',
-                engine: '1.1.2'
+                kotlin: '1.1.51',
+                spek: '1.1.2',
+                engine: '1.1.5'
         ],
-        bytebuddy: '1.7.1',
-        klaxon: '0.31',
-        typesafe: '1.3.1',
+        bytebuddy: '1.7.5',
+        klaxon: '0.32',
+        typesafe: '1.3.2',
         jgit: '4.8.0.201706111038-r',
         expekt: '0.5.0',
-        junitrunner: '1.0.0-M4',
-        snakeyaml: '1.18'
+        junitrunner: '1.0.1',
+        snakeyaml: '1.18',
+        jcommander: '1.72'
 ]
 
 ext.libraries = [
@@ -33,5 +34,6 @@ ext.libraries = [
         bytebuddy: "net.bytebuddy:byte-buddy:$versions.bytebuddy",
         typesafe: "com.typesafe:config:$versions.typesafe",
         snakeyaml: "org.yaml:snakeyaml:$versions.snakeyaml",
-        klaxon: "com.beust:klaxon:$versions.klaxon"
+        klaxon: "com.beust:klaxon:$versions.klaxon",
+        jcommander: "com.beust:jcommander:$versions.jcommander"
 ]
