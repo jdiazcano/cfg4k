@@ -291,6 +291,11 @@ class ConfigProviderTest : Spek({
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")
             }
+
+            it("supernested binding") {
+                val superNested = provider.bind<NestedBinder>("nested.supernested")
+                superNested.normal().should.be.equal(2)
+            }
         }
     }
 })
