@@ -260,6 +260,8 @@ class ConfigProviderTest : Spek({
                 testBinder.url().should.be.equal(URL("https://www.amazon.com"))
                 testBinder.file().should.be.equal(File("myfile.txt"))
                 testBinder.path().should.be.equal(Paths.get("mypath.txt"))
+                testBinder.nested().normal().should.be.equal(1)
+                testBinder.nested().supernested().normal().should.be.equal(2)
 
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")
@@ -283,6 +285,8 @@ class ConfigProviderTest : Spek({
                 testBinder.url.should.be.equal(URL("https://www.amazon.com"))
                 testBinder.file.should.be.equal(File("myfile.txt"))
                 testBinder.path.should.be.equal(Paths.get("mypath.txt"))
+                testBinder.nested.normal().should.be.equal(1)
+                testBinder.nested.supernested().normal().should.be.equal(2)
 
                 // toString should be the object tostring not the one that comes from the property
                 testBinder.toString().should.not.be.equal("this should not be ever used")
