@@ -42,6 +42,8 @@ interface TestBinder {
     fun url(): URL
     fun file(): File
     fun path(): Path
+
+    fun nested(): SuperNested
 }
 
 interface PropertyTestBinder {
@@ -62,6 +64,8 @@ interface PropertyTestBinder {
     val url: URL
     val file: File
     val path: Path
+
+    val nested: SuperNested
 }
 
 enum class TestEnum {
@@ -87,7 +91,6 @@ enum class Enumerito {
 }
 
 interface NestedBinder {
-    fun nested(): TestBinder
     fun normal(): Int
 }
 

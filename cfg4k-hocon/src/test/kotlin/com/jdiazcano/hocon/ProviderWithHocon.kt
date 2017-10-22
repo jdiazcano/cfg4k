@@ -25,6 +25,14 @@ class ProviderWithHocon : Spek({
         bind.application.modules.size.should.be.equal(1)
         bind.application.modules[0].should.be.equal(KtorConfig::class.java)
     }
+
+    describe("a short syntax hocon file") {
+        val loader = HoconConfigLoader("hocon2.conf")
+        val provider = Providers.proxy(loader)
+        val deployment = provider.bind<KtorDeploymentConfig>("ktor.deployment")
+
+        deployment.port.should.be.equal(8080)
+    }
 })
 
 interface KtorConfig {
