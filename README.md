@@ -12,7 +12,7 @@ Features
 
 # Overview
 
-![Lightbox](https://raw.githubusercontent.com/jdiazcano/cfg4k/master/cfg4k-schema.svg?sanitize=true)
+![Lightbox](https://raw.githubusercontent.com/jdiazcano/cfg4k/master/cfg4k-schema.png)
 
 # Quick start
 1. Add the Bintray repository (Requested jcenter sync): 
