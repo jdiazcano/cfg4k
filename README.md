@@ -10,6 +10,10 @@ Features
 * Easy to use
 * Bytebuddy provider will be able to compile your bindings at runtime
 
+# Overview
+
+![Lightbox](https://raw.githubusercontent.com/jdiazcano/cfg4k/master/cfg4k-schema.svg?sanitize=true)
+
 # Quick start
 1. Add the Bintray repository (Requested jcenter sync): 
 ```groovy
