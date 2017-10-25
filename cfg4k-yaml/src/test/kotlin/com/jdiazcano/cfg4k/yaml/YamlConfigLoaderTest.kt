@@ -3,6 +3,7 @@ package com.jdiazcano.cfg4k.yaml
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -11,7 +12,7 @@ import org.jetbrains.spek.api.dsl.it
 class YamlConfigLoaderTest : Spek({
 
     val loaders = listOf(
-            YamlConfigLoader(javaClass.classLoader.getResource("test.yml"))
+            YamlConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.yml")))
     )
 
     loaders.forEachIndexed { i, loader ->

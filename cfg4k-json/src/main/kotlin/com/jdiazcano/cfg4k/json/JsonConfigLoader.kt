@@ -17,10 +17,10 @@ package com.jdiazcano.cfg4k.json
 
 import com.beust.klaxon.Parser
 import com.jdiazcano.cfg4k.loaders.DefaultConfigLoader
-import java.net.URL
+import com.jdiazcano.cfg4k.sources.ConfigSource
 
 open class JsonConfigLoader(
-        private val url: URL
+        private val configSource: ConfigSource
 ) : DefaultConfigLoader() {
 
     protected val parser = Parser()
@@ -34,7 +34,7 @@ open class JsonConfigLoader(
     }
 
     protected fun loadProperties() {
-        url.openStream().use {
+        configSource.read().use {
             root = parser.asConfigObjectFromJson(it)
         }
     }

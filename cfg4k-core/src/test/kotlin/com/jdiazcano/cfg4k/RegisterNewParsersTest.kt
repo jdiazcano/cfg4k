@@ -22,6 +22,7 @@ import com.jdiazcano.cfg4k.parsers.Parser
 import com.jdiazcano.cfg4k.parsers.Parsers
 import com.jdiazcano.cfg4k.providers.CachedConfigProvider
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -33,7 +34,7 @@ class RegisterNewParsersTest : Spek({
 
     describe("a property config loader") {
         val loaders = listOf(
-                PropertyConfigLoader(javaClass.classLoader.getResource("book.properties"))
+                PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("book.properties")))
         )
         loaders.forEach { loader ->
             val providers = listOf(
