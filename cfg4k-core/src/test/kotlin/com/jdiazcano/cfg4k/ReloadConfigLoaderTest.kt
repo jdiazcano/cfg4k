@@ -20,6 +20,7 @@ import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
+import com.jdiazcano.cfg4k.sources.FileConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -43,7 +44,7 @@ list=1,2,3
 booleanProperty=true
 nested.a=nestedb""")
 
-        val loader = PropertyConfigLoader(file.toURI().toURL())
+        val loader = PropertyConfigLoader(FileConfigSource(file))
         it("a value should be b") {
             loader.get("a").should.be.equal("b".toConfig())
             loader.get("nested.a").should.be.equal("nestedb".toConfig())
@@ -92,7 +93,7 @@ nested.a=nestedb
 }
         """)
 
-        val loader = PropertyConfigLoader(file.toURI().toURL())
+        val loader = PropertyConfigLoader(FileConfigSource(file))
         it("a value should be b") {
             loader.get("a").should.be.equal("b".toConfig())
             loader.get("nested.a").should.be.equal("nestedb".toConfig())
@@ -130,7 +131,7 @@ nested.a=reloaded nestedb
 a=b
 c=d""".trim())
 
-        val loader = PropertyConfigLoader(file.toURI().toURL())
+        val loader = PropertyConfigLoader(FileConfigSource(file))
         it("values should be equals like in the string") {
             loader.get("a").should.be.equal("b".toConfig())
             loader.get("c").should.be.equal("d".toConfig())

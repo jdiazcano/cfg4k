@@ -18,11 +18,12 @@ package com.jdiazcano.cfg4k.loaders
 
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
+import com.jdiazcano.cfg4k.sources.ConfigSource
 import java.net.URL
 import java.util.Properties
 
 open class PropertyConfigLoader(
-        private val url: URL
+        private val source: ConfigSource
 ) : DefaultConfigLoader() {
 
     init {
@@ -30,7 +31,7 @@ open class PropertyConfigLoader(
     }
 
     private fun loadProperties() {
-        root = url.asProperties().toConfig()
+        root = Properties().apply { load(source.read()) }.toConfig()
     }
 
     override fun reload() {

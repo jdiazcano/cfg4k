@@ -25,6 +25,7 @@ import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.cache
 import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.providers.getOrNull
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -34,12 +35,12 @@ import kotlin.test.assertFailsWith
 
 class NullsConfigProviderTest : Spek({
 
-    val loader = PropertyConfigLoader(javaClass.classLoader.getResource("nulltest.properties"))
+    val loader = PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("nulltest.properties")))
     val providers = listOf(
             proxy(loader),
             proxy(loader).cache()
     )
-    val overridingLoader = PropertyConfigLoader(javaClass.classLoader.getResource("overridingnulltest.properties"))
+    val overridingLoader = PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("overridingnulltest.properties")))
     val overridingProvider = OverrideConfigProvider(DefaultConfigProvider(overridingLoader), providers[0])
 
     providers.forEachIndexed { i, provider ->

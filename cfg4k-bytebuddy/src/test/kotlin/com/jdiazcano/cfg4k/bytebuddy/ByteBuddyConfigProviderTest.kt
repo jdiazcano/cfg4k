@@ -3,6 +3,7 @@ package com.jdiazcano.cfg4k.bytebuddy
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -11,7 +12,7 @@ import org.jetbrains.spek.api.dsl.it
 class ByteBuddyConfigProviderTest : Spek({
     describe("a bytebuddyconfigprovider should ") {
         val provider = ByteBuddyConfigProvider(
-                PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
+                PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.properties")))
         )
 
         it("integer properties") {

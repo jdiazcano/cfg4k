@@ -12,6 +12,7 @@ import com.jdiazcano.cfg4k.providers.Providers.cached
 import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -38,8 +39,8 @@ import kotlin.test.assertFailsWith
 class ConfigProviderTest : Spek({
 
     val providers = listOf(
-            proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),
-            cached(proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))))
+            proxy(JsonConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.json")))),
+            cached(proxy(JsonConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.json")))))
     )
 
     providers.forEachIndexed { i, provider ->
