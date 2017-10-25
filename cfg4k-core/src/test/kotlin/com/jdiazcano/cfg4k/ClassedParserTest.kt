@@ -6,6 +6,7 @@ import com.jdiazcano.cfg4k.parsers.Parser
 import com.jdiazcano.cfg4k.parsers.Parsers
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -20,7 +21,7 @@ class ClassedParserTest : Spek({
     describe("A new parser is registered and it should parse it correctly with the new parser") {
         Parsers.addParser(Person::class.java, PrinterClassedParser())
 
-        val loader = PropertyConfigLoader(javaClass.classLoader.getResource("classedparser.properties"))
+        val loader = PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("classedparser.properties")))
         val provider = ProxyConfigProvider(loader)
 
         it("a printer is parsed correctly") {

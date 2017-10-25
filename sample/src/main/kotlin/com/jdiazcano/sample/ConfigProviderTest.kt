@@ -14,6 +14,7 @@ import com.jdiazcano.cfg4k.providers.Providers.cached
 import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -42,8 +43,8 @@ import kotlin.test.assertTrue
 class ConfigProviderTest : Spek({
 
     val providers = listOf(
-            Providers.bytebuddy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))),
-            cached(proxy(JsonConfigLoader(javaClass.classLoader.getResource("test.json"))))
+            Providers.bytebuddy(JsonConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.json")))),
+            cached(proxy(JsonConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.json")))))
     )
 
     providers.forEachIndexed { i, provider ->

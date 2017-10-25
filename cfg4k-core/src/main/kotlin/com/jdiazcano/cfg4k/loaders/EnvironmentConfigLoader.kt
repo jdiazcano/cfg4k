@@ -13,8 +13,8 @@ open class EnvironmentConfigLoader : ConfigLoader {
     protected val transformations: MutableList<(String) -> String> = mutableListOf()
 
     init {
-        addTransformer({ key -> key.replace('.', '_') })
-        addTransformer({ key -> key.replace('.', '-') })
+        addTransformer { key -> key.replace('.', '_') }
+        addTransformer { key -> key.replace('.', '-') }
     }
 
     override fun get(key: String): ConfigObject? {

@@ -5,6 +5,7 @@ import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.reloadstrategies.FileChangeReloadStrategy
+import com.jdiazcano.cfg4k.sources.FileConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -16,7 +17,7 @@ class FileChangeReloadStrategyTest : Spek({
         val file = Paths.get("test.properties")
         file.toFile().writeText("foo=bar")
         val provider = DefaultConfigProvider(
-                PropertyConfigLoader(file.toUri().toURL()),
+                PropertyConfigLoader(FileConfigSource(file)),
                 FileChangeReloadStrategy(file),
                 ProxyBinder()
         )

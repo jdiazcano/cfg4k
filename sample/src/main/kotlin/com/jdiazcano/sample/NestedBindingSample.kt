@@ -19,11 +19,13 @@ package com.jdiazcano.sample
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 
 fun main(args: Array<String>) {
-    val loader = PropertyConfigLoader(GlobalConfig::class.java.getResource("/global.properties")) // Create loader
+    val source = URLConfigSource(GlobalConfig::class.java.getResource("/global.properties")) // Create source
+    val loader = PropertyConfigLoader(source)                                                     // Create loader
     val provider = ProxyConfigProvider(loader)                                                    // Create provider
-    val globalConfig = provider.bind<GlobalConfig>("")                                            // bind and use
+    val globalConfig = provider.bind<GlobalConfig>("")                                       // bind and use
 
     println("Database name: ${globalConfig.database().name()}")
     println("Web url: ${globalConfig.web().url()}")

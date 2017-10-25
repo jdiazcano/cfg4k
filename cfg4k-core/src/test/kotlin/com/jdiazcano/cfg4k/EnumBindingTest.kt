@@ -19,6 +19,7 @@ package com.jdiazcano.cfg4k
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -27,7 +28,7 @@ import org.jetbrains.spek.api.dsl.it
 class EnumBindingTest : Spek({
 
     describe("a property config loader") {
-        val loader = PropertyConfigLoader(javaClass.classLoader.getResource("enumtest.properties"))
+        val loader = PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("enumtest.properties")))
         val provider = ProxyConfigProvider(loader)
 
         it("binding test") {

@@ -22,6 +22,7 @@ import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers.overriden
 import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -36,10 +37,10 @@ class OverrideConfigProviderTest : Spek({
 
     val provider = overriden(
             DefaultConfigProvider(
-                    PropertyConfigLoader(javaClass.classLoader.getResource("overridetest.properties"))
+                    PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("overridetest.properties")))
             ),
             DefaultConfigProvider(
-                    PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
+                    PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.properties")))
             )
     )
 
@@ -48,7 +49,7 @@ class OverrideConfigProviderTest : Spek({
                     EnvironmentConfigLoader()
             ),
             DefaultConfigProvider(
-                    PropertyConfigLoader(javaClass.classLoader.getResource("overridetest.properties"))
+                    PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("overridetest.properties")))
             )
     )
 
@@ -57,7 +58,7 @@ class OverrideConfigProviderTest : Spek({
                     SystemPropertyConfigLoader()
             ),
             DefaultConfigProvider(
-                    PropertyConfigLoader(javaClass.classLoader.getResource("overridetest.properties"))
+                    PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("overridetest.properties")))
             )
 
     )

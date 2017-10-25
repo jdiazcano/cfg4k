@@ -4,6 +4,7 @@ import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
+import com.jdiazcano.cfg4k.sources.FileConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -21,7 +22,7 @@ nested.a=reloaded nestedb
             val file = File("timedreloadedfile.properties")
             file.createNewFile()
             file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val provider = ByteBuddyConfigProvider(PropertyConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
+            val provider = ByteBuddyConfigProvider(PropertyConfigLoader(FileConfigSource(file)), TimedReloadStrategy(1, TimeUnit.SECONDS))
             checkProvider(file, provider, text)
         }
 
