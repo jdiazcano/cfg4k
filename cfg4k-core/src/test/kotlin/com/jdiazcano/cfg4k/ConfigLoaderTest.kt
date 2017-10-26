@@ -19,6 +19,7 @@ import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.EnvironmentConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
+import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -27,7 +28,7 @@ import org.jetbrains.spek.api.dsl.it
 class ConfigLoaderTest : Spek({
 
     describe("a property config loader") {
-        val loader = PropertyConfigLoader(javaClass.classLoader.getResource("test.properties"))
+        val loader = PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.properties")))
         it("a value should be b") {
             loader.get("a").should.be.equal("b".toConfig())
         }

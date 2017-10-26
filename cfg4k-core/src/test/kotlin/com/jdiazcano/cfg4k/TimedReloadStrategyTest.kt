@@ -24,6 +24,7 @@ import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
+import com.jdiazcano.cfg4k.sources.FileConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -41,7 +42,7 @@ nested.a=reloaded nestedb
             val file = File("timedreloadedfile.properties")
             file.createNewFile()
             file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val provider = ProxyConfigProvider(PropertyConfigLoader(file.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS))
+            val provider = ProxyConfigProvider(PropertyConfigLoader(FileConfigSource(file)), TimedReloadStrategy(1, TimeUnit.SECONDS))
             checkProvider(file, provider, text)
         }
 
@@ -49,7 +50,7 @@ nested.a=reloaded nestedb
             val cachedfile = File("cachedtimedreloadedfile.properties")
             cachedfile.createNewFile()
             cachedfile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val cachedProvider = CachedConfigProvider(ProxyConfigProvider(PropertyConfigLoader(cachedfile.toURI().toURL()), TimedReloadStrategy(1, TimeUnit.SECONDS)))
+            val cachedProvider = CachedConfigProvider(ProxyConfigProvider(PropertyConfigLoader(FileConfigSource(cachedfile)), TimedReloadStrategy(1, TimeUnit.SECONDS)))
             checkProvider(cachedfile, cachedProvider, text)
         }
 
@@ -63,11 +64,11 @@ nested.a=reloaded nestedb
             normalFile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
             val provider = OverrideConfigProvider(
                     DefaultConfigProvider(
-                            PropertyConfigLoader(overrideFile.toURI().toURL()),
+                            PropertyConfigLoader(FileConfigSource(overrideFile)),
                             TimedReloadStrategy(1, TimeUnit.SECONDS)
                     ),
                     DefaultConfigProvider(
-                            PropertyConfigLoader(normalFile.toURI().toURL()),
+                            PropertyConfigLoader(FileConfigSource(normalFile)),
                             TimedReloadStrategy(1, TimeUnit.SECONDS)
                     )
             )
