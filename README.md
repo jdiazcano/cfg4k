@@ -8,10 +8,14 @@ Features
 * Interface binding
 * Huge flexibility, custom sources
 * Easy to use
-* Bytebuddy provider will be able to compile your bindings at runtime
+* Bytebuddy provider will be able to compile your bindings at runtime (You will need to add the cfg4k-bytebuddy to your dependencies.)
+
+# Overview
+
+![Lightbox](https://raw.githubusercontent.com/jdiazcano/cfg4k/master/cfg4k-schema.png)
 
 # Quick start
-1. Add the Bintray repository (Requested jcenter sync): 
+1. Add the Bintray repository: 
 ```groovy
 repositories {
     jcenter()
@@ -20,7 +24,7 @@ repositories {
 
 2. Add the dependency for the module(s) that you are going to use
 ```
-compile 'com.jdiazcano.cfg4k:cfg4k-core:0.7.1'
+compile 'com.jdiazcano.cfg4k:cfg4k-core:0.7.2'
 ```
 
 # Example
@@ -67,6 +71,13 @@ interface DatabaseConfig {
 1. DefaultConfigProvider: Base class for all the other providers. It has the basic functionality for a Provider. (You can obviously ignore it if implementing a new provider)
 1. CachedConfigProvider: This provider will cache the calls into a map and use the cached one once the same call is done again. When the method `reload` is called this cache will be cleared.
 1. OverrideConfigProvider: With this provider you can input a list of Loaders in order of precedence and it will return the first one that is not null/empty. So you can override properties for example: `EnvironmentConfigLoader -> JsonConfigLoader` it would pick first from Environment and then from Json.
+
+## Sources
+1. File system
+1. Classpath
+1. Git
+1. URL
+1. Future: S3
 
 ## Binders
 1. ProxyBinder: Uses Java `InvocationHandler` in order to implement the interface and intercept the calls to return the correct value.
@@ -183,6 +194,10 @@ open class SystemPropertyConfigLoader : ConfigLoader {
 }
 ```
 More examples in the package `loaders`
+
+## Sources
+You can implement your own sources. Sources are also Loaders (which is something that I plan to review before 1.0)
+so when implementing a source you have to implement ConfigLoader and rely on another loader which will be the one actually reading the file
 
 ## Reload strategies
 You can create your own reloading strategy by implementing the `ReloadStrategy` interface. Remember that you have to use it then in the provider.
