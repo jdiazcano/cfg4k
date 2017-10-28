@@ -5,6 +5,7 @@ import com.jdiazcano.cfg4k.hocon.HoconConfigLoader
 import com.jdiazcano.cfg4k.providers.Providers
 import com.jdiazcano.cfg4k.providers.bind
 import com.typesafe.config.ConfigFactory
+import com.typesafe.config.ConfigParseOptions
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -17,7 +18,8 @@ class HoconConfigLoaderTest : Spek({
             HoconConfigLoader(File(javaClass.classLoader.getResource("test.properties").toURI())),
             HoconConfigLoader("test.properties"),
             HoconConfigLoader(javaClass.classLoader.getResource("test.properties")),
-            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), { ConfigFactory.parseResources("test.properties") })
+            HoconConfigLoader(ConfigFactory.parseResources("test.properties"), { ConfigFactory.parseResources("test.properties") }),
+            HoconConfigLoader { ConfigFactory.parseResourcesAnySyntax("test.properties", ConfigParseOptions.defaults()) }
     )
 
     loaders.forEachIndexed { i, loader ->

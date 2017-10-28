@@ -62,11 +62,6 @@ fun Properties.toConfig(): ConfigObject {
             map[keyAsString] = value
         } else {
             val valueMap = keys.dropLast(1).fold(map) { m, k ->
-                if (m[k] != null && m[k] !is Map<*, *>) {
-                    throw IllegalArgumentException("")
-                }
-
-                // TODO Think if on how to make arrays. I think it should be discouraged but...
                 m.getOrPut(k) { mutableMapOf<String, Any>() } as MutableMap<String, Any>
             }
             valueMap[keys.last()] = value

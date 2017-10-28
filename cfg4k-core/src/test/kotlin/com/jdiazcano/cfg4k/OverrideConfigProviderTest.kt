@@ -74,6 +74,11 @@ class OverrideConfigProviderTest : Spek({
             systemOverride.get("a", String::class.java).should.be.equal("overrideb")
             systemOverride.get("a", String::class.java).should.be.equal("overrideb") // cached property!
             systemOverride.get("c", String::class.java).should.be.equal("overrided")
+
+            systemOverride.reload()
+            systemOverride.get("a", String::class.java).should.be.equal("overrideb")
+            systemOverride.get("a", String::class.java).should.be.equal("overrideb") // cached property!
+            systemOverride.get("c", String::class.java).should.be.equal("overrided")
         }
 
         it("if the property does not exist, then the second one should be tested") {
