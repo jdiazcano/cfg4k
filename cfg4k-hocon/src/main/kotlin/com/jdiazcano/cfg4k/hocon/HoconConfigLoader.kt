@@ -1,10 +1,12 @@
 package com.jdiazcano.cfg4k.hocon
 
 import com.jdiazcano.cfg4k.loaders.DefaultConfigLoader
+import com.jdiazcano.cfg4k.sources.ConfigSource
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigParseOptions
 import java.io.File
+import java.io.InputStreamReader
 import java.net.URL
 
 fun HoconConfigLoader(url: URL, options: ConfigParseOptions = ConfigParseOptions.defaults()): HoconConfigLoader {
@@ -19,6 +21,11 @@ fun HoconConfigLoader(file: File, options: ConfigParseOptions = ConfigParseOptio
 
 fun HoconConfigLoader(resource: String, options: ConfigParseOptions = ConfigParseOptions.defaults()): HoconConfigLoader {
     val loader = { ConfigFactory.parseResourcesAnySyntax(resource, options) }
+    return HoconConfigLoader(loader)
+}
+
+fun HoconConfigLoader(source: ConfigSource, options: ConfigParseOptions = ConfigParseOptions.defaults()): HoconConfigLoader {
+    val loader = { ConfigFactory.parseReader(InputStreamReader(source.read()), options) }
     return HoconConfigLoader(loader)
 }
 
