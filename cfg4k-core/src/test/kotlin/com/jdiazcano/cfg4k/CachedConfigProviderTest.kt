@@ -30,7 +30,7 @@ import org.jetbrains.spek.api.dsl.it
 class CachedConfigProviderTest : Spek({
 
     val loaders = listOf(
-            PropertyConfigLoader(ClasspathConfigSource("test.properties"))
+            PropertyConfigLoader(ClasspathConfigSource("/test.properties"))
     )
     loaders.forEach { loader ->
         describe("a property config loader [${loader.javaClass.name}]") {
