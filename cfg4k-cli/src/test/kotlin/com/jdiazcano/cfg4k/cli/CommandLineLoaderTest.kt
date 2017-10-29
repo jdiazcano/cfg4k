@@ -16,7 +16,7 @@ class CommandLineLoaderTest : Spek({
      describe("a command line loader") {
          tests.forEach { key, value ->
             val loader = CommandLineLoader(key)
-            loader.root.should.be.equal(value)
+            loader.get("").should.be.equal(value)
          }
      }
 })
