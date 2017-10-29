@@ -39,11 +39,11 @@ fun HoconConfigLoader(config: Config, loader: () -> Config = { config }): HoconC
 open class HoconConfigLoader(protected val loader: () -> Config) : DefaultConfigLoader() {
 
     init {
-        root = loader().toConfig()
+        root = loader().resolve().toConfig()
     }
 
     override fun reload() {
-        root = loader().toConfig()
+        root = loader().resolve().toConfig()
     }
 
 }
