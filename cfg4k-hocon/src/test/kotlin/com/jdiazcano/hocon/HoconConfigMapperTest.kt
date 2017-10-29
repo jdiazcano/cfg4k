@@ -11,7 +11,7 @@ import org.jetbrains.spek.api.dsl.describe
 
 class HoconConfigMapperTest : Spek({
     describe("a hocon loader that can map") {
-        val conf = ConfigFactory.parseResourcesAnySyntax("hocon.conf", ConfigParseOptions.defaults())
+        val conf = ConfigFactory.parseResourcesAnySyntax("hocon.conf", ConfigParseOptions.defaults()).resolve()
         val configObject = conf.toConfig()
 
         configObject.isObject().should.be.`true`
@@ -29,5 +29,7 @@ class HoconConfigMapperTest : Spek({
         app.asObject()["modules"].should.be.equal(ConfigObject(listOf(
                 "com.jdiazcano.hocon.KtorConfig".toConfig()
         )))
+
+        ktor.asObject()["deploymentPort"].should.be.equal(8080.toConfig())
     }
 })

@@ -7,7 +7,7 @@ fun DefaultConfigLoader(map: Map<String, Any>) = DefaultConfigLoader(map.toConfi
 
 fun DefaultConfigLoader(vararg pairs: Pair<String, Any>) = DefaultConfigLoader(mapOf(*pairs).toConfig())
 
-open class DefaultConfigLoader(var root: ConfigObject = "".toConfig()) : ConfigLoader {
+open class DefaultConfigLoader(protected var root: ConfigObject = "".toConfig()) : ConfigLoader {
     override fun get(key: String): ConfigObject? {
         if (key == "") {
             return root
