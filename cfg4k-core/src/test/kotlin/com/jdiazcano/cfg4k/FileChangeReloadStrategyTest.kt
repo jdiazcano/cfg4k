@@ -47,11 +47,7 @@ class FileChangeReloadStrategyTest : Spek({
         file.toFile().deleteOnExit()
         file.toFile().writeText("foo=bar")
 
-        val unrelatedFile = Paths.get("subdir/subdir", "reloadedfile.properties")
-        unrelatedFile.parent.toFile().mkdir()
-        unrelatedFile.parent.toFile().deleteOnExit()
-        unrelatedFile.toFile().deleteOnExit()
-        unrelatedFile.toFile().writeText("foo=bar")
+
         val provider = DefaultConfigProvider(
                 PropertyConfigLoader(FileConfigSource(file)),
                 FileChangeReloadStrategy(file),
