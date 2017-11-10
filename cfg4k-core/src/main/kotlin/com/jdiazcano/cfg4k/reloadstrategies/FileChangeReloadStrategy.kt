@@ -46,6 +46,8 @@ class FileChangeReloadStrategy(val file: Path) : ReloadStrategy {
 
     override fun register(configProvider: ConfigProvider) {
         val fileWatcher = file.toAbsolutePath().parent.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY)
+        val parent = file.toAbsolutePath().parent
+        val fileAbsolute = file.toAbsolutePath()
         watching = true
         thread = thread(start = true, isDaemon = true) {
             while (watching) {
@@ -53,7 +55,7 @@ class FileChangeReloadStrategy(val file: Path) : ReloadStrategy {
                     val key = watcher.take()
                     fileWatcher.pollEvents().forEach { event ->
                         val fileName = event.context() as Path
-                        if (fileName == file) {
+                        if (parent.resolve(fileName) == fileAbsolute) {
                             configProvider.reload()
                         }
                     }
