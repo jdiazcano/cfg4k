@@ -83,7 +83,6 @@ class GitConfigSource(
     }
 
     override fun reload() {
-        initialised = false
         initProperties()
     }
 

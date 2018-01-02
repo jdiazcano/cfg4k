@@ -42,6 +42,7 @@ nested.a=reloaded nestedb
             val file = File("timedreloadedfile.properties")
             file.createNewFile()
             file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
+            file.deleteOnExit()
             val provider = ProxyConfigProvider(PropertyConfigLoader(FileConfigSource(file)), TimedReloadStrategy(1, TimeUnit.SECONDS))
             checkProvider(file, provider, text)
         }
@@ -50,18 +51,21 @@ nested.a=reloaded nestedb
             val cachedfile = File("cachedtimedreloadedfile.properties")
             cachedfile.createNewFile()
             cachedfile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
+            cachedfile.deleteOnExit()
             val cachedProvider = CachedConfigProvider(ProxyConfigProvider(PropertyConfigLoader(FileConfigSource(cachedfile)), TimedReloadStrategy(1, TimeUnit.SECONDS)))
             checkProvider(cachedfile, cachedProvider, text)
         }
 
         it("overrideconfigprovider test") {
-            val overrideFile = File("override.properties")
+            val overrideFile = File("qqqqq.properties")
             overrideFile.createNewFile()
             overrideFile.writeText(text.replace("%reload1", "overrideb").replace("c=%reload2\n", ""))
+            overrideFile.deleteOnExit()
 
             val normalFile = File("normal.properties")
             normalFile.createNewFile()
             normalFile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
+            normalFile.deleteOnExit()
             val provider = OverrideConfigProvider(
                     DefaultConfigProvider(
                             PropertyConfigLoader(FileConfigSource(overrideFile)),
@@ -73,7 +77,6 @@ nested.a=reloaded nestedb
                     )
             )
             checkProvider(overrideFile, provider, text, true)
-            normalFile.delete()
         }
     }
 
@@ -116,7 +119,6 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
         }
         lastReload++
     }
-    file.delete()
 }
 
 interface Nested {

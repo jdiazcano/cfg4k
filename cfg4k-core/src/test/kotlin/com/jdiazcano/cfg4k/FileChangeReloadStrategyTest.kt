@@ -10,6 +10,7 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import java.io.File
 import java.nio.file.Paths
 
 class FileChangeReloadStrategyTest : Spek({
@@ -40,18 +41,17 @@ class FileChangeReloadStrategyTest : Spek({
     }
 
     describe("a provider with a filechange reloader (with subdirectory)") {
-        val file = Paths.get("subdir", "reloadedfile.properties")
+        val folder = File("reloadsubdir")
+        val file = folder.resolve("reloadedfile.properties")
 
-        file.parent.toFile().mkdir()
-        file.parent.toFile().deleteOnExit()
-        file.toFile().deleteOnExit()
-        file.toFile().writeText("foo=bar")
+        folder.mkdirs()
+        folder.deleteOnExit()
+        file.writeText("foo=bar")
 
 
         val provider = DefaultConfigProvider(
                 PropertyConfigLoader(FileConfigSource(file)),
-                FileChangeReloadStrategy(file),
-                ProxyBinder()
+                FileChangeReloadStrategy(file)
         )
 
         it("should have this config loaded") {
@@ -59,13 +59,13 @@ class FileChangeReloadStrategyTest : Spek({
         }
 
         it("should update the configuration") {
-            Thread.sleep(5000) // We need to wait a little bit for the event watcher to be triggered
-            file.toFile().writeText("foo=bar2")
-            Thread.sleep(5000) // Another wait for that
+            Thread.sleep(10000) // We need to wait a little bit for the event watcher to be triggered
+            file.writeText("foo=bar2")
+            Thread.sleep(10000) // Another wait for that
             provider.get<String>("foo").should.be.equal("bar2")
             provider.cancelReload()
-            file.toFile().writeText("foo=bar3")
-            Thread.sleep(5000) // Another wait for that
+            file.writeText("foo=bar3")
+            Thread.sleep(10000) // Another wait for that
             provider.get<String>("foo").should.be.equal("bar2") // We have canceled the reload so no more reloads
         }
     }
