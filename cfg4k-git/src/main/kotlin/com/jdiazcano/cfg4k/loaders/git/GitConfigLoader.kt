@@ -37,9 +37,10 @@ class GitConfigSource(
 
     init {
         // If the repo exist we just open the directory
-        if (repoDirectory.exists()) {
+        if (repoDirectory.exists() && repoDirectory.resolve(".git").exists()) {
             clonedRepo = Git.open(repoDirectory)
         } else {
+            repoDirectory.deleteRecursively()
             repoDirectory.mkdirs()
             val builder = Git.cloneRepository()
                     .setURI(uri)

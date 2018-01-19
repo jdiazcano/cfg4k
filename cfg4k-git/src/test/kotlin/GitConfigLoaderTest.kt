@@ -10,32 +10,42 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
 class GitConfigSourceTest : Spek({
+
+    val isRunninInTravis = System.getenv()["CI_NAME"] ?: "" == "travis-ci"
+    val gitUser = System.getenv("CFGK_GIT_USER")
+    val gitPassword = System.getenv("CFGK_GIT_PASS")
+
     describe("a git config loader 1") {
 
         it("should load the integer property") {
+            val repoDirectory = File("publictest")
             val source = GitConfigSource(
                     "https://github.com/jdiazcano/cfg4k-git-test.git",
-                    File("publictest"),
+                    repoDirectory,
                     "test.properties",
                     loaderGenerator = ::PropertyConfigLoader
             )
             testSource(source)
+            repoDirectory.deleteRecursively()
         }
 
     }
 
+
     describe("a git config loader 2") {
 
         it("should load the integer property") {
-            if (System.getenv()["CI_NAME"]?:"" == "travis-ci") {
+            if (isRunninInTravis) {
+                val repoDirectory = File("userpasstest")
                 val source = GitConfigSource(
                         "https://bitbucket.org/javierdiaz/cfg4k-git-test.git",
-                        File("userpasstest"),
+                        repoDirectory,
                         "test.properties",
                         loaderGenerator = ::PropertyConfigLoader,
-                        credentials = UsernamePasswordCredentialsProvider(System.getenv("CFGK_GIT_USER"), System.getenv("CFGK_GIT_PASS"))
+                        credentials = UsernamePasswordCredentialsProvider(gitUser, gitPassword)
                 )
                 testSource(source)
+                repoDirectory.deleteRecursively()
             }
         }
     }
@@ -43,15 +53,17 @@ class GitConfigSourceTest : Spek({
     describe("a git config loader 3") {
 
         it("should load the integer property") {
-            if (System.getenv()["CI_NAME"]?:"" == "travis-ci") {
+            if (isRunninInTravis) {
+                val repoDirectory = File("sshtest")
                 val source = GitConfigSource(
                         "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
-                        File("sshtest"),
+                        repoDirectory,
                         "test.properties",
                         loaderGenerator = ::PropertyConfigLoader,
-                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa")
+                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/rsa_cfg4k")
                 )
                 testSource(source)
+                repoDirectory.deleteRecursively()
             }
         }
 
@@ -59,15 +71,17 @@ class GitConfigSourceTest : Spek({
     describe("a git config loader 4") {
 
         it("should load the integer property") {
-            if (System.getenv()["CI_NAME"]?:"" == "travis-ci") {
+            if (isRunninInTravis) {
+                val repoDirectory = File("sshknownhosttest")
                 val source = GitConfigSource(
                         "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
-                        File("sshknownhosttest"),
+                        repoDirectory,
                         "test.properties",
                         loaderGenerator = ::PropertyConfigLoader,
                         ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
                 )
                 testSource(source)
+                repoDirectory.deleteRecursively()
             }
         }
 

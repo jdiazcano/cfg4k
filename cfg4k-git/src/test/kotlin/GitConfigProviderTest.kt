@@ -16,18 +16,19 @@ import java.util.concurrent.TimeUnit
 
 class GitConfigProviderTest : Spek({
 
+    val isRunninInTravis = System.getenv()["CI_NAME"] ?: "" == "travis-ci"
     val reloadFolder = File("gitreloadtest")
 
     describe("a git config loader 4") {
 
         it("should load the integer property") {
-            if (System.getenv()["CI_NAME"]?:"" == "travis-ci") {
+            if (isRunninInTravis) {
                 val loader = GitConfigSource(
                         "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
                         reloadFolder,
                         "test.properties",
                         loaderGenerator = ::PropertyConfigLoader,
-                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
+                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/rsa_cfg4k", System.getProperty("user.home") + "/.ssh/known_hosts")
                 )
                 val provider = DefaultConfigProvider(loader, TimedReloadStrategy(1, TimeUnit.SECONDS))
                 testProvider(provider)
