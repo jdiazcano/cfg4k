@@ -60,7 +60,7 @@ class GitConfigSourceTest : Spek({
                         repoDirectory,
                         "test.properties",
                         loaderGenerator = ::PropertyConfigLoader,
-                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/rsa_cfg4k")
+                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa")
                 )
                 testSource(source)
                 repoDirectory.deleteRecursively()

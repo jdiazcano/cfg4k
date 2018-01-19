@@ -28,7 +28,7 @@ class GitConfigProviderTest : Spek({
                         reloadFolder,
                         "test.properties",
                         loaderGenerator = ::PropertyConfigLoader,
-                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/rsa_cfg4k", System.getProperty("user.home") + "/.ssh/known_hosts")
+                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
                 )
                 val provider = DefaultConfigProvider(loader, TimedReloadStrategy(1, TimeUnit.SECONDS))
                 testProvider(provider)
