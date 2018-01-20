@@ -32,14 +32,20 @@ import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
 import net.bytebuddy.ByteBuddy
+import net.bytebuddy.description.modifier.Visibility
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
+import net.bytebuddy.implementation.FieldAccessor
+import net.bytebuddy.implementation.MethodCall
 import net.bytebuddy.implementation.MethodDelegation
-import net.bytebuddy.implementation.bind.annotation.RuntimeType
+import net.bytebuddy.implementation.bind.annotation.*
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.lang.reflect.Type
+import java.util.*
+import kotlin.reflect.KClass
 
-@Suppress("UNCHECKED_CAST")
 open class ByteBuddyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
@@ -47,61 +53,98 @@ open class ByteBuddyConfigProvider(
 
 @Suppress("UNCHECKED_CAST")
 class ByteBuddyBinder : Binder {
+
+    private val cache = WeakHashMap<Class<*>, Class<*>>()
+
     override fun <T : Any> bind(configProvider: ConfigProvider, prefix: String, type: Class<T>): T {
-        var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
-        var instance: Any? = null
+        if (type in cache) {
+            return cache[type]!!.getDeclaredConstructor(
+                    ConfigProvider::class.java,
+                    String::class.java,
+                    Class::class.java).newInstance(configProvider, prefix, type) as T
+        }
+
+        var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.NO_CONSTRUCTORS)
+                .defineField("provider", ConfigProvider::class.java, Visibility.PRIVATE)
+                .defineField("prefix", String::class.java, Visibility.PRIVATE)
+                .defineField("type", Class::class.java, Visibility.PRIVATE)
+                .defineConstructor(Visibility.PUBLIC).withParameters(ConfigProvider::class.java, String::class.java, Class::class.java)
+                .intercept(
+                        MethodCall.invoke(Any::class.java.getConstructor())
+                                .andThen(FieldAccessor.ofField("provider").setsArgumentAt(0)
+                                .andThen(FieldAccessor.ofField("prefix").setsArgumentAt(1)
+                                .andThen(FieldAccessor.ofField("type").setsArgumentAt(2)))
+                        )
+                )
+
         type.methods.forEach { method ->
-
-            val returnType = method.genericReturnType
-            val methodName = method.name
-            val name = getPropertyName(methodName)
-
-            val kotlinClass = method.declaringClass.kotlin
-            val isNullable = kotlinClass.isMethodNullable(method, name)
-
-            val value: (Boolean) -> T? = { nullable ->
-                var returning: Any?
-                val configObject = configProvider.load(concatPrefix(prefix, name))
-                if (configObject == null) {
-                    try {
-                        returning = kotlinClass.getDefaultMethod(method.name)?.invoke(instance, instance)
-                    } catch (e: Exception) { // There's no default
-                        if (nullable) {
-                            returning = null
-                        } else {
-                            throw SettingNotFound("Setting $name not found")
-                        }
-                    }
-                } else {
-                    if (configObject.isArray()) {
-                        val targetType = TargetType(returnType)
-                        val rawType = targetType.rawTargetType()
-                        val collection = createCollection(rawType)
-                        toMutableCollection(configObject, returnType, collection, name, configProvider, prefix)
-                        returning = collection
-                    } else if (configObject.isPrimitive()) {
-                        val targetType = TargetType(returnType)
-                        val rawType = targetType.rawTargetType()
-                        val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                        val classType = superType ?: rawType
-                        returning = classType.findParser().parse(configObject, classType, superType?.findParser())
-                    } else { // it is an object
-                        returning = configProvider.bind(concatPrefix(prefix, name), method.returnType)
-                    }
-                }
-                returning as T?
-            }
             subclass = subclass
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
                     .intercept(MethodDelegation
-                            .withEmptyConfiguration()
+                            .withDefaultConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(object : Any() {
-                                @RuntimeType fun delegate() = value(isNullable)
-                            }))
+                            .to(ConfigurationHandler::class.java))
         }
-        instance = subclass.make().load(javaClass.classLoader).loaded.newInstance()
-        return instance
+
+        val generatedClass = subclass.make()
+                .load(javaClass.classLoader)
+                .loaded
+        cache[type] = generatedClass
+        return generatedClass
+                .getDeclaredConstructor(ConfigProvider::class.java, String::class.java, Class::class.java)
+                .newInstance(configProvider, prefix, type)
+    }
+}
+
+class ConfigurationHandler {
+
+    companion object {
+        @JvmStatic
+        @RuntimeType
+        fun <T> intercept(
+                @This that: Any,
+                @Origin classMethod: Method,
+                @FieldValue("provider") configProvider: ConfigProvider,
+                @FieldValue("type") interfaze: Class<T>,
+                @FieldValue("prefix") prefix: String): T? {
+
+            val method = interfaze.getMethod(classMethod.name)
+            val kotlinClass: KClass<*> = method.declaringClass.kotlin
+            val name: String = getPropertyName(method.name)
+            val returnType: Type = method.genericReturnType
+            val isNullable = kotlinClass.isMethodNullable(method, name)
+            var returning: Any?
+
+            val configObject = configProvider.load(concatPrefix(prefix, name))
+            if (configObject == null) {
+                try {
+                    returning = kotlinClass.getDefaultMethod(method.name)?.invoke(that, that)
+                } catch (e: Exception) { // There's no default
+                    if (isNullable) {
+                        returning = null
+                    } else {
+                        throw SettingNotFound("Setting $name not found")
+                    }
+                }
+            } else {
+                if (configObject.isArray()) {
+                    val targetType = TargetType(returnType)
+                    val rawType = targetType.rawTargetType()
+                    val collection = createCollection(rawType)
+                    toMutableCollection(configObject, returnType, collection, name, configProvider, prefix)
+                    returning = collection
+                } else if (configObject.isPrimitive()) {
+                    val targetType = TargetType(returnType)
+                    val rawType = targetType.rawTargetType()
+                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                    val classType = superType ?: rawType
+                    returning = classType.findParser().parse(configObject, classType, superType?.findParser())
+                } else { // it is an object
+                    returning = configProvider.bind(concatPrefix(prefix, name), method.returnType)
+                }
+            }
+            return returning as T?
+        }
     }
 }
 

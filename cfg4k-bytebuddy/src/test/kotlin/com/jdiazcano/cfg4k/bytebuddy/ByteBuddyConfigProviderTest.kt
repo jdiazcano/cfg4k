@@ -59,5 +59,15 @@ class ByteBuddyConfigProviderTest : Spek({
             // toString should be the object tostring not the one that comes from the property
             testBinder.toString().should.not.be.equal("this should not be ever used")
         }
+
+        it("foreach binding test to MANUALLY detect if there are memory leaks") {
+            (1..10).forEach {
+                val testBinder = provider.bind<TestBinder>("")
+                val otherTestBinder = provider.bind<com.jdiazcano.cfg4k.bytebuddy.subpackage.TestBinder>("")
+                testBinder.should.not.be.equals(otherTestBinder) // they must be different instances since classes are different
+                testBinder.nullProperty().should.be.`null`
+            }
+        }
+
     }
 })
