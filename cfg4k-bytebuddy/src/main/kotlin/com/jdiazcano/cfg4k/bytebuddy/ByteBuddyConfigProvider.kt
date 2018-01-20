@@ -61,18 +61,12 @@ class ByteBuddyBinder : Binder {
         var instance: Any? = null
         type.methods.forEach { method ->
 
-            val returnType = method.genericReturnType
-            val methodName = method.name
-            val name = getPropertyName(methodName)
-
-            val kotlinClass = method.declaringClass.kotlin
-
             subclass = subclass
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
                     .intercept(MethodDelegation
                             .withEmptyConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(MethodDelegation.to(Handler(kotlinClass, method, name, prefix, instance, returnType))))
+                            .to(MethodDelegation.to(Handler(method, prefix, instance))))
         }
         instance = subclass.make().load(javaClass.classLoader).loaded.getDeclaredConstructor(ConfigProvider::class.java).newInstance(configProvider)
         return instance
@@ -80,12 +74,12 @@ class ByteBuddyBinder : Binder {
 }
 
 class Handler(
-        val kotlinClass: KClass<*>,
         val method: Method,
-        val name: String,
         val prefix: String,
         val instance: Any?,
-        val returnType: Type) {
+        val kotlinClass: KClass<*> = method.declaringClass.kotlin,
+        val name: String = getPropertyName(method.name),
+        val returnType: Type = method.genericReturnType) {
     @RuntimeType
     fun <T> intercept(@FieldValue("provider") obj: Any): T? {
         val configProvider = obj as ConfigProvider
