@@ -61,11 +61,10 @@ class ByteBuddyConfigProviderTest : Spek({
         }
 
         it("foreach binding test to MANUALLY detect if there are memory leaks") {
-            val cachedProvider = provider
             (1..10).forEach {
-                val testBinder = cachedProvider.bind<TestBinder>("")
-                val otherTestBinder = cachedProvider.bind<com.jdiazcano.cfg4k.bytebuddy.subpackage.TestBinder>("")
-                testBinder.should.not.be.equals(otherTestBinder)
+                val testBinder = provider.bind<TestBinder>("")
+                val otherTestBinder = provider.bind<com.jdiazcano.cfg4k.bytebuddy.subpackage.TestBinder>("")
+                testBinder.should.not.be.equals(otherTestBinder) // they must be different instances since classes are different
                 testBinder.nullProperty().should.be.`null`
             }
         }
