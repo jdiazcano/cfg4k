@@ -35,17 +35,17 @@ import net.bytebuddy.ByteBuddy
 import net.bytebuddy.description.modifier.Visibility
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
 import net.bytebuddy.implementation.FieldAccessor
+import net.bytebuddy.implementation.MethodCall
 import net.bytebuddy.implementation.MethodDelegation
-import net.bytebuddy.implementation.bind.annotation.FieldValue
 import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
+import java.util.*
 import kotlin.reflect.KClass
 
-@Suppress("UNCHECKED_CAST")
 open class ByteBuddyConfigProvider(
         configLoader: ConfigLoader,
         reloadStrategy: ReloadStrategy? = null
@@ -53,11 +53,18 @@ open class ByteBuddyConfigProvider(
 
 @Suppress("UNCHECKED_CAST")
 class ByteBuddyBinder : Binder {
+
+    val cache = WeakHashMap<Class<*>, Class<*>>()
+
     override fun <T : Any> bind(configProvider: ConfigProvider, prefix: String, type: Class<T>): T {
+        if (type in cache) {
+            return cache[type]!!.getDeclaredConstructor(ConfigProvider::class.java).newInstance(configProvider) as T
+        }
+
         var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
                 .defineField("provider", ConfigProvider::class.java, Visibility.PRIVATE)
-                .defineConstructor(Visibility.PUBLIC).withParameters(listOf(ConfigProvider::class.java))
-                .intercept(FieldAccessor.ofField("provider").setsArgumentAt(0))
+                .defineConstructor(Visibility.PUBLIC).withParameters(ConfigProvider::class.java)
+                .intercept(MethodCall.invoke(Any::class.java.getConstructor()).andThen(FieldAccessor.ofField("provider").setsArgumentAt(0)))
         var instance: Any? = null
         type.methods.forEach { method ->
 
@@ -66,14 +73,23 @@ class ByteBuddyBinder : Binder {
                     .intercept(MethodDelegation
                             .withEmptyConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(MethodDelegation.to(Handler(method, prefix, instance))))
+                            .to(object : Any() {
+                                @RuntimeType fun delegate() = Handler<T>(configProvider, method, prefix, instance).delegate()
+                            }))
         }
-        instance = subclass.make().load(javaClass.classLoader).loaded.getDeclaredConstructor(ConfigProvider::class.java).newInstance(configProvider)
+        val generatedClass = subclass.make()
+                .load(javaClass.classLoader)
+                .loaded
+        cache[type] = generatedClass
+        instance = generatedClass
+                .getDeclaredConstructor(ConfigProvider::class.java)
+                .newInstance(configProvider)
         return instance
     }
 }
 
-class Handler(
+class Handler<T>(
+        val configProvider: ConfigProvider,
         val method: Method,
         val prefix: String,
         val instance: Any?,
@@ -81,8 +97,7 @@ class Handler(
         val name: String = getPropertyName(method.name),
         val returnType: Type = method.genericReturnType) {
     @RuntimeType
-    fun <T> intercept(@FieldValue("provider") obj: Any): T? {
-        val configProvider = obj as ConfigProvider
+    fun delegate(): T? {
         val isNullable = kotlinClass.isMethodNullable(method, name)
         var returning: Any?
         val configObject = configProvider.load(concatPrefix(prefix, name))

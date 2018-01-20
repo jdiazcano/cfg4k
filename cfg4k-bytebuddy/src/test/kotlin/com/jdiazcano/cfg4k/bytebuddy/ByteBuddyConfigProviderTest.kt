@@ -2,7 +2,6 @@ package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.providers.cache
 import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
@@ -62,9 +61,11 @@ class ByteBuddyConfigProviderTest : Spek({
         }
 
         it("foreach binding test") {
-            val cachedProvider = provider.cache()
+            val cachedProvider = provider
             (1..10).forEach {
                 val testBinder = cachedProvider.bind<TestBinder>("")
+                val otherTestBinder = cachedProvider.bind<com.jdiazcano.cfg4k.bytebuddy.subpackage.TestBinder>("")
+                testBinder.should.not.be.equals(otherTestBinder)
                 testBinder.nullProperty().should.be.`null`
             }
         }
