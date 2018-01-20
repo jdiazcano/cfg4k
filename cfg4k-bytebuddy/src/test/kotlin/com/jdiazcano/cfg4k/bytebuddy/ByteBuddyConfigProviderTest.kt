@@ -60,7 +60,7 @@ class ByteBuddyConfigProviderTest : Spek({
             testBinder.toString().should.not.be.equal("this should not be ever used")
         }
 
-        it("foreach binding test") {
+        it("foreach binding test to MANUALLY detect if there are memory leaks") {
             val cachedProvider = provider
             (1..10).forEach {
                 val testBinder = cachedProvider.bind<TestBinder>("")

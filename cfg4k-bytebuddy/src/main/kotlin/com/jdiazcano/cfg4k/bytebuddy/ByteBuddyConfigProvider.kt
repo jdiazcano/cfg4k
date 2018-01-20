@@ -37,7 +37,7 @@ import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
 import net.bytebuddy.implementation.FieldAccessor
 import net.bytebuddy.implementation.MethodCall
 import net.bytebuddy.implementation.MethodDelegation
-import net.bytebuddy.implementation.bind.annotation.RuntimeType
+import net.bytebuddy.implementation.bind.annotation.*
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
 import java.lang.reflect.Method
@@ -58,77 +58,94 @@ class ByteBuddyBinder : Binder {
 
     override fun <T : Any> bind(configProvider: ConfigProvider, prefix: String, type: Class<T>): T {
         if (type in cache) {
-            return cache[type]!!.getDeclaredConstructor(ConfigProvider::class.java).newInstance(configProvider) as T
+            return cache[type]!!.getDeclaredConstructor(
+                    ConfigProvider::class.java,
+                    String::class.java,
+                    Class::class.java).newInstance(configProvider, prefix, type) as T
         }
 
-        var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR)
+        var subclass = ByteBuddy().subclass(type, ConstructorStrategy.Default.NO_CONSTRUCTORS)
                 .defineField("provider", ConfigProvider::class.java, Visibility.PRIVATE)
-                .defineConstructor(Visibility.PUBLIC).withParameters(ConfigProvider::class.java)
-                .intercept(MethodCall.invoke(Any::class.java.getConstructor()).andThen(FieldAccessor.ofField("provider").setsArgumentAt(0)))
-        var instance: Any? = null
-        type.methods.forEach { method ->
+                .defineField("prefix", String::class.java, Visibility.PRIVATE)
+                .defineField("type", Class::class.java, Visibility.PRIVATE)
+                .defineConstructor(Visibility.PUBLIC).withParameters(ConfigProvider::class.java, String::class.java, Class::class.java)
+                .intercept(
+                        MethodCall.invoke(Any::class.java.getConstructor())
+                                .andThen(FieldAccessor.ofField("provider").setsArgumentAt(0)
+                                .andThen(FieldAccessor.ofField("prefix").setsArgumentAt(1)
+                                .andThen(FieldAccessor.ofField("type").setsArgumentAt(2)))
+                        )
 
+                )
+
+        type.methods.forEach { method ->
             subclass = subclass
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
                     .intercept(MethodDelegation
-                            .withEmptyConfiguration()
+                            .withDefaultConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(object : Any() {
-                                @RuntimeType fun delegate() = Handler<T>(configProvider, method, prefix, instance).delegate()
-                            }))
+                            .to(Handler::class.java))
         }
+
         val generatedClass = subclass.make()
                 .load(javaClass.classLoader)
                 .loaded
         cache[type] = generatedClass
-        instance = generatedClass
-                .getDeclaredConstructor(ConfigProvider::class.java)
-                .newInstance(configProvider)
-        return instance
+        return generatedClass
+                .getDeclaredConstructor(ConfigProvider::class.java, String::class.java, Class::class.java)
+                .newInstance(configProvider, prefix, type)
     }
 }
 
-class Handler<T>(
-        val configProvider: ConfigProvider,
-        val method: Method,
-        val prefix: String,
-        val instance: Any?,
-        val kotlinClass: KClass<*> = method.declaringClass.kotlin,
-        val name: String = getPropertyName(method.name),
-        val returnType: Type = method.genericReturnType) {
-    @RuntimeType
-    fun delegate(): T? {
-        val isNullable = kotlinClass.isMethodNullable(method, name)
-        var returning: Any?
-        val configObject = configProvider.load(concatPrefix(prefix, name))
-        if (configObject == null) {
-            try {
-                returning = kotlinClass.getDefaultMethod(method.name)?.invoke(instance, instance)
-            } catch (e: Exception) { // There's no default
-                if (isNullable) {
-                    returning = null
-                } else {
-                    throw SettingNotFound("Setting $name not found")
+class Handler {
+
+    companion object {
+        @JvmStatic
+        @RuntimeType
+        fun <T> intercept(
+                @This that: Any,
+                @Origin classMethod: Method,
+                @FieldValue("provider") configProvider: ConfigProvider,
+                @FieldValue("type") interfaze: Class<T>,
+                @FieldValue("prefix") prefix: String): T? {
+
+            val method = interfaze.getMethod(classMethod.name)
+            val kotlinClass: KClass<*> = method.declaringClass.kotlin
+            val name: String = getPropertyName(method.name)
+            val returnType: Type = method.genericReturnType
+            val isNullable = kotlinClass.isMethodNullable(method, name)
+            var returning: Any?
+
+            val configObject = configProvider.load(concatPrefix(prefix, name))
+            if (configObject == null) {
+                try {
+                    returning = kotlinClass.getDefaultMethod(method.name)?.invoke(that, that)
+                } catch (e: Exception) { // There's no default
+                    if (isNullable) {
+                        returning = null
+                    } else {
+                        throw SettingNotFound("Setting $name not found")
+                    }
+                }
+            } else {
+                if (configObject.isArray()) {
+                    val targetType = TargetType(returnType)
+                    val rawType = targetType.rawTargetType()
+                    val collection = createCollection(rawType)
+                    toMutableCollection(configObject, returnType, collection, name, configProvider, prefix)
+                    returning = collection
+                } else if (configObject.isPrimitive()) {
+                    val targetType = TargetType(returnType)
+                    val rawType = targetType.rawTargetType()
+                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
+                    val classType = superType ?: rawType
+                    returning = classType.findParser().parse(configObject, classType, superType?.findParser())
+                } else { // it is an object
+                    returning = configProvider.bind(concatPrefix(prefix, name), method.returnType)
                 }
             }
-        } else {
-            if (configObject.isArray()) {
-                val targetType = TargetType(returnType)
-                val rawType = targetType.rawTargetType()
-                val collection = createCollection(rawType)
-                toMutableCollection(configObject, returnType, collection, name, configProvider, prefix)
-                returning = collection
-            } else if (configObject.isPrimitive()) {
-                val targetType = TargetType(returnType)
-                val rawType = targetType.rawTargetType()
-                val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                val classType = superType ?: rawType
-                returning = classType.findParser().parse(configObject, classType, superType?.findParser())
-            } else { // it is an object
-                returning = configProvider.bind(concatPrefix(prefix, name), method.returnType)
-            }
+            return returning as T?
         }
-        return returning as T?
     }
 }
 
