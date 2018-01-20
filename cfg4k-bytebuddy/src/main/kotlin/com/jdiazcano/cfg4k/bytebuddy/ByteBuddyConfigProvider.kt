@@ -54,7 +54,7 @@ open class ByteBuddyConfigProvider(
 @Suppress("UNCHECKED_CAST")
 class ByteBuddyBinder : Binder {
 
-    val cache = WeakHashMap<Class<*>, Class<*>>()
+    private val cache = WeakHashMap<Class<*>, Class<*>>()
 
     override fun <T : Any> bind(configProvider: ConfigProvider, prefix: String, type: Class<T>): T {
         if (type in cache) {
@@ -75,7 +75,6 @@ class ByteBuddyBinder : Binder {
                                 .andThen(FieldAccessor.ofField("prefix").setsArgumentAt(1)
                                 .andThen(FieldAccessor.ofField("type").setsArgumentAt(2)))
                         )
-
                 )
 
         type.methods.forEach { method ->
@@ -84,7 +83,7 @@ class ByteBuddyBinder : Binder {
                     .intercept(MethodDelegation
                             .withDefaultConfiguration()
                             .filter(not(isDeclaredBy(Any::class.java)))
-                            .to(Handler::class.java))
+                            .to(ConfigurationHandler::class.java))
         }
 
         val generatedClass = subclass.make()
@@ -97,7 +96,7 @@ class ByteBuddyBinder : Binder {
     }
 }
 
-class Handler {
+class ConfigurationHandler {
 
     companion object {
         @JvmStatic

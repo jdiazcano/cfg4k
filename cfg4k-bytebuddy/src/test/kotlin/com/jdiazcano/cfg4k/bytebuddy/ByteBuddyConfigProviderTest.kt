@@ -69,8 +69,5 @@ class ByteBuddyConfigProviderTest : Spek({
             }
         }
 
-        it("should not have any testbinder references") {
-            "a".should.be.equal("a")
-        }
     }
 })
