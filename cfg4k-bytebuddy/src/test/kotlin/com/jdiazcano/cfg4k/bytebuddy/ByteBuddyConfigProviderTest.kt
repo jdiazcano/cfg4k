@@ -2,6 +2,7 @@ package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.providers.cache
 import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
@@ -58,6 +59,18 @@ class ByteBuddyConfigProviderTest : Spek({
 
             // toString should be the object tostring not the one that comes from the property
             testBinder.toString().should.not.be.equal("this should not be ever used")
+        }
+
+        it("foreach binding test") {
+            val cachedProvider = provider.cache()
+            (1..10).forEach {
+                val testBinder = cachedProvider.bind<TestBinder>("")
+                testBinder.nullProperty().should.be.`null`
+            }
+        }
+
+        it("should not have any testbinder references") {
+            "a".should.be.equal("a")
         }
     }
 })
