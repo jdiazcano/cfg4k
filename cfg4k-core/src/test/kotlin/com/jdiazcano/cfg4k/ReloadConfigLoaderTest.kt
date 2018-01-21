@@ -17,7 +17,6 @@
 package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.core.toConfig
-import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
 import com.jdiazcano.cfg4k.sources.FileConfigSource
@@ -31,6 +30,7 @@ class ReloadConfigLoaderTest : Spek({
     describe("a reloadable properties config loader") {
         val file = File("reloadedfile.properties")
         file.createNewFile()
+        file.deleteOnExit()
         file.writeText("""
 a=b
 c=d
@@ -69,8 +69,6 @@ nested.a=reloaded nestedb""")
             loader.reload()
             loader.get("a").should.be.equal("reloadedb".toConfig())
             loader.get("nested.a").should.be.equal("reloaded nestedb".toConfig())
-
-            file.delete()
         }
     }
 
@@ -154,24 +152,24 @@ c=reloadedd
     }
 
     describe("a reloadable system properties config loader") {
-        var loader: ConfigLoader? = null
+        val loader = SystemPropertyConfigLoader()
         var inc = 1
         beforeEachTest {
             System.setProperty("first", "$inc")
             System.setProperty("second", "$inc")
+            inc++
+            loader.reload()
         }
 
-        it("the first time should be 1 and 2") {
-            loader = SystemPropertyConfigLoader()
-            loader?.let {
+        it("the first time should be 1 and 1") {
+            loader.let {
                 it.get("first").should.be.equal("1".toConfig())
                 it.get("second").should.be.equal("1".toConfig())
             }
         }
 
-        it("the first time should be 1 and 2") {
-            loader?.let {
-                it.reload()
+        it("the first time should be 2 and 2") {
+            loader.let {
                 it.get("first").should.be.equal("2".toConfig())
                 it.get("second").should.be.equal("2".toConfig())
             }

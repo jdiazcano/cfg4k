@@ -25,10 +25,12 @@ import com.jdiazcano.cfg4k.parsers.OffsetDateTimeParser
 import com.jdiazcano.cfg4k.parsers.OffsetTimeParser
 import com.jdiazcano.cfg4k.parsers.Parsers
 import com.jdiazcano.cfg4k.parsers.ZonedDateTimeParser
+import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers.proxy
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.cache
 import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.sources.ConfigSource
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.winterbe.expekt.should
@@ -52,12 +54,15 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class ConfigProviderTest : Spek({
 
+    val source = URLConfigSource(javaClass.classLoader.getResource("test.properties"))
     val providers = listOf(
-            proxy(PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.properties")))),
-            proxy(PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.properties")))).cache()
+            proxy(PropertyConfigLoader(source)),
+            proxy(PropertyConfigLoader(source)).cache()
     )
 
     providers.forEachIndexed { i, provider ->
@@ -299,4 +304,18 @@ class ConfigProviderTest : Spek({
             }
         }
     }
+
+    describe("A reload that fails must not throw an exception but call the listener") {
+        val provider = DefaultConfigProvider(FailReloadConfigLoader(source))
+        provider.addReloadErrorListener { assertTrue { true } }
+        provider.addReloadListener { fail("This should not happen!") }
+        provider.reload()
+    }
 })
+
+// Just used for testing purposes
+private class FailReloadConfigLoader(configSource: ConfigSource): PropertyConfigLoader(configSource) {
+    override fun reload() {
+        throw Exception("Ha! We are in a cute exception in case something happens!")
+    }
+}

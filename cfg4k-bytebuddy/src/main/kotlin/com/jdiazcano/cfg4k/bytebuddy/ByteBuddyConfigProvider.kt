@@ -37,13 +37,16 @@ import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
 import net.bytebuddy.implementation.FieldAccessor
 import net.bytebuddy.implementation.MethodCall
 import net.bytebuddy.implementation.MethodDelegation
-import net.bytebuddy.implementation.bind.annotation.*
+import net.bytebuddy.implementation.bind.annotation.FieldValue
+import net.bytebuddy.implementation.bind.annotation.Origin
+import net.bytebuddy.implementation.bind.annotation.RuntimeType
+import net.bytebuddy.implementation.bind.annotation.This
 import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
 import net.bytebuddy.matcher.ElementMatchers.not
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
-import java.util.*
+import java.util.WeakHashMap
 import kotlin.reflect.KClass
 
 open class ByteBuddyConfigProvider(

@@ -23,7 +23,7 @@ import java.lang.reflect.Type
  * provider will clear the cache so things will have to be binded again.
  */
 @Suppress("UNCHECKED_CAST")
-class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider by configProvider {
+class CachedConfigProvider(private val configProvider: ConfigProvider) : ConfigProvider by configProvider {
     private val cache = mutableMapOf<String, Any>()
 
     init {
@@ -31,34 +31,34 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
     }
 
     override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
-        if (cache.containsKey(name)) {
-            return cache[name] as T
+        return if (cache.containsKey(name)) {
+            cache[name] as T
         } else {
             val property = configProvider.get(name, type, default)
             cache[name] = property
-            return property
+            property
         }
     }
 
     override fun <T : Any> get(name: String, type: Type, default: T?): T {
-        if (cache.containsKey(name)) {
-            return cache[name] as T
+        return if (cache.containsKey(name)) {
+            cache[name] as T
         } else {
             val property: T = configProvider.get(name, type, default)
             cache[name] = property
-            return property
+            property
         }
     }
 
     override fun <T : Any> bind(prefix: String, type: Class<T>): T {
         // This is using %pre. in order to not collide with general properties
         val cachePrefix = "%pre.$prefix"
-        if (cache.containsKey(cachePrefix)) {
-            return cache[cachePrefix] as T
+        return if (cache.containsKey(cachePrefix)) {
+            cache[cachePrefix] as T
         } else {
             val property: T = configProvider.bind(prefix, type)
             cache[cachePrefix] = property
-            return property
+            property
         }
     }
 

@@ -25,12 +25,13 @@ import com.jdiazcano.cfg4k.utils.SettingNotFound
 import java.lang.reflect.Type
 
 class OverrideConfigProvider(
-        vararg private val providers: ConfigProvider,
+        private vararg val providers: ConfigProvider,
         private val reloadStrategy: ReloadStrategy? = null
 ) : ConfigProvider {
 
     override val binder = ProxyBinder()
     private val listeners = mutableListOf<() -> Unit>()
+    private val errorReloadListeners = mutableListOf<(Exception) -> Unit>()
     private val cachedProviders = mutableMapOf<String, ConfigProvider>()
 
     init {
@@ -132,8 +133,13 @@ class OverrideConfigProvider(
     }
 
     override fun reload() {
-        providers.forEach { it.reload() }
-        listeners.forEach { it() }
+        try {
+            providers.forEach { it.reload() }
+            listeners.forEach { it() }
+        } catch (e: Exception) {
+            errorReloadListeners.forEach { it(e) }
+        }
+
     }
 
     override fun cancelReload(): Unit? {
@@ -142,6 +148,10 @@ class OverrideConfigProvider(
 
     override fun addReloadListener(listener: () -> Unit) {
         listeners.add(listener)
+    }
+
+    override fun addReloadErrorListener(listener: (Exception) -> Unit) {
+        errorReloadListeners.add(listener)
     }
 
 }

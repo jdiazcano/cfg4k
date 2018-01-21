@@ -38,6 +38,7 @@ open class DefaultConfigProvider(
 ) : ConfigProvider {
 
     private val listeners: MutableList<() -> Unit> = mutableListOf()
+    private val errorReloadListeners: MutableList<(Exception) -> Unit> = mutableListOf()
 
     init {
         reloadStrategy?.register(this)
@@ -45,16 +46,12 @@ open class DefaultConfigProvider(
 
     override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
         // There is no way that this has a generic parsers because the class actually removes that possibility
-        if (type.isParseable()) {
+        return if (type.isParseable()) {
             val value = configLoader.get(name)
             if (value != null) {
-                return type.findParser().parse(value) as T
+                type.findParser().parse(value) as T
             } else {
-                if (default != null) {
-                    return default
-                } else {
-                    throw SettingNotFound("Setting $name was not found")
-                }
+                default ?: throw SettingNotFound("Setting $name was not found")
             }
         } else {
             throw ParserClassNotFound("Parser for class ${type.name} was not found")
@@ -80,11 +77,7 @@ open class DefaultConfigProvider(
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {
-            if (default != null) {
-                return default
-            } else {
-                throw SettingNotFound("Setting $name was not found")
-            }
+            return default ?: throw SettingNotFound("Setting $name was not found")
         }
     }
 
@@ -128,12 +121,20 @@ open class DefaultConfigProvider(
     override fun cancelReload() = reloadStrategy?.deregister(this)
 
     override fun reload() {
-        configLoader.reload()
-        listeners.forEach { it() } // call listeners
+        try {
+            configLoader.reload()
+            listeners.forEach { it() } // call listeners
+        } catch (e: Exception) {
+            errorReloadListeners.forEach { it(e) }
+        }
     }
 
     override fun addReloadListener(listener: () -> Unit) {
         listeners.add(listener)
+    }
+
+    override fun addReloadErrorListener(listener: (Exception) -> Unit) {
+        errorReloadListeners.add(listener)
     }
 
 }
