@@ -1,6 +1,8 @@
 package com.jdiazcano.hocon
 
-import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.ListConfigObject
+import com.jdiazcano.cfg4k.core.asObject
+import com.jdiazcano.cfg4k.core.isObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.hocon.toConfig
 import com.typesafe.config.ConfigFactory
@@ -19,14 +21,14 @@ class HoconConfigMapperTest : Spek({
         val deployment = ktor.asObject()["deployment"]!!
         deployment.isObject().should.be.`true`
         deployment.asObject()["port"].should.be.equal(8080.toConfig())
-        deployment.asObject()["watch"].should.be.equal(ConfigObject(listOf(
+        deployment.asObject()["watch"].should.be.equal(ListConfigObject(listOf(
                 "hello".toConfig(), "bye".toConfig()
         )))
         deployment.asObject()["ssl"]!!.asObject()["keyStore"].should.be.equal("goodKeyStore".toConfig())
 
         val app = ktor.asObject()["application"]!!
         app.isObject().should.be.`true`
-        app.asObject()["modules"].should.be.equal(ConfigObject(listOf(
+        app.asObject()["modules"].should.be.equal(ListConfigObject(listOf(
                 "com.jdiazcano.hocon.KtorConfig".toConfig()
         )))
 

@@ -1,6 +1,7 @@
 package com.jdiazcano.cfg4k
 
-import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.ListConfigObject
+import com.jdiazcano.cfg4k.core.MapConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -45,11 +46,11 @@ class ConfigObjectTest : Spek({
         }
 
         it("should be equals as objects") {
-            val one = ConfigObject(mapOf(
+            val one = MapConfigObject(mapOf(
                     "test" to 1.toConfig(),
                     "str" to "bestest".toConfig()
             ))
-            val anotherOne = ConfigObject(mapOf(
+            val anotherOne = MapConfigObject(mapOf(
                     "test" to 1.toConfig(),
                     "str" to "bestest".toConfig()
             ))
@@ -58,18 +59,18 @@ class ConfigObjectTest : Spek({
         }
 
         it("should be equals as lists") {
-            val one = ConfigObject(listOf(
+            val one = ListConfigObject(listOf(
                     1.toConfig(),
                     "test".toConfig(),
-                    ConfigObject(mapOf(
+                    MapConfigObject(mapOf(
                             "test" to 1.toConfig(),
                             "str" to "bestest".toConfig()
                     ))
             ))
-            val anotherOne = ConfigObject(listOf(
+            val anotherOne = ListConfigObject(listOf(
                     1.toConfig(),
                     "test".toConfig(),
-                    ConfigObject(mapOf(
+                    MapConfigObject(mapOf(
                             "test" to 1.toConfig(),
                             "str" to "bestest".toConfig()
                     ))

@@ -17,10 +17,15 @@
 package com.jdiazcano.cfg4k.binders
 
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.asList
+import com.jdiazcano.cfg4k.core.isList
+import com.jdiazcano.cfg4k.core.isObject
+import com.jdiazcano.cfg4k.core.isString
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
+import java.io.InvalidObjectException
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Type
@@ -65,13 +70,13 @@ class BindingInvocationHandler(
                 }
             }
         } else {
-            if (configObject.isArray()) {
+            if (configObject.isList()) {
                 val targetType = TargetType(type)
                 val rawType = targetType.rawTargetType()
                 val collection = createCollection(rawType)
                 toMutableCollection(configObject, type, collection, name, provider, prefix)
                 return collection
-            } else if (configObject.isPrimitive()) {
+            } else if (configObject.isString()) {
                 val targetType = TargetType(type)
                 val rawType = targetType.rawTargetType()
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
@@ -91,20 +96,14 @@ class BindingInvocationHandler(
 }
 
 fun createCollection(rawType: Class<*>): MutableCollection<Any?> {
-    return if (ArrayList::class.java.isAssignableFrom(rawType)) {
-        arrayListOf<Any?>()
-    } else if (LinkedList::class.java.isAssignableFrom(rawType)) {
-        mutableListOf<Any?>()
-    } else if (LinkedHashSet::class.java.isAssignableFrom(rawType)) {
-        mutableSetOf<Any?>()
-    } else if (HashSet::class.java.isAssignableFrom(rawType)) {
-        hashSetOf<Any?>()
-    } else if (List::class.java.isAssignableFrom(rawType)) {
-        arrayListOf<Any?>()
-    } else if (Set::class.java.isAssignableFrom(rawType)) {
-        mutableSetOf<Any?>()
-    } else {
-        TODO()
+    return when {
+        ArrayList::class.java.isAssignableFrom(rawType) -> arrayListOf()
+        LinkedList::class.java.isAssignableFrom(rawType) -> mutableListOf()
+        LinkedHashSet::class.java.isAssignableFrom(rawType) -> mutableSetOf()
+        HashSet::class.java.isAssignableFrom(rawType) -> hashSetOf()
+        List::class.java.isAssignableFrom(rawType) -> arrayListOf()
+        Set::class.java.isAssignableFrom(rawType) -> mutableSetOf()
+        else -> throw InvalidObjectException("Invalid class to create a collection from.")
     }
 }
 
@@ -114,7 +113,7 @@ fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCol
             val targetType = TargetType(type)
             val superType = targetType.getParameterizedClassArguments().firstOrNull()
             list.add(provider.bind(concatPrefix(prefix, "$name[$index]"), superType as Class<Any>))
-        } else if (innerObject.isPrimitive()) {
+        } else if (innerObject.isString()) {
             val targetType = TargetType(type)
             val rawType = targetType.rawTargetType()
             val superType = targetType.getParameterizedClassArguments().firstOrNull()

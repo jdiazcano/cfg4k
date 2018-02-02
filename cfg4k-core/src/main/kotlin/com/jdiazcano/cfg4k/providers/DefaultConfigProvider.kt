@@ -21,6 +21,7 @@ import com.jdiazcano.cfg4k.binders.ProxyBinder
 import com.jdiazcano.cfg4k.binders.createCollection
 import com.jdiazcano.cfg4k.binders.toMutableCollection
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.isList
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
@@ -68,7 +69,7 @@ open class DefaultConfigProvider(
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
                 return rawType.findParser().parse(value, classType, superType?.findParser()) as T
-            } else if (value.isArray()) {
+            } else if (value.isList()) {
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
                 val collection = createCollection(rawType)

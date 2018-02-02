@@ -1,7 +1,11 @@
 package com.jdiazcano.cfg4k.json
 
 import com.beust.klaxon.Parser
-import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.MapConfigObject
+import com.jdiazcano.cfg4k.core.asList
+import com.jdiazcano.cfg4k.core.asObject
+import com.jdiazcano.cfg4k.core.isList
+import com.jdiazcano.cfg4k.core.isObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -42,14 +46,14 @@ class JsonToConfigObjectMapperTest : Spek({
         configObject.isObject().should.be.`true`
         configObject.asObject()["int"].should.be.equal(1.toConfig())
         configObject.asObject()["str"].should.be.equal("string".toConfig())
-        configObject.asObject()["obj"].should.be.equal(ConfigObject(
+        configObject.asObject()["obj"].should.be.equal(MapConfigObject(
                 mapOf("objstr" to "objstring".toConfig(),
                         "objint" to "11".toConfig())
         ))
         val listConfigObject = configObject.asObject()["listobj"]
         listConfigObject.should.not.be.`null`
         listConfigObject?.let {
-            it.isArray().should.be.`true`
+            it.isList().should.be.`true`
             it.asList().size.should.be.equal(2)
             it.asList().forEachIndexed { index, obj ->
                 obj.isObject().should.be.`true`
@@ -60,7 +64,7 @@ class JsonToConfigObjectMapperTest : Spek({
             }
         }
         val listItemsObject = configObject.asObject()["listitems"]
-        listItemsObject!!.isArray().should.be.`true`
+        listItemsObject!!.isList().should.be.`true`
         listItemsObject.asList().size.should.be.equal(5)
         listItemsObject.asList().forEachIndexed { index, configObject -> configObject.should.be.equal(index.toConfig()) }
     }

@@ -23,6 +23,8 @@ import com.jdiazcano.cfg4k.binders.getDefaultMethod
 import com.jdiazcano.cfg4k.binders.getPropertyName
 import com.jdiazcano.cfg4k.binders.isMethodNullable
 import com.jdiazcano.cfg4k.binders.toMutableCollection
+import com.jdiazcano.cfg4k.core.isList
+import com.jdiazcano.cfg4k.core.isString
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
@@ -130,13 +132,13 @@ class ConfigurationHandler {
                     }
                 }
             } else {
-                if (configObject.isArray()) {
+                if (configObject.isList()) {
                     val targetType = TargetType(returnType)
                     val rawType = targetType.rawTargetType()
                     val collection = createCollection(rawType)
                     toMutableCollection(configObject, returnType, collection, name, configProvider, prefix)
                     returning = collection
-                } else if (configObject.isPrimitive()) {
+                } else if (configObject.isString()) {
                     val targetType = TargetType(returnType)
                     val rawType = targetType.rawTargetType()
                     val superType = targetType.getParameterizedClassArguments().firstOrNull()

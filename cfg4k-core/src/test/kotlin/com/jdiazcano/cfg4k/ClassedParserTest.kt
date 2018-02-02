@@ -1,6 +1,8 @@
 package com.jdiazcano.cfg4k
 
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.asObject
+import com.jdiazcano.cfg4k.core.asString
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parser
 import com.jdiazcano.cfg4k.parsers.Parsers

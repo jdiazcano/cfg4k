@@ -17,6 +17,7 @@
 package com.jdiazcano.cfg4k.parsers
 
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.asString
 
 class EnumParser<T : Enum<T>> : Parser<T> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): T {

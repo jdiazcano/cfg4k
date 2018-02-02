@@ -4,6 +4,9 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.core.ListConfigObject
+import com.jdiazcano.cfg4k.core.MapConfigObject
+import com.jdiazcano.cfg4k.core.StringConfigObject
 import java.io.InputStream
 
 /**
@@ -15,20 +18,20 @@ fun Parser.asConfigObjectFromJson(input: InputStream): ConfigObject {
 }
 
 private fun parseObject(parsed: JsonObject): ConfigObject {
-    return ConfigObject(parsed.map { (key, value) ->
+    return MapConfigObject(parsed.map { (key, value) ->
         when (value) {
             is JsonArray<*> -> key to parseArray(value)
             is JsonObject -> key to parseObject(value)
-            else -> key to ConfigObject(value.toString())
+            else -> key to StringConfigObject(value.toString())
         }
-    }.toMap(hashMapOf<String, ConfigObject>()))
+    }.toMap(hashMapOf()))
 }
 
 private fun parseArray(array: JsonArray<*>): ConfigObject {
-    return ConfigObject(array.map { item ->
+    return ListConfigObject(array.map { item ->
         when (item) {
             is JsonObject -> parseObject(item)
-            else -> ConfigObject(item.toString())
+            else -> StringConfigObject(item.toString())
         }
     })
 }
