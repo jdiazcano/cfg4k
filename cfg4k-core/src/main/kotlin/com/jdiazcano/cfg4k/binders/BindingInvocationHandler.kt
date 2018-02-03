@@ -124,7 +124,7 @@ fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCol
 }
 
 fun KClass<*>.getDefaultMethod(methodName: String): Method? {
-    return Class.forName(jvmName + "\$DefaultImpls").methods.filter { it.name == methodName }.firstOrNull()
+    return Class.forName(jvmName + "\$DefaultImpls").methods.firstOrNull { it.name == methodName }
 }
 
 fun KClass<*>.isMethodNullable(method: Method, propertyName: String = ""): Boolean {

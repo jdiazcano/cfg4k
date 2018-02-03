@@ -6,6 +6,7 @@ import com.jdiazcano.cfg4k.core.toConfig
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import java.io.InvalidObjectException
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -45,7 +46,7 @@ class ConfigObjectMergeTest : Spek({
                     "d" to 4.toConfig()
             ))
 
-            assertFailsWith<NotImplementedError> { list1.merge(list2) }
+            assertFailsWith<InvalidObjectException> { list1.merge(list2) }
         }
 
         it("merge lists with collision will just take the object once") {

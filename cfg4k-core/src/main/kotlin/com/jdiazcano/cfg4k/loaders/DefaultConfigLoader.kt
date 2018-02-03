@@ -35,6 +35,10 @@ open class DefaultConfigLoader(protected var root: ConfigObject = "".toConfig())
         }
     }
 
+    fun merge(loader: DefaultConfigLoader): ConfigLoader {
+        return DefaultConfigLoader(loader.root.merge(root))
+    }
+
     override fun reload() {}
 
 }
@@ -43,9 +47,9 @@ val numberRegex = "([^\\[]+)(?:\\[(\\d+)])".toRegex()
 
 internal fun findNumbers(key: String): Pair<Int?, String> {
     val result = numberRegex.find(key)
-    if (result != null) {
-        return Pair(result.groups[2]?.value?.toInt(), result.groups[1]?.value!!)
+    return if (result != null) {
+        Pair(result.groups[2]?.value?.toInt(), result.groups[1]?.value!!)
     } else {
-        return Pair(null, key)
+        Pair(null, key)
     }
 }

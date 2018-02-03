@@ -33,8 +33,6 @@ abstract class AbstractConfigObject(
         override val type: ConfigObjectType
 ) : ConfigObject {
 
-
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
