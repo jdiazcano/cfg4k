@@ -1,6 +1,5 @@
 package com.jdiazcano.cfg4k.yaml
 
-import com.jdiazcano.cfg4k.core.asObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

@@ -2,10 +2,6 @@ package com.jdiazcano.cfg4k.json
 
 import com.beust.klaxon.Parser
 import com.jdiazcano.cfg4k.core.MapConfigObject
-import com.jdiazcano.cfg4k.core.asList
-import com.jdiazcano.cfg4k.core.asObject
-import com.jdiazcano.cfg4k.core.isList
-import com.jdiazcano.cfg4k.core.isObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek

@@ -21,7 +21,6 @@ import com.jdiazcano.cfg4k.binders.ProxyBinder
 import com.jdiazcano.cfg4k.binders.createCollection
 import com.jdiazcano.cfg4k.binders.toMutableCollection
 import com.jdiazcano.cfg4k.core.ConfigObject
-import com.jdiazcano.cfg4k.core.isList
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable

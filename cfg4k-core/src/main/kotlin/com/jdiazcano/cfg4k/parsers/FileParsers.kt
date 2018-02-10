@@ -1,7 +1,6 @@
 package com.jdiazcano.cfg4k.parsers
 
 import com.jdiazcano.cfg4k.core.ConfigObject
-import com.jdiazcano.cfg4k.core.asString
 import java.io.File
 import java.net.URI
 import java.net.URL

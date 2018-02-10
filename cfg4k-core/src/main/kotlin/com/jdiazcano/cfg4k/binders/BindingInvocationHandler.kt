@@ -17,10 +17,6 @@
 package com.jdiazcano.cfg4k.binders
 
 import com.jdiazcano.cfg4k.core.ConfigObject
-import com.jdiazcano.cfg4k.core.asList
-import com.jdiazcano.cfg4k.core.isList
-import com.jdiazcano.cfg4k.core.isObject
-import com.jdiazcano.cfg4k.core.isString
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.utils.SettingNotFound

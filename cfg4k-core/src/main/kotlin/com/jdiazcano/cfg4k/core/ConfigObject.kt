@@ -18,15 +18,14 @@ interface ConfigObject {
             asObject()[cleanKey]?.asList()?.get(number)
         }
     }
+
+    fun isString() = type == ConfigObjectType.STRING
+    fun isObject() = type == ConfigObjectType.OBJECT
+    fun isList() = type == ConfigObjectType.LIST
+    fun asString() = value.toString()
+    fun asObject() = value as Map<String, ConfigObject>
+    fun asList() = value as List<ConfigObject>
 }
-
-fun ConfigObject.isString() = type == ConfigObjectType.STRING
-fun ConfigObject.isObject() = type == ConfigObjectType.OBJECT
-fun ConfigObject.isList() = type == ConfigObjectType.LIST
-
-fun ConfigObject.asString() = value.toString()
-fun ConfigObject.asObject() = value as Map<String, ConfigObject>
-fun ConfigObject.asList() = value as List<ConfigObject>
 
 abstract class AbstractConfigObject(
         override val value: Any,

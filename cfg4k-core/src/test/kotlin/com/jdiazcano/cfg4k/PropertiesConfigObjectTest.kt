@@ -1,7 +1,5 @@
 package com.jdiazcano.cfg4k
 
-import com.jdiazcano.cfg4k.core.asObject
-import com.jdiazcano.cfg4k.core.isObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.asProperties
 import com.jdiazcano.cfg4k.loaders.toConfig

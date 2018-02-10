@@ -23,8 +23,6 @@ import com.jdiazcano.cfg4k.binders.getDefaultMethod
 import com.jdiazcano.cfg4k.binders.getPropertyName
 import com.jdiazcano.cfg4k.binders.isMethodNullable
 import com.jdiazcano.cfg4k.binders.toMutableCollection
-import com.jdiazcano.cfg4k.core.isList
-import com.jdiazcano.cfg4k.core.isString
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider

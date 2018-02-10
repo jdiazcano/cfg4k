@@ -17,7 +17,6 @@
 package com.jdiazcano.cfg4k.parsers
 
 import com.jdiazcano.cfg4k.core.ConfigObject
-import com.jdiazcano.cfg4k.core.asString
 
 object IntParser : Parser<Int> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toInt()

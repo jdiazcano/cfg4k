@@ -1,8 +1,6 @@
 package com.jdiazcano.hocon
 
 import com.jdiazcano.cfg4k.core.ListConfigObject
-import com.jdiazcano.cfg4k.core.asObject
-import com.jdiazcano.cfg4k.core.isObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.hocon.toConfig
 import com.typesafe.config.ConfigFactory
