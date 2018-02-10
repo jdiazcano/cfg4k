@@ -128,6 +128,12 @@ These parsers are supported out of the box
 1. File
 1. Path
 1. Class<*>
+1. Regex
+1. Pattern
+1. InetAddress
+1. Connection
+1. Driver
+1. UUID
 
 # Customizing Cfg4k
 
