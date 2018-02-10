@@ -7,18 +7,18 @@ import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class FileParser : Parser<File> {
+object FileParser : Parser<File> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = File(value.asString())
 }
 
-class PathParser : Parser<Path> {
+object PathParser : Parser<Path> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = Paths.get(value.asString())
 }
 
-class URIParser : Parser<URI> {
+object URIParser : Parser<URI> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = URI(value.asString())
 }
 
-class URLParser : Parser<URL> {
+object URLParser : Parser<URL> {
     override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = URL(value.asString())
 }

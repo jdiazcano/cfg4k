@@ -22,9 +22,14 @@ import com.jdiazcano.cfg4k.utils.ParserClassNotFound
 import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.net.InetAddress
 import java.net.URI
 import java.net.URL
 import java.nio.file.Path
+import java.sql.Connection
+import java.sql.Driver
+import java.util.UUID
+import java.util.regex.Pattern
 
 object Parsers {
     private val parsers: MutableMap<Class<out Any>, Parser<Any>> = mutableMapOf(
@@ -41,10 +46,16 @@ object Parsers {
             BigInteger::class.java to BigIntegerParser,
             Enum::class.java to EnumParser<Nothing>(),
             Class::class.java to ClassParser,
-            File::class.java to FileParser(),
-            Path::class.java to PathParser(),
-            URL::class.java to URLParser(),
-            URI::class.java to URIParser(),
+            File::class.java to FileParser,
+            Path::class.java to PathParser,
+            URL::class.java to URLParser,
+            URI::class.java to URIParser,
+            Regex::class.java to RegexParser,
+            Pattern::class.java to PatternParser,
+            UUID::class.java to UUIDParser,
+            Driver::class.java to SQLDriverParser,
+            Connection::class.java to SQLConnectionParser,
+            InetAddress::class.java to InetAddressParser,
 
             /* These are needed for compatibility */
             java.lang.Integer::class.java to IntParser,
@@ -73,7 +84,7 @@ object Parsers {
     }
 
     fun addParser(type: Class<out Any>, parser: Parser<Any>) {
-        parsers.put(type, parser)
+        parsers[type] = parser
     }
 
 }
