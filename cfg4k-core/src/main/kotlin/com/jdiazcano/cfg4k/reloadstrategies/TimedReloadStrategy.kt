@@ -17,25 +17,47 @@
 package com.jdiazcano.cfg4k.reloadstrategies
 
 import com.jdiazcano.cfg4k.providers.ConfigProvider
-import java.util.Timer
+import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy.Mode.FIXED_DELAY
+import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy.Mode.FIXED_RATE
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.timer
 
 /**
  * This reload strategy will reload the config provider when the timer ticks. A TimeUnit is used which will be
  * translated to milliseconds.
  */
-class TimedReloadStrategy(val time: Long, val unit: TimeUnit) : ReloadStrategy {
+class TimedReloadStrategy(private val time: Long,
+                          private val unit: TimeUnit,
+                          private val mode: Mode = FIXED_RATE) : ReloadStrategy {
+    enum class Mode {
+        FIXED_RATE, FIXED_DELAY
+    }
 
-    private lateinit var reloadTimer: Timer
+    private val executor: ScheduledExecutorService by lazy {
+        Executors.newSingleThreadScheduledExecutor { runnable ->
+            Thread(runnable, "TimeReloadStrategy").also { it.isDaemon = true }
+        }
+    }
+    private val reloadTasks = mutableMapOf<ConfigProvider, ScheduledFuture<*>>()
 
     override fun register(configProvider: ConfigProvider) {
-        reloadTimer = timer("TimeReloadStrategy", true, unit.toMillis(time), unit.toMillis(time)) {
-            configProvider.reload()
+        reloadTasks.computeIfAbsent(configProvider) { cp ->
+            val reload = {
+                try {
+                    cp.reload()
+                } catch (ignored: Exception) {
+                }
+            }
+            when (mode) {
+                FIXED_RATE -> executor.scheduleAtFixedRate(reload, 0, time, unit)
+                FIXED_DELAY -> executor.scheduleWithFixedDelay(reload, 0, time, unit)
+            }
         }
     }
 
     override fun deregister(configProvider: ConfigProvider) {
-        reloadTimer.cancel()
+        reloadTasks[configProvider]?.cancel(true)
     }
 }

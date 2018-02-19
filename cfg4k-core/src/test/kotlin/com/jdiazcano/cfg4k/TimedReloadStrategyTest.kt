@@ -16,6 +16,8 @@
 
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.binders.Binder
+import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.CachedConfigProvider
 import com.jdiazcano.cfg4k.providers.ConfigProvider
@@ -30,6 +32,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
+import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 class TimedReloadStrategyTest : Spek({
@@ -78,8 +81,47 @@ nested.a=reloaded nestedb
             )
             checkProvider(overrideFile, provider, text, true)
         }
-    }
 
+        it("error on reload doesn't prevent further reload attempts") {
+            var reloadCounter = 0
+            val provider = reloadTestProvider {
+                // Every second reload throws an exception
+                if (reloadCounter++ % 2 == 0) throw Exception("simulate reload failure")
+            }
+            val reloadStrategy = TimedReloadStrategy(100, TimeUnit.MILLISECONDS)
+
+            reloadStrategy.register(provider)
+            Thread.sleep(1000)
+            reloadStrategy.deregister(provider)
+
+            // Expected value is low enough to avoid test flakiness
+            reloadCounter.should.be.least(5)
+        }
+
+        it("reload strategy can be reused by multiple providers") {
+            var reloadCounter1 = 0
+            val provider1 = reloadTestProvider { reloadCounter1 ++ }
+            var reloadCounter2 = 0
+            val provider2 = reloadTestProvider { reloadCounter2 ++ }
+            val reloadStrategy = TimedReloadStrategy(10, TimeUnit.MILLISECONDS)
+
+            reloadStrategy.register(provider1)
+            reloadStrategy.register(provider2)
+            Thread.sleep(100)
+            reloadStrategy.deregister(provider1)
+            val lastSeenReloadCounter1 = reloadCounter1
+            val lastSeenReloadCounter2 = reloadCounter2
+            Thread.sleep(100)
+            reloadStrategy.deregister(provider2)
+            val finishedReloadCounter2 = reloadCounter2
+
+            // provider1 must've been unregistered just before lastSeenReloadCounter1 was observed,
+            // and at most one running reload might've increased reloadCounter1 since then
+            reloadCounter1.should.be.most(lastSeenReloadCounter1 + 1)
+            // provider2 has not been unregistered, so its counter must've been running
+            reloadCounter2.should.be.least(lastSeenReloadCounter2 + 2)
+        }
+    }
 })
 
 private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
@@ -119,6 +161,45 @@ private fun checkProvider(file: File, provider: ConfigProvider, text: String, ov
         }
         lastReload++
     }
+}
+
+/**
+ *  Creates a no-op [ConfigProvider] with configurable action on [ConfigProvider.reload].
+ */
+private fun reloadTestProvider(onReload: () -> Unit): ConfigProvider = object : ConfigProvider {
+    override fun reload() {
+        onReload()
+    }
+
+    override val binder: Binder
+        get() = throw UnsupportedOperationException("not used in the test")
+
+    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun <T : Any> get(name: String, type: Type, default: T?): T =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun <T> getOrNull(name: String, type: Type, default: T?): T? =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun load(name: String): ConfigObject? =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun cancelReload(): Unit? =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun addReloadListener(listener: () -> Unit): Unit =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun addReloadErrorListener(listener: (Exception) -> Unit): Unit =
+            throw UnsupportedOperationException("not used in the test")
+
+    override fun contains(name: String): Boolean =
+            throw UnsupportedOperationException("not used in the test")
 }
 
 interface Nested {
