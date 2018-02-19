@@ -44,12 +44,7 @@ class TimedReloadStrategy(private val time: Long,
 
     override fun register(configProvider: ConfigProvider) {
         reloadTasks.computeIfAbsent(configProvider) { cp ->
-            val reload = {
-                try {
-                    cp.reload()
-                } catch (ignored: Exception) {
-                }
-            }
+            val reload = { cp.reload() }
             when (mode) {
                 FIXED_RATE -> executor.scheduleAtFixedRate(reload, 0, time, unit)
                 FIXED_DELAY -> executor.scheduleWithFixedDelay(reload, 0, time, unit)

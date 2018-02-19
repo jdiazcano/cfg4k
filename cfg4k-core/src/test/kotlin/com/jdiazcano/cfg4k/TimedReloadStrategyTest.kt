@@ -82,27 +82,11 @@ nested.a=reloaded nestedb
             checkProvider(overrideFile, provider, text, true)
         }
 
-        it("error on reload doesn't prevent further reload attempts") {
-            var reloadCounter = 0
-            val provider = reloadTestProvider {
-                // Every second reload throws an exception
-                if (reloadCounter++ % 2 == 0) throw Exception("simulate reload failure")
-            }
-            val reloadStrategy = TimedReloadStrategy(100, TimeUnit.MILLISECONDS)
-
-            reloadStrategy.register(provider)
-            Thread.sleep(1000)
-            reloadStrategy.deregister(provider)
-
-            // Expected value is low enough to avoid test flakiness
-            reloadCounter.should.be.least(5)
-        }
-
         it("reload strategy can be reused by multiple providers") {
             var reloadCounter1 = 0
-            val provider1 = reloadTestProvider { reloadCounter1 ++ }
+            val provider1 = reloadTestProvider { reloadCounter1++ }
             var reloadCounter2 = 0
-            val provider2 = reloadTestProvider { reloadCounter2 ++ }
+            val provider2 = reloadTestProvider { reloadCounter2++ }
             val reloadStrategy = TimedReloadStrategy(10, TimeUnit.MILLISECONDS)
 
             reloadStrategy.register(provider1)
@@ -113,7 +97,6 @@ nested.a=reloaded nestedb
             val lastSeenReloadCounter2 = reloadCounter2
             Thread.sleep(100)
             reloadStrategy.deregister(provider2)
-            val finishedReloadCounter2 = reloadCounter2
 
             // provider1 must've been unregistered just before lastSeenReloadCounter1 was observed,
             // and at most one running reload might've increased reloadCounter1 since then
