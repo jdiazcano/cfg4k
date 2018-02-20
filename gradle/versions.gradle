@@ -12,7 +12,7 @@ ext.versions = [
         junitrunner: '1.1.0-M1',
         snakeyaml: '1.19',
         jcommander: '1.72',
-        klogging: '1.4.9'
+        mockwebserver: '3.9.1'
 ]
 
 ext.libraries = [
@@ -37,5 +37,5 @@ ext.libraries = [
         snakeyaml: "org.yaml:snakeyaml:$versions.snakeyaml",
         klaxon: "com.beust:klaxon:$versions.klaxon",
         jcommander: "com.beust:jcommander:$versions.jcommander",
-        klogging: "io.github.microutils:kotlin-logging:$versions.klogging"
+        mockwebserver: "com.squareup.okhttp3:mockwebserver:$versions.mockwebserver"
 ]
