@@ -4,6 +4,7 @@ dependencies {
     compile project(":cfg4k-core")
     compile project(":cfg4k-json")
     compile project(":cfg4k-bytebuddy")
+    compile libraries.jetbrains.spek.api
 
     compile libraries.junitrunner
     compile libraries.expekt

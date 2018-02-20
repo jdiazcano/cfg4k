@@ -5,6 +5,7 @@ dependencies {
     compile libraries.jetbrains.kotlin.stdlib
     compile libraries.eclipse.jgit
 
+    testCompile libraries.jetbrains.spek.api
     testCompile libraries.junitrunner
     testCompile libraries.expekt
     testRuntime libraries.jetbrains.spek.engine
