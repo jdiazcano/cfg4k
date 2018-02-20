@@ -3,13 +3,13 @@ package com.jdiazcano.cfg4k.sources
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.*
+import java.util.Base64
 
 class URLConfigSource(private val url: URL,
                       private val authHeader: String? = null) : ConfigSource {
     override fun read(): InputStream {
-        val connection = url.openConnection() as HttpURLConnection
-        if (authHeader != null) {
+        val connection = url.openConnection()
+        if (connection is HttpURLConnection && authHeader != null) {
             connection.setRequestProperty("Authorization", authHeader)
         }
 
