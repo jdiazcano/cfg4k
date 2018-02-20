@@ -11,7 +11,8 @@ ext.versions = [
         expekt: '0.5.0',
         junitrunner: '1.1.0-M1',
         snakeyaml: '1.19',
-        jcommander: '1.72'
+        jcommander: '1.72',
+        mockwebserver: '3.9.1'
 ]
 
 ext.libraries = [
@@ -35,5 +36,6 @@ ext.libraries = [
         typesafe: "com.typesafe:config:$versions.typesafe",
         snakeyaml: "org.yaml:snakeyaml:$versions.snakeyaml",
         klaxon: "com.beust:klaxon:$versions.klaxon",
-        jcommander: "com.beust:jcommander:$versions.jcommander"
+        jcommander: "com.beust:jcommander:$versions.jcommander",
+        mockwebserver: "com.squareup.okhttp3:mockwebserver:$versions.mockwebserver"
 ]

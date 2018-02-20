@@ -8,5 +8,6 @@ dependencies {
     testCompile libraries.jetbrains.spek.api
     testCompile libraries.junitrunner
     testCompile libraries.expekt
+    testCompile libraries.mockwebserver
     testRuntime libraries.jetbrains.spek.engine
 }
