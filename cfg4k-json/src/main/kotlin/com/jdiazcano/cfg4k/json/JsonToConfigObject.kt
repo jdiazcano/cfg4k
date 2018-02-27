@@ -13,8 +13,12 @@ import java.io.InputStream
  * Parse a json string as a ConfigObject
  */
 fun Parser.asConfigObjectFromJson(input: InputStream): ConfigObject {
-    val parsed = parse(input) as JsonObject
-    return parseObject(parsed)
+    val parsed = parse(input)
+    return when (parsed) {
+        is JsonObject -> parseObject(parsed)
+        is JsonArray<*> -> parseArray(parsed)
+        else -> throw UnsupportedOperationException("Input must be array or object.")
+    }
 }
 
 private fun parseObject(parsed: JsonObject): ConfigObject {

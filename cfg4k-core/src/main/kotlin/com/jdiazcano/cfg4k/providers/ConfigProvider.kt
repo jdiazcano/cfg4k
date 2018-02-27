@@ -108,7 +108,7 @@ interface ConfigProvider {
     }
 }
 
-inline fun <reified T : Any> ConfigProvider.bind(name: String) = bind(name, T::class.java)
-inline fun <reified T : Any> ConfigProvider.get(name: String, default: T? = null) = get(name, typeOf<T>(), default)
-inline fun <reified T : Any?> ConfigProvider.getOrNull(name: String, default: T? = null) = getOrNull(name, typeOf<T>(), default)
+inline fun <reified T : Any> ConfigProvider.bind(name: String = "") = bind(name, T::class.java)
+inline fun <reified T : Any> ConfigProvider.get(name: String = "", default: T? = null) = get(name, typeOf<T>(), default)
+inline fun <reified T : Any?> ConfigProvider.getOrNull(name: String = "", default: T? = null) = getOrNull(name, typeOf<T>(), default)
 fun ConfigProvider.cache() = CachedConfigProvider(this)

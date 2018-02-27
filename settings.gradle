@@ -14,4 +14,3 @@ include 'cfg4k-hocon'
 include 'cfg4k-yaml'
 include 'cfg4k-git'
 include 'cfg4k-cli'
-
