@@ -1,6 +1,6 @@
+
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
-import com.jdiazcano.cfg4k.loaders.git.CustomConfigSessionFactory
 import com.jdiazcano.cfg4k.loaders.git.GitConfigSource
 import com.winterbe.expekt.should
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
@@ -50,42 +50,41 @@ class GitConfigSourceTest : Spek({
         }
     }
 
-    describe("a git config loader 3") {
-
-        it("should load the integer property") {
-            if (isRunninInTravis) {
-                val repoDirectory = File("sshtest")
-                val source = GitConfigSource(
-                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
-                        repoDirectory,
-                        "test.properties",
-                        loaderGenerator = ::PropertyConfigLoader,
-                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa")
-                )
-                testSource(source)
-                repoDirectory.deleteRecursively()
-            }
-        }
-
-    }
-    describe("a git config loader 4") {
-
-        it("should load the integer property") {
-            if (isRunninInTravis) {
-                val repoDirectory = File("sshknownhosttest")
-                val source = GitConfigSource(
-                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
-                        repoDirectory,
-                        "test.properties",
-                        loaderGenerator = ::PropertyConfigLoader,
-                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
-                )
-                testSource(source)
-                repoDirectory.deleteRecursively()
-            }
-        }
-
-    }
+//    describe("a git config loader 3") {
+//
+//        it("should load the integer property") {
+//            if (isRunninInTravis) {
+//                val repoDirectory = File("sshtest")
+//                val source = GitConfigSource(
+//                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
+//                        repoDirectory,
+//                        "test.properties",
+//                        loaderGenerator = ::PropertyConfigLoader,
+//                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa")
+//                )
+//                testSource(source)
+//                repoDirectory.deleteRecursively()
+//            }
+//        }
+//
+//    }
+//    describe("a git config loader 4") {
+//
+//        it("should load the integer property") {
+//            if (isRunninInTravis) {
+//                val repoDirectory = File("sshknownhosttest")
+//                val source = GitConfigSource(
+//                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
+//                        repoDirectory,
+//                        "test.properties",
+//                        loaderGenerator = ::PropertyConfigLoader,
+//                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
+//                )
+//                testSource(source)
+//                repoDirectory.deleteRecursively()
+//            }
+//        }
+//    }
 })
 
 private fun testSource(loader: GitConfigSource) {

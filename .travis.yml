@@ -20,15 +20,6 @@ cache:
 
 before_install:
   - mkdir -p ~/.ssh
-  - openssl aes-256-cbc -K $encrypted_31e6c9a72288_key -iv $encrypted_31e6c9a72288_iv -in encrypted_cfg4k -out ~/.ssh/id_rsa -d
-  - chmod 600 ~/.ssh/id_rsa
-  - eval "$(ssh-agent -s)"
-  - ssh-add ~/.ssh/id_rsa
-  - ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-  - ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 after_success:
   - ./gradlew junitTest report jacocoRootReport coveralls
-  - ssh-add -D
-  - rm ~/.ssh/id_rsa
-  - ssh-agent -k
