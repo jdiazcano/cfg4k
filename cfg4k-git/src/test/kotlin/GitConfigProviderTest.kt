@@ -1,41 +1,34 @@
-import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
+
 import com.jdiazcano.cfg4k.loaders.git.CustomConfigSessionFactory
-import com.jdiazcano.cfg4k.loaders.git.GitConfigSource
 import com.jdiazcano.cfg4k.providers.ConfigProvider
-import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.get
-import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
 import com.winterbe.expekt.should
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.SshTransport
 import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class GitConfigProviderTest : Spek({
 
     val isRunninInTravis = System.getenv()["CI_NAME"] ?: "" == "travis-ci"
     val reloadFolder = File("gitreloadtest")
 
-    describe("a git config loader 4") {
-
-        it("should load the integer property") {
-            if (isRunninInTravis) {
-                val loader = GitConfigSource(
-                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
-                        reloadFolder,
-                        "test.properties",
-                        loaderGenerator = ::PropertyConfigLoader,
-                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
-                )
-                val provider = DefaultConfigProvider(loader, TimedReloadStrategy(1, TimeUnit.SECONDS))
-                testProvider(provider)
-            }
-        }
-
-    }
+//    describe("a git config loader 4") {
+//
+//        it("should load the integer property") {
+//            if (isRunninInTravis) {
+//                val loader = GitConfigSource(
+//                        "git@bitbucket.org:javierdiaz/cfg4k-git-test.git",
+//                        reloadFolder,
+//                        "test.properties",
+//                        loaderGenerator = ::PropertyConfigLoader,
+//                        ssh = CustomConfigSessionFactory(System.getProperty("user.home") + "/.ssh/id_rsa", System.getProperty("user.home") + "/.ssh/known_hosts")
+//                )
+//                val provider = DefaultConfigProvider(loader, TimedReloadStrategy(1, TimeUnit.SECONDS))
+//                testProvider(provider)
+//            }
+//        }
+//    }
 
     afterGroup {
         reloadFolder.deleteRecursively()
