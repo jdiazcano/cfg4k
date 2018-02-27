@@ -24,10 +24,12 @@ repositories {
 
 2. Add the dependency for the module(s) that you are going to use
 ```
-compile 'com.jdiazcano.cfg4k:cfg4k-core:0.7.2'
+compile 'com.jdiazcano.cfg4k:cfg4k-core:0.8.5'
 ```
 
 # Example
+
+Look better and more complete examples take a look at the [examples](https://github.com/jdiazcano/cfg4k/tree/master/examples/src/main/kotlin) module
 
 ```kotlin
 import PropertyConfigLoader
@@ -78,6 +80,8 @@ interface DatabaseConfig {
 1. Git
 1. URL
 1. Future: S3
+1. BitbucketConfigSource
+1. GithubConfigSource
 
 ## Binders
 1. ProxyBinder: Uses Java `InvocationHandler` in order to implement the interface and intercept the calls to return the correct value.
@@ -85,7 +89,7 @@ interface DatabaseConfig {
 
 ## Loaders
 1. DefaultConfigLoader: This loader can take static map or vararg of pairs to create a loader from it.
-1. JsonConfigLoader: Load the properties from a Json file, an URL must be provided.
+1. JsonConfigLoader: Load the properties from a Json file.
 1. PropertyConfigLoader: Load the properties from a Java properties file.
 1. EnvironmentConfigLoader: Load the properties from the Environment Variables. This will transform the environment variables so they can be used inside the project and stay consistent with the rest of the properties. For example having the variable `GLOBAL_URL` will result in the property `global.url`
     1. `_` will become `.`
@@ -137,6 +141,26 @@ These parsers are supported out of the box
 
 # Customizing Cfg4k
 
+## Sources
+Sources is an interface that must return an `InputStream` which is the stream of the data to load.
+It will be used to be injected in a Loader as the Loader is the one that knows how to use that data.
+
+## Loaders
+You can create your own config loader by implementing the `ConfigLoader` interface (or extending `DefaultConfigLoader` which provides the base code for "get")
+```kotlin
+open class SystemPropertyConfigLoader : ConfigLoader {
+    override fun reload() {
+        // Nothing to do, the System.properties do the reload for us!
+    }
+
+    override fun get(key: String): ConfigObject {
+        return System.get(key, "").toConfig()
+    }
+
+}
+```
+More examples in the package `loaders`
+
 ## Providers
 You can create your own Providers by implementing `ConfigProvider` or extending `DefaultConfigProvider`, keep in mind that the default provider already has the parsing so it is always a good practice to extend it.
 
@@ -185,26 +209,6 @@ class CachedConfigProvider(val configProvider: ConfigProvider) : ConfigProvider 
 ```
 More examples in the package `providers`
 
-## Loaders
-You can create your own config loader by implementing the `ConfigLoader` interface (or extending `DefaultConfigLoader` which provides the base code for "get")
-```kotlin
-open class SystemPropertyConfigLoader : ConfigLoader {
-    override fun reload() {
-        // Nothing to do, the System.properties do the reload for us!
-    }
-
-    override fun get(key: String): ConfigObject {
-        return System.get(key, "").toConfig()
-    }
-
-}
-```
-More examples in the package `loaders`
-
-## Sources
-You can implement your own sources. Sources are also Loaders (which is something that I plan to review before 1.0)
-so when implementing a source you have to implement ConfigLoader and rely on another loader which will be the one actually reading the file
-
 ## Reload strategies
 You can create your own reloading strategy by implementing the `ReloadStrategy` interface. Remember that you have to use it then in the provider.
 
@@ -229,29 +233,9 @@ class TimedReloadStrategy(val time: Long, val unit: TimeUnit) : ReloadStrategy {
 There are two steps in order to use a new parser (this is mostly used for parsing basic types and interfaces should be used instead of parsers!).
 
 1. Create your class by implementing Parser
-1. Register your parser in the `Parsers` class `addParser(), addClassedParser(), addParseredParser()`
+1. Register your parser in the `Parsers` class `addParser()`
 
-```kotlin
-data class Point(val x: Int, val y: Int)
-
-object PointParser: Parser<Point> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = Point(value.split(',')[0], value.split(',')[1])
-}
-
-Parsers.addParser(Point::class.java, PointParser())
-```
-
-Alternative:
-```kotlin
-interface Point {
-    val x: Int
-    val y: Int
-}
-
-//And use it! that's everything you need!
-```
-
-Full example inside the sample module: https://github.com/jdiazcano/cfg4k/tree/master/sample
+See [examples](https://github.com/jdiazcano/cfg4k/tree/master/examples/src/main/kotlin)
 
 \* Have in mind that not everything is supported in code coverage in Kotlin (inline extension functions) so the code coverage might appear worse than it really is!
 
