@@ -16,6 +16,7 @@
 
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.parsers.CalendarParser
 import com.jdiazcano.cfg4k.parsers.DateParser
@@ -31,6 +32,7 @@ import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.cache
 import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.sources.ConfigSource
+import com.jdiazcano.cfg4k.sources.StringConfigSource
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.winterbe.expekt.should
@@ -304,6 +306,27 @@ class ConfigProviderTest : Spek({
         provider.addReloadErrorListener { assertTrue { true } }
         provider.addReloadListener { fail("This should not happen!") }
         provider.reload()
+    }
+
+    describe("a simple bytebuddy provider") {
+        val provider = DefaultConfigProvider(PropertyConfigLoader(StringConfigSource("""
+            a=b
+            nested.a=b
+            """)))
+        val obj = "b".toConfig()
+        val nestedObj = mapOf("a" to "b").toConfig()
+
+        it("has the correct toString") {
+            provider.load("a").toString().should.be.equal("ConfigObject(value=b)")
+        }
+
+        it("a primitive is equal to the expected ConfigObject") {
+            provider.load("a").should.be.equal(obj)
+        }
+
+        it("a binding is equal to the expected ConfigObject") {
+            provider.bind<Nested>("nested").toString().should.be.equal(nestedObj.toString())
+        }
     }
 })
 

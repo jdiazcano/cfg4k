@@ -9,19 +9,12 @@ import org.jetbrains.spek.api.dsl.describe
 
 class MapParserTest : Spek({
     val mapTests = mapOf(
-            mapOf("a" to 1) to MapConfigObject(mapOf("a" to 1.toConfig()))
-    )
-    val listTests = mapOf(
-            listOf("a", "b") to ListConfigObject(listOf("a".toConfig(), "b".toConfig()))
+            mapOf("a" to 1).toConfig() to MapConfigObject(mapOf("a" to 1.toConfig())),
+            listOf("a", "b").toConfig() to ListConfigObject(listOf("a".toConfig(), "b".toConfig()))
     )
     describe("a map to be parsed") {
         mapTests.forEach { key, value ->
-            val converted = key.toConfig()
-            converted.should.be.equal(value)
-        }
-        listTests.forEach { key, value ->
-            val converted = key.toConfig()
-            converted.should.be.equal(value)
+            key.should.be.equal(value)
         }
     }
 })

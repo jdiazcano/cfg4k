@@ -1,8 +1,10 @@
 package com.jdiazcano.cfg4k.bytebuddy
 
+import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
+import com.jdiazcano.cfg4k.sources.StringConfigSource
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -10,7 +12,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
 class ByteBuddyConfigProviderTest : Spek({
-    describe("a bytebuddyconfigprovider should ") {
+    describe("a bytebuddyconfigprovider") {
         val provider = ByteBuddyConfigProvider(
                 PropertyConfigLoader(URLConfigSource(javaClass.classLoader.getResource("test.properties")))
         )
@@ -61,10 +63,31 @@ class ByteBuddyConfigProviderTest : Spek({
             (1..10).forEach {
                 val testBinder = provider.bind<TestBinder>("")
                 val otherTestBinder = provider.bind<com.jdiazcano.cfg4k.bytebuddy.subpackage.TestBinder>("")
-                testBinder.should.not.be.equals(otherTestBinder) // they must be different instances since classes are different
+                testBinder.equals(otherTestBinder).should.be.`false` // they must be different instances since classes are different
                 testBinder.nullProperty().should.be.`null`
             }
         }
 
+    }
+
+    describe("a simple bytebuddy provider") {
+        val provider = ByteBuddyConfigProvider(PropertyConfigLoader(StringConfigSource("""
+            a=b
+            nested.a=b
+            """)))
+        val obj = "b".toConfig()
+        val nestedObj = mapOf("a" to "b").toConfig()
+
+        it("has the correct toString") {
+            provider.load("a").toString().should.be.equal("ConfigObject(value=b)")
+        }
+
+        it("a primitive is equal to the expected ConfigObject") {
+            provider.load("a").should.be.equal(obj)
+        }
+
+        it("a binding is equal to the expected ConfigObject") {
+            provider.bind<Nested>("nested").toString().should.be.equal(nestedObj.toString())
+        }
     }
 })
