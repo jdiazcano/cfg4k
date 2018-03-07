@@ -26,60 +26,55 @@ import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
-import com.jdiazcano.cfg4k.sources.FileConfigSource
+import com.jdiazcano.cfg4k.sources.FunctionConfigSource
+import com.jdiazcano.cfg4k.sources.StringFunctionConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import java.io.File
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
-class TimedReloadStrategyTest : Spek({
-    val text = """a=%reload1
-c=%reload2
+fun createText(index: Int = 0, overriden: Boolean = false): String {
+    return """a=${if (overriden) "override" else ""}b$index
+c=d${if (overriden) "" else index.toString()}
 nested.a=reloaded nestedb
 """
+}
+
+class TimedReloadStrategyTest : Spek({
+
+    val strategy = TimedReloadStrategy(50, TimeUnit.MILLISECONDS)
+    val overridenSource = StringFunctionConfigSource({ createText(lastReload, true) })
+    val source = FunctionConfigSource({ createText(lastReload, false).toByteArray() })
+
     describe("a timed reloadable properties config loader") {
+        beforeEachTest {
+            lastReload = 1
+        }
+
         it("defaultconfigprovider test") {
-            val file = File("timedreloadedfile.properties")
-            file.createNewFile()
-            file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            file.deleteOnExit()
-            val provider = ProxyConfigProvider(PropertyConfigLoader(FileConfigSource(file)), TimedReloadStrategy(1, TimeUnit.SECONDS))
-            checkProvider(file, provider, text)
+            val provider = ProxyConfigProvider(
+                    PropertyConfigLoader(source),
+                    strategy
+            )
+            checkProvider(provider)
         }
 
         it("cacheddefaultconfigprovider test") {
-            val cachedfile = File("cachedtimedreloadedfile.properties")
-            cachedfile.createNewFile()
-            cachedfile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            cachedfile.deleteOnExit()
-            val cachedProvider = CachedConfigProvider(ProxyConfigProvider(PropertyConfigLoader(FileConfigSource(cachedfile)), TimedReloadStrategy(1, TimeUnit.SECONDS)))
-            checkProvider(cachedfile, cachedProvider, text)
+            val cachedProvider = CachedConfigProvider(
+                    ProxyConfigProvider(PropertyConfigLoader(source),
+                    strategy)
+            )
+            checkProvider(cachedProvider)
         }
 
         it("overrideconfigprovider test") {
-            val overrideFile = File("qqqqq.properties")
-            overrideFile.createNewFile()
-            overrideFile.writeText(text.replace("%reload1", "overrideb").replace("c=%reload2\n", ""))
-            overrideFile.deleteOnExit()
-
-            val normalFile = File("normal.properties")
-            normalFile.createNewFile()
-            normalFile.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            normalFile.deleteOnExit()
             val provider = OverrideConfigProvider(
-                    DefaultConfigProvider(
-                            PropertyConfigLoader(FileConfigSource(overrideFile)),
-                            TimedReloadStrategy(1, TimeUnit.SECONDS)
-                    ),
-                    DefaultConfigProvider(
-                            PropertyConfigLoader(FileConfigSource(normalFile)),
-                            TimedReloadStrategy(1, TimeUnit.SECONDS)
-                    )
+                    DefaultConfigProvider(PropertyConfigLoader(overridenSource), strategy),
+                    DefaultConfigProvider(PropertyConfigLoader(source), strategy)
             )
-            checkProvider(overrideFile, provider, text, true)
+            checkProvider(provider, true)
         }
 
         it("reload strategy can be reused by multiple providers") {
@@ -107,30 +102,29 @@ nested.a=reloaded nestedb
     }
 })
 
-private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
-    val binded = provider.bind<Normal>("")
+private var lastReload = 1
+private const val lastIteration = 3
+
+private fun checkProvider(provider: ConfigProvider, overriden: Boolean = false) {
+    val binded = provider.bind<Normal>()
     if (overriden) {
-        provider.get("a", String::class.java).should.be.equal("overrideb")
-        binded.a().should.be.equal("overrideb")
+        provider.get("a", String::class.java).should.be.equal("overrideb1")
+        binded.a().should.be.equal("overrideb1")
+        provider.get("c", String::class.java).should.be.equal("d")
+        binded.c().should.be.equal("d")
     } else {
-        provider.get("a", String::class.java).should.be.equal("b")
-        binded.a().should.be.equal("b")
+        provider.get("a", String::class.java).should.be.equal("b1")
+        binded.a().should.be.equal("b1")
+        provider.get("c", String::class.java).should.be.equal("d1")
+        binded.c().should.be.equal("d1")
     }
-    provider.get("c", String::class.java).should.be.equal("d")
-    binded.c().should.be.equal("d")
-    var lastReload = 1
-    val lastIteration = 3
+
     for (i in 1..5) {
         if (i > lastIteration) {
             provider.cancelReload()
-            lastReload = lastIteration // This is the last reload iteration (8-1)
+            lastReload = lastIteration // This is the last reload iteration
         }
-        if (overriden) {
-            file.writeText(text.replace("%reload1", "overrideb$lastReload").replace("c=%reload2\n", ""))
-        } else {
-            file.writeText(text.replace("%reload1", "b$lastReload").replace("%reload2", "d$lastReload"))
-        }
-        Thread.sleep(1500)
+        Thread.sleep(60)
         if (overriden) {
             provider.get("a", String::class.java).should.be.equal("overrideb$lastReload")
             provider.get("c", String::class.java).should.be.equal("d")

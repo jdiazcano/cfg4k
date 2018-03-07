@@ -59,13 +59,13 @@ class FileChangeReloadStrategyTest : Spek({
         }
 
         it("should update the configuration") {
-            Thread.sleep(10000) // We need to wait a little bit for the event watcher to be triggered
+            Thread.sleep(5000) // We need to wait a little bit for the event watcher to be triggered
             file.writeText("foo=bar2")
-            Thread.sleep(10000) // Another wait for that
+            Thread.sleep(5000) // Another wait for that
             provider.get<String>("foo").should.be.equal("bar2")
             provider.cancelReload()
             file.writeText("foo=bar3")
-            Thread.sleep(10000) // Another wait for that
+            Thread.sleep(5000) // Another wait for that
             provider.get<String>("foo").should.be.equal("bar2") // We have canceled the reload so no more reloads
         }
     }
