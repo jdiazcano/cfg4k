@@ -31,6 +31,9 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmName
 import kotlin.reflect.jvm.kotlinFunction
 
+val objectMethods: List<String> = Object::class.java.declaredMethods.map { it.name }
+val overridableAnyMethods = Any::class.java.methods.filter { it.name == "toString" }.toTypedArray()
+
 /**
  * InvocationHandler that handles the proxying between the interface and the call. This class is used in the
  * ProxyConfigProvider.
@@ -40,18 +43,16 @@ class BindingInvocationHandler(
         private val prefix: String
 ) : InvocationHandler {
 
-    private val objectMethods: List<String> = Object::class.java.declaredMethods.map { it.name }
-
     override fun invoke(proxy: Any?, method: Method, args: Array<out Any>?): Any? {
-        val name = getPropertyName(method.name)
 
+        when (method.name) {
+            "toString" -> return provider.load(prefix).toString()
+            in objectMethods -> return method.invoke(this, *(args ?: arrayOf()))
+        }
+
+        val name = getPropertyName(method.name)
         val kotlinClass = method.declaringClass.kotlin
         val isNullable = kotlinClass.isMethodNullable(method, name)
-
-        // If method is toString()/equals() etc, we just return it
-        if (objectMethods.contains(method.name)) {
-            return method.invoke(this, *(args ?: arrayOf()))
-        }
 
         val type = method.genericReturnType
         val configObject = provider.load(concatPrefix(prefix, name))
@@ -62,7 +63,7 @@ class BindingInvocationHandler(
                 if (isNullable) {
                     return null
                 } else {
-                    throw SettingNotFound("Setting $name not found")
+                    throw SettingNotFound(name)
                 }
             }
         } else {

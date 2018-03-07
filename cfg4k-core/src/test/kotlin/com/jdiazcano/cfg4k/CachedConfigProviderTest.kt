@@ -33,13 +33,13 @@ class CachedConfigProviderTest : Spek({
             PropertyConfigLoader(ClasspathConfigSource("/test.properties"))
     )
     loaders.forEach { loader ->
-        describe("a property config loader [${loader.javaClass.name}]") {
+        describe("a property config loader [${loader.javaClass.simpleName}]") {
             val providers = listOf(
                     ProxyConfigProvider(loader),
                     CachedConfigProvider(ProxyConfigProvider(loader))
             )
             providers.forEach { provider ->
-                it("primitive properties [${provider.javaClass.name}]") {
+                it("primitive properties [${provider.javaClass.simpleName}]") {
                     provider.get<Int>("integerProperty").should.be.equal(1)
                     provider.get<Int>("integerProperty").should.be.equal(1)
                     provider.get("integerProperty", Int::class.java).should.be.equal(1)
@@ -51,7 +51,7 @@ class CachedConfigProviderTest : Spek({
                     provider.get("booleanProperty", Boolean::class.java).should.be.`true`
                 }
 
-                it("binding test [${provider.javaClass.name}]") {
+                it("binding test [${provider.javaClass.simpleName}]") {
                     val testBinder = provider.bind<TestBinder>("")
                     testBinder.booleanProperty().should.be.`true`
                     testBinder.integerProperty().should.be.equal(1)
@@ -66,8 +66,8 @@ class CachedConfigProviderTest : Spek({
                     val secondTestBinder = provider.bind<TestBinder>("")
                     when (provider) {
                         // When we have a cached object it must be the same object, but when it's not cached values must
-                        is CachedConfigProvider -> testBinder.should.be.equal(secondTestBinder)
-                        is ProxyConfigProvider -> {
+                        is CachedConfigProvider -> testBinder.should.be.identity(secondTestBinder)
+                        else -> {
                             with (testBinder) {
                                 booleanProperty().should.be.equal(secondTestBinder.booleanProperty())
                                 integerProperty().should.be.equal(secondTestBinder.integerProperty())
@@ -80,7 +80,6 @@ class CachedConfigProviderTest : Spek({
                                 c().should.be.equal(secondTestBinder.c())
                             }
                         }
-                        else -> IllegalArgumentException("Unrecognised provider")
                     }
                 }
             }

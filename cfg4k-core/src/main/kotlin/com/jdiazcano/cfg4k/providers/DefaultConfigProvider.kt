@@ -28,6 +28,7 @@ import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.utils.TargetType
+import com.jdiazcano.cfg4k.utils.typeOf
 import java.lang.reflect.Type
 
 @Suppress("UNCHECKED_CAST")
@@ -39,6 +40,7 @@ open class DefaultConfigProvider(
 
     private val listeners: MutableList<() -> Unit> = mutableListOf()
     private val errorReloadListeners: MutableList<(Exception) -> Unit> = mutableListOf()
+    private val changeListeners: HashMap<ListenerKey, (Any?, Any?) -> Unit> = HashMap()
 
     init {
         reloadStrategy?.register(this)
@@ -51,7 +53,7 @@ open class DefaultConfigProvider(
             if (value != null) {
                 type.findParser().parse(value) as T
             } else {
-                default ?: throw SettingNotFound("Setting $name was not found")
+                default ?: throw SettingNotFound(name)
             }
         } else {
             throw ParserClassNotFound("Parser for class ${type.name} was not found")
@@ -77,7 +79,7 @@ open class DefaultConfigProvider(
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {
-            return default ?: throw SettingNotFound("Setting $name was not found")
+            return default ?: throw SettingNotFound(name)
         }
     }
 
@@ -87,12 +89,12 @@ open class DefaultConfigProvider(
 
     override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? {
         // There is no way that this has a generic parsers because the class actually removes that possibility
-        if (type.isParseable()) {
+        return if (type.isParseable()) {
             val value = configLoader.get(name)
             if (value != null) {
-                return type.findParser().parse(value) as T
+                type.findParser().parse(value) as T
             } else {
-                return default
+                default
             }
         } else {
             throw ParserClassNotFound("Parser for class ${type.name} was not found")
@@ -109,6 +111,8 @@ open class DefaultConfigProvider(
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
                 return rawType.findParser().parse(value, classType, superType?.findParser()) as T
+            } else if (rawType.isInterface) {
+                return bind(name, rawType) as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")
         } else {
@@ -122,8 +126,13 @@ open class DefaultConfigProvider(
 
     override fun reload() {
         try {
+            val keysBefore = changeListeners.keys.associateBy({ it }, { getOrNull<Any>(it.name, it.type) })
             configLoader.reload()
+            val keysAfter = changeListeners.keys.associateBy({ it }, { getOrNull<Any>(it.name, it.type) })
             listeners.forEach { it() } // call listeners
+            changeListeners.forEach { key, function ->
+                function(keysBefore[key], keysAfter[key])
+            }
         } catch (e: Exception) {
             errorReloadListeners.forEach { it(e) }
         }
@@ -137,4 +146,17 @@ open class DefaultConfigProvider(
         errorReloadListeners.add(listener)
     }
 
+    fun <T: Any?> addChangeListener(name: String, type: Type, function: (T, T) -> Unit) {
+        changeListeners[ListenerKey(name, type)] = function as (Any?, Any?) -> Unit
+    }
+
+    fun removeListener(name: String, type: Type) {
+        changeListeners.remove(ListenerKey(name, type))
+    }
+
 }
+
+private data class ListenerKey(val name: String, val type: Type)
+
+inline fun <reified T> DefaultConfigProvider.addChangeListener(name: String, noinline function: (T, T) -> Unit) =
+        addChangeListener(name, typeOf<T>(), function)

@@ -55,7 +55,7 @@ class OverrideConfigProvider(
         if (default != null) {
             return default
         } else {
-            throw SettingNotFound("Setting $name was not found")
+            throw SettingNotFound(name)
         }
     }
 
@@ -89,7 +89,7 @@ class OverrideConfigProvider(
         if (default != null) {
             return default
         } else {
-            throw SettingNotFound("Setting $name was not found")
+            throw SettingNotFound(name)
         }
     }
 

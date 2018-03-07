@@ -51,9 +51,6 @@ class YamlConfigLoaderTest : Spek({
                 testBinder.complexList[1].name.should.be.equal("thefrog")
 
                 testBinder.complexSet.size.should.be.equal(2)
-
-                // toString should be the object tostring not the one that comes from the property
-                testBinder.toString().should.not.be.equal("this should not be ever used")
             }
         }
     }

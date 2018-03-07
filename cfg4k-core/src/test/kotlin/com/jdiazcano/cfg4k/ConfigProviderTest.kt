@@ -268,9 +268,6 @@ class ConfigProviderTest : Spek({
                 testBinder.path().should.be.equal(Paths.get("mypath.txt"))
                 testBinder.nested().normal().should.be.equal(1)
                 testBinder.nested().supernested().normal().should.be.equal(2)
-
-                // toString should be the object tostring not the one that comes from the property
-                testBinder.toString().should.not.be.equal("this should not be ever used")
             }
 
             it("property binding test") {
@@ -293,9 +290,6 @@ class ConfigProviderTest : Spek({
                 testBinder.path.should.be.equal(Paths.get("mypath.txt"))
                 testBinder.nested.normal().should.be.equal(1)
                 testBinder.nested.supernested().normal().should.be.equal(2)
-
-                // toString should be the object tostring not the one that comes from the property
-                testBinder.toString().should.not.be.equal("this should not be ever used")
             }
 
             it("supernested binding") {

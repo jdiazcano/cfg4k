@@ -47,9 +47,6 @@ class HoconConfigLoaderTest : Spek({
                 testBinder.byteProperty().should.be.equal(2)
                 testBinder.a().should.be.equal("b")
                 testBinder.c().should.be.equal("d")
-
-                // toString should be the object tostring not the one that comes from the property
-                testBinder.toString().should.not.be.equal("this should not be ever used")
             }
         }
     }

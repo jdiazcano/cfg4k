@@ -22,6 +22,8 @@ import com.jdiazcano.cfg4k.binders.createCollection
 import com.jdiazcano.cfg4k.binders.getDefaultMethod
 import com.jdiazcano.cfg4k.binders.getPropertyName
 import com.jdiazcano.cfg4k.binders.isMethodNullable
+import com.jdiazcano.cfg4k.binders.objectMethods
+import com.jdiazcano.cfg4k.binders.overridableAnyMethods
 import com.jdiazcano.cfg4k.binders.toMutableCollection
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parsers.findParser
@@ -37,12 +39,11 @@ import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
 import net.bytebuddy.implementation.FieldAccessor
 import net.bytebuddy.implementation.MethodCall
 import net.bytebuddy.implementation.MethodDelegation
+import net.bytebuddy.implementation.bind.annotation.AllArguments
 import net.bytebuddy.implementation.bind.annotation.FieldValue
 import net.bytebuddy.implementation.bind.annotation.Origin
 import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.implementation.bind.annotation.This
-import net.bytebuddy.matcher.ElementMatchers.isDeclaredBy
-import net.bytebuddy.matcher.ElementMatchers.not
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
@@ -80,12 +81,15 @@ class ByteBuddyBinder : Binder {
                         )
                 )
 
-        type.methods.forEach { method ->
+        // Interfaces only return the decalred methods and classes return everything. If we add the methods no matter what
+        // then we end up duplicating some methods
+        val methods = type.methods + (if (type.isInterface) overridableAnyMethods else arrayOf<Method>())
+        methods.forEach { method ->
             subclass = subclass
                     .defineMethod(method.name, method.returnType, Modifier.PUBLIC)
+                    .withParameters(*method.parameterTypes)
                     .intercept(MethodDelegation
                             .withDefaultConfiguration()
-                            .filter(not(isDeclaredBy(Any::class.java)))
                             .to(ConfigurationHandler::class.java))
         }
 
@@ -106,10 +110,16 @@ class ConfigurationHandler {
         @RuntimeType
         fun <T> intercept(
                 @This that: Any,
+                @AllArguments args: Array<Any>?,
                 @Origin classMethod: Method,
-                @FieldValue("provider") configProvider: ConfigProvider,
+                @FieldValue("provider") provider: ConfigProvider,
                 @FieldValue("type") interfaze: Class<T>,
-                @FieldValue("prefix") prefix: String): T? {
+                @FieldValue("prefix") prefix: String): Any? {
+
+            when (classMethod.name) {
+                "toString" -> return provider.load(prefix).toString()
+                in objectMethods -> return classMethod.invoke(this, *(args ?: arrayOf()))
+            }
 
             val method = interfaze.getMethod(classMethod.name)
             val kotlinClass: KClass<*> = method.declaringClass.kotlin
@@ -118,7 +128,7 @@ class ConfigurationHandler {
             val isNullable = kotlinClass.isMethodNullable(method, name)
             var returning: Any?
 
-            val configObject = configProvider.load(concatPrefix(prefix, name))
+            val configObject = provider.load(concatPrefix(prefix, name))
             if (configObject == null) {
                 try {
                     returning = kotlinClass.getDefaultMethod(method.name)?.invoke(that, that)
@@ -126,7 +136,7 @@ class ConfigurationHandler {
                     if (isNullable) {
                         returning = null
                     } else {
-                        throw SettingNotFound("Setting $name not found")
+                        throw SettingNotFound(name)
                     }
                 }
             } else {
@@ -134,7 +144,7 @@ class ConfigurationHandler {
                     val targetType = TargetType(returnType)
                     val rawType = targetType.rawTargetType()
                     val collection = createCollection(rawType)
-                    toMutableCollection(configObject, returnType, collection, name, configProvider, prefix)
+                    toMutableCollection(configObject, returnType, collection, name, provider, prefix)
                     returning = collection
                 } else if (configObject.isString()) {
                     val targetType = TargetType(returnType)
@@ -143,7 +153,7 @@ class ConfigurationHandler {
                     val classType = superType ?: rawType
                     returning = classType.findParser().parse(configObject, classType, superType?.findParser())
                 } else { // it is an object
-                    returning = configProvider.bind(concatPrefix(prefix, name), method.returnType)
+                    returning = provider.bind(concatPrefix(prefix, name), method.returnType)
                 }
             }
             return returning as T?

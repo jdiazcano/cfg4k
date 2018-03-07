@@ -47,6 +47,9 @@ class ConfigProviderTest : Spek({
         describe("provider[$i]") {
             it("default values") {
                 provider.get("this.does.not.exist", 1).should.be.equal(1)
+            }
+
+            it("throws when no default and value doesnt exist") {
                 // When having a cached provider then it will cache the "this.does.not.exist" if it has a default value
                 // because the delegated provider will return the default value. Should the default value not be passed
                 // and the exception caught? I think that would mean a performance impact and having exceptions into
@@ -252,9 +255,6 @@ class ConfigProviderTest : Spek({
                 testBinder.url().should.be.equal(URL("https://www.amazon.com"))
                 testBinder.file().should.be.equal(File("myfile.txt"))
                 testBinder.path().should.be.equal(Paths.get("mypath.txt"))
-
-                // toString should be the object tostring not the one that comes from the property
-                testBinder.toString().should.not.be.equal("this should not be ever used")
             }
         }
     }
