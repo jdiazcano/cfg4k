@@ -1,74 +1,97 @@
 package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
+import com.jdiazcano.cfg4k.providers.CachedConfigProvider
 import com.jdiazcano.cfg4k.providers.ConfigProvider
+import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
-import com.jdiazcano.cfg4k.sources.FileConfigSource
+import com.jdiazcano.cfg4k.sources.FunctionConfigSource
+import com.jdiazcano.cfg4k.sources.StringFunctionConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import java.io.File
 import java.util.concurrent.TimeUnit
 
-class ByteBuddyConfigProviderReloadTest : Spek({
-    val text = """a=%reload1
-c=%reload2
+private fun createText(index: Int = 0, overriden: Boolean = false): String {
+    return """a=${if (overriden) "override" else ""}b$index
+c=d${if (overriden) "" else index.toString()}
 nested.a=reloaded nestedb
 """
-    describe("a timed reloadable bytebuddy proxy with json config loader") {
-        it("bytebuddy test") {
-            val file = File("timedreloadedfile.properties")
-            file.createNewFile()
-            file.writeText(text.replace("%reload1", "b").replace("%reload2", "d"))
-            val provider = ByteBuddyConfigProvider(PropertyConfigLoader(FileConfigSource(file)), TimedReloadStrategy(1, TimeUnit.SECONDS))
-            checkProvider(file, provider, text)
+}
+
+class ByteBuddyConfigProviderReloadTest : Spek({
+    val strategy = TimedReloadStrategy(50, TimeUnit.MILLISECONDS)
+    val overridenSource = StringFunctionConfigSource({ createText(lastReload, true) })
+    val source = FunctionConfigSource({ createText(lastReload, false).toByteArray() })
+
+    describe("a timed reloadable properties config loader") {
+        beforeEachTest {
+            lastReload = 1
         }
 
+        it("defaultconfigprovider test") {
+            val provider = ByteBuddyConfigProvider(
+                    PropertyConfigLoader(source),
+                    strategy
+            )
+            checkProvider(provider)
+        }
+
+        it("cacheddefaultconfigprovider test") {
+            val cachedProvider = CachedConfigProvider(
+                    ByteBuddyConfigProvider(PropertyConfigLoader(source), strategy)
+            )
+            checkProvider(cachedProvider)
+        }
+
+        it("overrideconfigprovider test") {
+            val provider = OverrideConfigProvider(
+                    ByteBuddyConfigProvider(PropertyConfigLoader(overridenSource), strategy),
+                    ByteBuddyConfigProvider(PropertyConfigLoader(source), strategy)
+            )
+            checkProvider(provider, true)
+        }
     }
 })
 
-private fun checkProvider(file: File, provider: ConfigProvider, text: String, overriden: Boolean = false) {
-    val bindedNormal = provider.bind<Normal>("")
-    bindedNormal.nested().a().should.be.equal("reloaded nestedb")
+private var lastReload = 1
+private const val lastIteration = 3
 
-    val bindedProperty = provider.bind<Properties>("")
-    bindedProperty.nested.a().should.be.equal("reloaded nestedb")
-
+private fun checkProvider(provider: ConfigProvider, overriden: Boolean = false) {
+    val binded = provider.bind<Normal>()
     if (overriden) {
-        bindedNormal.a().should.be.equal("overrideb")
-        bindedProperty.a.should.be.equal("overrideb")
+        provider.get("a", String::class.java).should.be.equal("overrideb1")
+        binded.a().should.be.equal("overrideb1")
+        provider.get("c", String::class.java).should.be.equal("d")
+        binded.c().should.be.equal("d")
     } else {
-        bindedNormal.a().should.be.equal("b")
-        bindedProperty.a.should.be.equal("b")
+        provider.get("a", String::class.java).should.be.equal("b1")
+        binded.a().should.be.equal("b1")
+        provider.get("c", String::class.java).should.be.equal("d1")
+        binded.c().should.be.equal("d1")
     }
-    bindedNormal.c().should.be.equal("d")
-    bindedProperty.c.should.be.equal("d")
 
-    var lastReload = 1
-    val lastIteration = 3
     for (i in 1..5) {
         if (i > lastIteration) {
             provider.cancelReload()
-            lastReload = lastIteration // This is the last reload iteration (8-1)
+            lastReload = lastIteration // This is the last reload iteration
         }
+        Thread.sleep(60)
         if (overriden) {
-            file.writeText(text.replace("%reload1", "overrideb$lastReload").replace("c=%reload2\n", ""))
+            provider.get("a", String::class.java).should.be.equal("overrideb$lastReload")
+            provider.get("c", String::class.java).should.be.equal("d")
+            binded.a().should.be.equal("overrideb$lastReload")
+            binded.c().should.be.equal("d")
         } else {
-            file.writeText(text.replace("%reload1", "b$lastReload").replace("%reload2", "d$lastReload"))
-        }
-        Thread.sleep(1500)
-        if (overriden) {
-            bindedNormal.a().should.be.equal("overrideb$lastReload")
-            bindedNormal.c().should.be.equal("d")
-        } else {
-            bindedNormal.a().should.be.equal("b$lastReload")
-            bindedNormal.c().should.be.equal("d$lastReload")
+            provider.get("a", String::class.java).should.be.equal("b$lastReload")
+            provider.get("c", String::class.java).should.be.equal("d$lastReload")
+            binded.a().should.be.equal("b$lastReload")
+            binded.c().should.be.equal("d$lastReload")
         }
         lastReload++
     }
-    file.delete()
 }
 
 interface Nested {
@@ -79,10 +102,4 @@ interface Normal {
     fun nested(): Nested
     fun a(): String
     fun c(): String
-}
-
-interface Properties {
-    val nested: Nested
-    val a: String
-    val c: String
 }

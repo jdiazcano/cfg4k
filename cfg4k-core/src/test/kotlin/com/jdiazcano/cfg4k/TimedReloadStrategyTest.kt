@@ -35,7 +35,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
-fun createText(index: Int = 0, overriden: Boolean = false): String {
+private fun createText(index: Int = 0, overriden: Boolean = false): String {
     return """a=${if (overriden) "override" else ""}b$index
 c=d${if (overriden) "" else index.toString()}
 nested.a=reloaded nestedb
