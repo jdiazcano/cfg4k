@@ -10,6 +10,8 @@
 **/build
 **/classes
 **/out
+**/kobaltBuild
+.kobalt
 ktlint
 
 # Mongo Explorer plugin:

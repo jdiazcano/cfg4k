@@ -12,6 +12,8 @@ import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.junit.runner.RunWith
+import org.junit.runner.Runner
 import java.util.concurrent.TimeUnit
 
 private fun createText(index: Int = 0, overriden: Boolean = false): String {
