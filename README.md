@@ -3,6 +3,8 @@
 # Overview 
 Cfg4k is a configuration library made for Kotlin in Kotlin!
 
+#### Currently migrating from a big readme to the [wiki](https://github.com/jdiazcano/cfg4k/wiki)
+
 Features
 * Automatic reload
 * Interface binding
