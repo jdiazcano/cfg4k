@@ -19,6 +19,7 @@ class HoconConfigMapperTest : Spek({
         val deployment = ktor.asObject()["deployment"]!!
         deployment.isObject().should.be.`true`
         deployment.asObject()["port"].should.be.equal(8080.toConfig())
+        deployment.asObject()["random"].should.be.equal(null)
         deployment.asObject()["watch"].should.be.equal(ListConfigObject(listOf(
                 "hello".toConfig(), "bye".toConfig()
         )))

@@ -53,7 +53,7 @@ class ListConfigObject(value: Collection<ConfigObject>) : AbstractConfigObject(v
     }
 }
 
-class MapConfigObject(value: Map<String, ConfigObject>) : AbstractConfigObject(value.toMap(), ConfigObjectType.OBJECT) {
+class MapConfigObject(value: Map<String, ConfigObject?>) : AbstractConfigObject(value.toMap(), ConfigObjectType.OBJECT) {
     override fun merge(configObject: ConfigObject): ConfigObject {
         val thisMap = value as Map<String, ConfigObject>
         val thatMap = configObject.value as Map<String, ConfigObject>
