@@ -17,6 +17,7 @@ class ProviderWithHocon : Spek({
         bind.deployment().ssl.port.should.be.`null`
         bind.deployment().ssl.keyStore.should.be.equal("goodKeyStore")
         bind.deployment().watch.should.be.equal(listOf("hello", "bye"))
+        bind.deployment().random.should.be.`null`
         bind.users.size.should.be.equal(2)
         bind.users[0].age().should.be.equal(1)
         bind.users[1].age().should.be.equal(100)
@@ -47,6 +48,7 @@ interface KtorModules {
 
 interface KtorDeploymentConfig {
     val host: String?
+    val random: String?
     val port: Int get() = 80
     val watch: List<String>
     val ssl: KtorDeploymentSslConfig
