@@ -9,7 +9,6 @@ buildscript {
         mavenCentral()
         jcenter()
         maven { url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots' }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
     }
 
     dependencies {
@@ -64,7 +63,6 @@ subprojects { p ->
         mavenCentral()
         jcenter()
         maven { url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots' }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.1" }
     }
 
     bintray {
