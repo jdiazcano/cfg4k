@@ -71,10 +71,8 @@ open class DefaultConfigProvider(
                 val classType = superType ?: rawType
                 return rawType.findParser().parse(value, classType, superType?.findParser()) as T
             } else if (value.isList()) {
-                val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                val classType = superType ?: rawType
                 val collection = createCollection(rawType)
-                toMutableCollection(value, classType, collection, name, this, name)
+                toMutableCollection(value, targetType, collection, name, this, name)
                 return collection as T
             }
             throw ParserClassNotFound("Parser for class $type was not found")

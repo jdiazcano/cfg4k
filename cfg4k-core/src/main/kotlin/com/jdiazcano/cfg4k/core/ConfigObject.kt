@@ -12,10 +12,13 @@ interface ConfigObject {
     fun child(key: String): ConfigObject? {
         val (number, cleanKey) = findNumbers(key)
 
-        return if (number == null) {
-            asObject()[cleanKey]
-        } else {
-            asObject()[cleanKey]?.asList()?.get(number)
+        return when {
+            // We're in a normal object
+            number == null -> asObject()[cleanKey]
+            // We're in a list that is ROOT
+            cleanKey.isEmpty() -> asList()[number]
+            // When we are in a list that is inside our object
+            else -> asObject()[cleanKey]?.asList()?.get(number)
         }
     }
 
