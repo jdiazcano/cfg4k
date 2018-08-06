@@ -40,6 +40,6 @@ ext.libraries = [
         jcommander: "com.beust:jcommander:$versions.jcommander",
         mockwebserver: "com.squareup.okhttp3:mockwebserver:$versions.mockwebserver",
         aws: [
-                s3: "com.amazonaws:aws-java-sdk-bom:$versions.aws"
+                s3: "com.amazonaws:aws-java-sdk-s3:$versions.aws"
         ]
 ]

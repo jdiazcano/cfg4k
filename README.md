@@ -81,7 +81,7 @@ interface DatabaseConfig {
 1. Classpath
 1. Git
 1. URL
-1. Future: S3
+1. S3
 1. BitbucketConfigSource
 1. GithubConfigSource
 
