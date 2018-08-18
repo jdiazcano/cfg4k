@@ -7,7 +7,7 @@ import java.io.InputStream
 /**
  * Given an S3 Client, bucket and objectName it will convert it to a ConfigSource.
  *
- * @since 0.8.6
+ * @since 0.9.0
  */
 class S3ConfigSource(
         private val client: AmazonS3,
