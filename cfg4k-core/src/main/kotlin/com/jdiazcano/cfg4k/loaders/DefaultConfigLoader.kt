@@ -42,12 +42,12 @@ open class DefaultConfigLoader(protected var root: ConfigObject = "".toConfig())
 
 }
 
-internal val numberRegex = "([^\\[]+)(?:\\[(\\d+)])".toRegex()
+internal val numberRegex = "([^\\[]+)?(?:\\[(\\d+)])".toRegex()
 
 internal fun findNumbers(key: String): Pair<Int?, String> {
     val result = numberRegex.find(key)
     return if (result != null) {
-        result.groups[2]?.value?.toInt() to result.groups[1]?.value!!
+        result.groups[2]?.value?.toInt() to (result.groups[1]?.value ?: "")
     } else {
         null to key
     }

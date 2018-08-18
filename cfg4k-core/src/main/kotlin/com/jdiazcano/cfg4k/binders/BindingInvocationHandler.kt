@@ -67,15 +67,13 @@ class BindingInvocationHandler(
                 }
             }
         } else {
+            val targetType = TargetType(type)
+            val rawType = targetType.rawTargetType()
             if (configObject.isList()) {
-                val targetType = TargetType(type)
-                val rawType = targetType.rawTargetType()
                 val collection = createCollection(rawType)
-                toMutableCollection(configObject, type, collection, name, provider, prefix)
+                toMutableCollection(configObject, targetType, collection, name, provider, prefix)
                 return collection
             } else if (configObject.isString()) {
-                val targetType = TargetType(type)
-                val rawType = targetType.rawTargetType()
                 val superType = targetType.getParameterizedClassArguments().firstOrNull()
                 val classType = superType ?: rawType
                 return classType.findParser().parse(configObject, classType, superType?.findParser())
@@ -104,14 +102,12 @@ fun createCollection(rawType: Class<*>): MutableCollection<Any?> {
     }
 }
 
-fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCollection<Any?>, name: String, provider: ConfigProvider, prefix: String) {
+fun toMutableCollection(configObject: ConfigObject, targetType: TargetType, list: MutableCollection<Any?>, name: String, provider: ConfigProvider, prefix: String) {
     configObject.asList().forEachIndexed { index, innerObject ->
         if (innerObject.isObject()) {
-            val targetType = TargetType(type)
             val superType = targetType.getParameterizedClassArguments().firstOrNull()
             list.add(provider.bind(concatPrefix(prefix, "$name[$index]"), superType as Class<Any>))
         } else if (innerObject.isString()) {
-            val targetType = TargetType(type)
             val rawType = targetType.rawTargetType()
             val superType = targetType.getParameterizedClassArguments().firstOrNull()
             val classType = superType ?: rawType
@@ -121,7 +117,7 @@ fun toMutableCollection(configObject: ConfigObject, type: Type, list: MutableCol
 }
 
 fun KClass<*>.getDefaultMethod(methodName: String): Method? {
-    return Class.forName(jvmName + "\$DefaultImpls").methods.firstOrNull { it.name == methodName }
+    return Class.forName("$jvmName\$DefaultImpls").methods.firstOrNull { it.name == methodName }
 }
 
 fun KClass<*>.isMethodNullable(method: Method, propertyName: String = ""): Boolean {

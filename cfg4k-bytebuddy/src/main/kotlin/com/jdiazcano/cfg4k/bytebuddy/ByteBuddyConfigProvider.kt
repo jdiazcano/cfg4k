@@ -144,7 +144,7 @@ class ConfigurationHandler {
                     val targetType = TargetType(returnType)
                     val rawType = targetType.rawTargetType()
                     val collection = createCollection(rawType)
-                    toMutableCollection(configObject, returnType, collection, name, provider, prefix)
+                    toMutableCollection(configObject, targetType, collection, name, provider, prefix)
                     returning = collection
                 } else if (configObject.isString()) {
                     val targetType = TargetType(returnType)
