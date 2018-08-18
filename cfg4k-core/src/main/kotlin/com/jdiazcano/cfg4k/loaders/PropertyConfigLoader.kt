@@ -19,8 +19,11 @@ package com.jdiazcano.cfg4k.loaders
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.sources.ConfigSource
+import mu.KotlinLogging
 import java.net.URL
 import java.util.Properties
+
+private val logger = KotlinLogging.logger {}
 
 open class PropertyConfigLoader(
         private val source: ConfigSource
@@ -62,7 +65,16 @@ fun Properties.toConfig(): ConfigObject {
             map[keyAsString] = value
         } else {
             val valueMap = keys.dropLast(1).fold(map) { m, k ->
-                m.getOrPut(k) { mutableMapOf<String, Any>() } as MutableMap<String, Any>
+                val innerValue = m.getOrPut(k) { mutableMapOf<String, Any>() }
+                when (innerValue) {
+                    is Map<*, *> -> innerValue as MutableMap<String, Any>
+                    // This will only happen when we try to add root value to an object
+                    is String -> {
+                        logger.warn { "Key ($key=$innerValue) has overridden another value used as root" }
+                        mutableMapOf()
+                    }
+                    else -> error("Value can only be Map or String")
+                }
             }
             valueMap[keys.last()] = value
         }

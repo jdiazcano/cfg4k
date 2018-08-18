@@ -42,7 +42,7 @@ abstract class AbstractConfigObject(
     }
 
     override fun hashCode(): Int {
-        return javaClass.hashCode()
+        return value.hashCode()
     }
 
     override fun toString(): String {

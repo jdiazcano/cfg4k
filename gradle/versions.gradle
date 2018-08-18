@@ -13,7 +13,8 @@ ext.versions = [
         snakeyaml: '1.21',
         jcommander: '1.72',
         mockwebserver: '3.11.0',
-        aws: '1.11.380'
+        aws: '1.11.380',
+        logging: '1.5.4'
 ]
 
 ext.libraries = [
@@ -41,5 +42,6 @@ ext.libraries = [
         mockwebserver: "com.squareup.okhttp3:mockwebserver:$versions.mockwebserver",
         aws: [
                 s3: "com.amazonaws:aws-java-sdk-s3:$versions.aws"
-        ]
+        ],
+        logging: "io.github.microutils:kotlin-logging:$versions.logging"
 ]

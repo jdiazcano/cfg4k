@@ -5,11 +5,9 @@ import com.jdiazcano.cfg4k.core.toConfig
 
 /**
  * EnvironmentConfigLoader will try to match the key to an environment variable. This will apply a series of
- * transformations before matching. Once the match is done, it will be cached until the next time. Once reload is called
- * it will clear the cache until the next get() call is done and the value is cached again.
+ * transformations before matching.
  */
-open class EnvironmentConfigLoader : ConfigLoader {
-    protected val properties: MutableMap<String, String> = mutableMapOf()
+open class EnvironmentConfigLoader : DefaultConfigLoader(System.getenv().toConfig()) {
     protected val transformations: MutableList<(String) -> String> = mutableListOf()
 
     init {
@@ -18,17 +16,11 @@ open class EnvironmentConfigLoader : ConfigLoader {
     }
 
     override fun get(key: String): ConfigObject? {
-        // If we already have it in cache, we have to use it
-        if (properties.containsKey(key)) {
-            return properties[key]!!.toConfig()
-        }
-
         transformations.forEach {
             val transformed = it(key).toUpperCase()
-            val value = System.getenv()[transformed]
+            val value = super.get(transformed)
             if (value != null) {
-                properties[key] = value
-                return value.toConfig()
+                return value
             }
         }
 
@@ -36,7 +28,7 @@ open class EnvironmentConfigLoader : ConfigLoader {
     }
 
     override fun reload() {
-        properties.clear()
+        root = System.getenv().toConfig()
     }
 
     /**

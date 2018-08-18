@@ -4,6 +4,7 @@ dependencies {
     compile libraries.jetbrains.kotlin.stdlib
     compile libraries.jetbrains.kotlin.test
     compile libraries.jetbrains.kotlin.reflect
+    compile libraries.logging
 
     testCompile libraries.jetbrains.spek.api
     testCompile libraries.junitrunner

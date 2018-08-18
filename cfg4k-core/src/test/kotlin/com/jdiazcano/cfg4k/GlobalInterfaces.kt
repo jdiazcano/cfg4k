@@ -68,8 +68,13 @@ interface PropertyTestBinder {
     val nested: SuperNested
 }
 
-enum class TestEnum {
+enum class TestEnum : Interf {
     TEST, TEST1, TEST2
+}
+
+interface Interf {
+    val name: String
+    val slug: String get() = name.toLowerCase()
 }
 
 interface BindedEnum {

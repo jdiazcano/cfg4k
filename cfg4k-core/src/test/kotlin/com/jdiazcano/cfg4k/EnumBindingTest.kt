@@ -34,6 +34,7 @@ class EnumBindingTest : Spek({
         it("binding test") {
             val testBinder = provider.bind<BindedEnum>("")
             testBinder.thisWillBeEnum().should.be.equal(TestEnum.TEST)
+            testBinder.thisWillBeEnum().slug.should.be.equal(TestEnum.TEST.name.toLowerCase())
         }
 
         it("prefixed binding test") {

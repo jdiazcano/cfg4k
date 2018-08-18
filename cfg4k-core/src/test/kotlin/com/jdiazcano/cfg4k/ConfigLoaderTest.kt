@@ -19,6 +19,10 @@ import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.loaders.EnvironmentConfigLoader
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
+import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
+import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
+import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -71,7 +75,50 @@ class ConfigLoaderTest : Spek({
             loader.get("another.test").should.be.equal("bestest".toConfig())
         }
     }
+
+    describe("an override with system and environment") {
+        beforeEachTest {
+            System.setProperty("this.is.a.test", "testvalue")
+            System.setProperty("another.test", "bestest")
+
+            // The environment variables will be set in travis
+            if (System.getenv()["CI_NAME"]?:"" != "travis-ci") {
+                setEnv("SERVER_HOST", "localhost")
+                setEnv("SERVER_ENVIRONMENT", "development")
+            }
+        }
+
+        it("should be ok") {
+            val sysLoader = SystemPropertyConfigLoader()
+            val envLoader = EnvironmentConfigLoader()
+
+            val baseProvider = OverrideConfigProvider(
+                    DefaultConfigProvider(sysLoader),
+                    DefaultConfigProvider(envLoader)
+            )
+
+            baseProvider.get<String>("server.host").should.be.equal("localhost")
+            baseProvider.get<String>("server.environment").should.be.equal("development")
+        }
+    }
 })
+
+private interface Config {
+    val database: DatabaseConfig
+    val server: ServerConfig
+}
+
+private interface DatabaseConfig {
+    val url: String
+    val username: String
+    val password: String
+}
+
+private interface ServerConfig {
+    val port: Int
+    val host: String
+    val environment: String
+}
 
 internal fun setEnv(key: String, value: String) {
     try {
