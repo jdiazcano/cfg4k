@@ -3,14 +3,14 @@
 # Overview 
 Cfg4k is a configuration library made for Kotlin in Kotlin!
 
-#### Currently migrating from a big readme to the [wiki](https://github.com/jdiazcano/cfg4k/wiki)
-
 Features
 * Automatic reload
 * Interface binding
 * Huge flexibility, custom sources
 * Easy to use
 * Bytebuddy provider will be able to compile your bindings at runtime (You will need to add the cfg4k-bytebuddy to your dependencies.)
+
+For further information, use the [wiki](https://github.com/jdiazcano/cfg4k/wiki)
 
 # Quick start
 1. Add the Bintray repository: 
