@@ -30,15 +30,6 @@ interface ConfigProvider {
     val binder: Binder
 
     /**
-     * Gets a property from the loader and parses it to the correct type. Normally only primitive and custom parsers
-     * will be here, generic types must be used with the Typable parameter.
-     *
-     * @param name Name of the property
-     * @param type Class of the property, it will be parsed to it.
-     */
-    fun <T : Any> get(name: String, type: Class<T>, default: T? = null): T
-
-    /**
      * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
      * this method will correctly parse List<Int> for example.
      *
@@ -46,15 +37,6 @@ interface ConfigProvider {
      * @param type Type of the property. (You can get the type with typeOf<Class>() method)
      */
     fun <T : Any> get(name: String, type: Type, default: T? = null): T
-
-    /**
-     * Gets a property from the loader and parses it to the correct type. Normally only primitive and custom parsers
-     * will be here, generic types must be used with the Type parameter.
-     *
-     * @param name Name of the property
-     * @param type Class of the property, it will be parsed to it.
-     */
-    fun <T : Any?> getOrNull(name: String, type: Class<T>, default: T? = null): T?
 
     /**
      * Gets a property from the loader and parses it to the correct type. This is used for generics (but not only) so
@@ -109,7 +91,6 @@ interface ConfigProvider {
 }
 
 inline fun <reified T : Any> ConfigProvider.bind(name: String = "") = bind(name, T::class.java)
-fun ConfigProvider.get(name: String = "", default: String? = null) = get(name, String::class.java, default)
 inline fun <reified T : Any> ConfigProvider.get(name: String = "", default: T? = null) = get(name, typeOf<T>(), default)
 inline fun <reified T : Any?> ConfigProvider.getOrNull(name: String = "", default: T? = null) = getOrNull(name, typeOf<T>(), default)
 fun ConfigProvider.cache() = CachedConfigProvider(this)

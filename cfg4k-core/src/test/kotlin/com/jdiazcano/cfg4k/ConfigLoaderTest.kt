@@ -21,7 +21,6 @@ import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.loaders.SystemPropertyConfigLoader
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
-import com.jdiazcano.cfg4k.providers.bind
 import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.winterbe.expekt.should

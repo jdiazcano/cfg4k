@@ -23,7 +23,6 @@ import com.jdiazcano.cfg4k.binders.convertGetOrNull
 import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
-import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
 import com.jdiazcano.cfg4k.parsers.Parsers.isExtendedParseable
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
@@ -47,19 +46,6 @@ open class DefaultConfigProvider(
         reloadStrategy?.register(this)
     }
 
-    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
-
-        val value = configLoader.get(name)
-        return if (value != null) {
-            val context = ConfigContext(this, name)
-            val structure = type.convert()
-
-            convertGet(context, value, structure) as T
-        } else {
-            default ?: throw SettingNotFound(name)
-        }
-    }
-
     override fun <T : Any> get(name: String, type: Type, default: T?): T {
 
         val value = configLoader.get(name)
@@ -75,22 +61,6 @@ open class DefaultConfigProvider(
 
     override fun load(name: String): ConfigObject? {
         return configLoader.get(name)
-    }
-
-    override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? {
-        // There is no way that this has a generic parsers because the class actually removes that possibility
-        return if (type.isParseable()) {
-            val context = ConfigContext(this, name)
-
-            val value = configLoader.get(name)
-            if (value != null) {
-                convertGetOrNull(context, value, type.convert()) as T
-            } else {
-                default
-            }
-        } else {
-            throw ParserClassNotFound("Parser for class ${type.name} was not found")
-        }
     }
 
     override fun <T> getOrNull(name: String, type: Type, default: T?): T? {

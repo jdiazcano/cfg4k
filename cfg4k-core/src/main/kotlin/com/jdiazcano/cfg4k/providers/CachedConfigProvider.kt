@@ -20,24 +20,14 @@ import java.lang.reflect.Type
 
 /**
  * This config provider will cache the calls so binding and property lookup is not done everytime. Reloading this
- * provider will clear the cache so things will have to be binded again.
+ * provider will clear the cache so things will have to be cached again.
  */
 @Suppress("UNCHECKED_CAST")
 class CachedConfigProvider(private val configProvider: ConfigProvider) : ConfigProvider by configProvider {
-    private val cache = mutableMapOf<String, Any>()
+    private val cache = mutableMapOf<String, Any?>()
 
     init {
         configProvider.addReloadListener { cache.clear() }
-    }
-
-    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
-        return if (cache.containsKey(name)) {
-            cache[name] as T
-        } else {
-            val property = configProvider.get(name, type, default)
-            cache[name] = property
-            property
-        }
     }
 
     override fun <T : Any> get(name: String, type: Type, default: T?): T {
@@ -45,6 +35,16 @@ class CachedConfigProvider(private val configProvider: ConfigProvider) : ConfigP
             cache[name] as T
         } else {
             val property: T = configProvider.get(name, type, default)
+            cache[name] = property
+            property
+        }
+    }
+
+    override fun <T> getOrNull(name: String, type: Type, default: T?): T? {
+        return if (cache.containsKey(name)) {
+            cache[name] as T?
+        } else {
+            val property: T? = configProvider.getOrNull(name, type, default)
             cache[name] = property
             property
         }

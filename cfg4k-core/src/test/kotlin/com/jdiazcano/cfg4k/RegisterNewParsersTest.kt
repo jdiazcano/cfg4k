@@ -23,6 +23,7 @@ import com.jdiazcano.cfg4k.parsers.Parser
 import com.jdiazcano.cfg4k.parsers.Parsers
 import com.jdiazcano.cfg4k.providers.CachedConfigProvider
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
+import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
 import com.jdiazcano.cfg4k.utils.TypeStructure
@@ -52,7 +53,7 @@ class RegisterNewParsersTest : Spek({
 
                 it("class has been registered and now everything is cool") {
                     Parsers.addParser(Book::class.java, BookParser)
-                    provider.get("harrypotter", Book::class.java).should.be.equal(Book(1, "Prisoner of azkaban"))
+                    provider.get<Book>("harrypotter").should.be.equal(Book(1, "Prisoner of azkaban"))
                 }
             }
         }

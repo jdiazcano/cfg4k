@@ -24,9 +24,9 @@ class ReloadChangeListenerByNameTest : Spek({
                 called = true
             }
 
-            val before = provider.get("a")
+            val before = provider.get<String>("a")
             provider.reload()
-            val after = provider.get("a")
+            val after = provider.get<String>("a")
 
             called.should.be.`true`
             before.should.be.equal("b")

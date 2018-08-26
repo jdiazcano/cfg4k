@@ -65,20 +65,20 @@ class OverrideConfigProviderTest : Spek({
 
     describe("An overriding provider") {
         it("if the property exist in the first, should not go to the second loader") {
-            provider.get("a", String::class.java).should.be.equal("overrideb")
-            provider.get("a", String::class.java).should.be.equal("overrideb") // cached property!
-            provider.get("c", String::class.java).should.be.equal("overrided")
-            environmentOverride.get("a", String::class.java).should.be.equal("overrideb")
-            environmentOverride.get("a", String::class.java).should.be.equal("overrideb") // cached property!
-            environmentOverride.get("c", String::class.java).should.be.equal("overrided")
-            systemOverride.get("a", String::class.java).should.be.equal("overrideb")
-            systemOverride.get("a", String::class.java).should.be.equal("overrideb") // cached property!
-            systemOverride.get("c", String::class.java).should.be.equal("overrided")
+            provider.get<String>("a").should.be.equal("overrideb")
+            provider.get<String>("a").should.be.equal("overrideb") // cached property!
+            provider.get<String>("c").should.be.equal("overrided")
+            environmentOverride.get<String>("a").should.be.equal("overrideb")
+            environmentOverride.get<String>("a").should.be.equal("overrideb") // cached property!
+            environmentOverride.get<String>("c").should.be.equal("overrided")
+            systemOverride.get<String>("a").should.be.equal("overrideb")
+            systemOverride.get<String>("a").should.be.equal("overrideb") // cached property!
+            systemOverride.get<String>("c").should.be.equal("overrided")
 
             systemOverride.reload()
-            systemOverride.get("a", String::class.java).should.be.equal("overrideb")
-            systemOverride.get("a", String::class.java).should.be.equal("overrideb") // cached property!
-            systemOverride.get("c", String::class.java).should.be.equal("overrided")
+            systemOverride.get<String>("a").should.be.equal("overrideb")
+            systemOverride.get<String>("a").should.be.equal("overrideb") // cached property!
+            systemOverride.get<String>("c").should.be.equal("overrided")
         }
 
         it("if the property does not exist, then the second one should be tested") {

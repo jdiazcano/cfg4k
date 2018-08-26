@@ -40,25 +40,6 @@ class OverrideConfigProvider(
         addReloadListener { cachedProviders.clear() }
     }
 
-    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
-        if (name in cachedProviders) {
-            return cachedProviders[name]!!.get(name, type, default)
-        } else {
-            for (provider in providers) {
-                if (provider.contains(name)) {
-                    cachedProviders[name] = provider
-                    return provider.get(name, type, default)
-                }
-            }
-        }
-
-        if (default != null) {
-            return default
-        } else {
-            throw SettingNotFound(name)
-        }
-    }
-
     override fun load(name: String): ConfigObject? {
         if (name in cachedProviders) {
             return cachedProviders[name]!!.load(name)
@@ -94,21 +75,6 @@ class OverrideConfigProvider(
     }
 
     override fun <T> getOrNull(name: String, type: Type, default: T?): T? {
-        if (name in cachedProviders) {
-            return cachedProviders[name]!!.getOrNull(name, type, default)
-        } else {
-            for (provider in providers) {
-                if (provider.contains(name)) {
-                    cachedProviders[name] = provider
-                    return provider.getOrNull(name, type, default)
-                }
-            }
-        }
-
-        return default
-    }
-
-    override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? {
         if (name in cachedProviders) {
             return cachedProviders[name]!!.getOrNull(name, type, default)
         } else {

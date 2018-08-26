@@ -25,6 +25,7 @@ import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 import com.jdiazcano.cfg4k.providers.bind
+import com.jdiazcano.cfg4k.providers.get
 import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
 import com.jdiazcano.cfg4k.sources.FunctionConfigSource
 import com.jdiazcano.cfg4k.sources.StringFunctionConfigSource
@@ -108,14 +109,14 @@ private const val lastIteration = 3
 private fun checkProvider(provider: ConfigProvider, overriden: Boolean = false) {
     val binded = provider.bind<Normal>()
     if (overriden) {
-        provider.get("a", String::class.java).should.be.equal("overrideb1")
+        provider.get<String>("a").should.be.equal("overrideb1")
         binded.a().should.be.equal("overrideb1")
-        provider.get("c", String::class.java).should.be.equal("d")
+        provider.get<String>("c").should.be.equal("d")
         binded.c().should.be.equal("d")
     } else {
-        provider.get("a", String::class.java).should.be.equal("b1")
+        provider.get<String>("a").should.be.equal("b1")
         binded.a().should.be.equal("b1")
-        provider.get("c", String::class.java).should.be.equal("d1")
+        provider.get<String>("c").should.be.equal("d1")
         binded.c().should.be.equal("d1")
     }
 
@@ -126,13 +127,13 @@ private fun checkProvider(provider: ConfigProvider, overriden: Boolean = false) 
         }
         Thread.sleep(60)
         if (overriden) {
-            provider.get("a", String::class.java).should.be.equal("overrideb$lastReload")
-            provider.get("c", String::class.java).should.be.equal("d")
+            provider.get<String>("a").should.be.equal("overrideb$lastReload")
+            provider.get<String>("c").should.be.equal("d")
             binded.a().should.be.equal("overrideb$lastReload")
             binded.c().should.be.equal("d")
         } else {
-            provider.get("a", String::class.java).should.be.equal("b$lastReload")
-            provider.get("c", String::class.java).should.be.equal("d$lastReload")
+            provider.get<String>("a").should.be.equal("b$lastReload")
+            provider.get<String>("c").should.be.equal("d$lastReload")
             binded.a().should.be.equal("b$lastReload")
             binded.c().should.be.equal("d$lastReload")
         }
@@ -151,13 +152,7 @@ private fun reloadTestProvider(onReload: () -> Unit): ConfigProvider = object : 
     override val binder: Binder
         get() = throw UnsupportedOperationException("not used in the test")
 
-    override fun <T : Any> get(name: String, type: Class<T>, default: T?): T =
-            throw UnsupportedOperationException("not used in the test")
-
     override fun <T : Any> get(name: String, type: Type, default: T?): T =
-            throw UnsupportedOperationException("not used in the test")
-
-    override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? =
             throw UnsupportedOperationException("not used in the test")
 
     override fun <T> getOrNull(name: String, type: Type, default: T?): T? =

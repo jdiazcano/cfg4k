@@ -62,31 +62,31 @@ class ConfigProviderTest : Spek({
             }
 
             it("integer properties") {
-                provider.get("integerProperty", Int::class.java).should.be.equal(1)
+                provider.get<Int>("integerProperty").should.be.equal(1)
             }
 
             it("long properties") {
-                provider.get("longProperty", Long::class.java).should.be.equal(2)
+                provider.get<Long>("longProperty").should.be.equal(2)
             }
 
             it("short properties") {
-                provider.get("shortProperty", Short::class.java).should.be.equal(1)
+                provider.get<Short>("shortProperty").should.be.equal(1)
             }
 
             it("float properties") {
-                provider.get("floatProperty", Float::class.java).should.be.equal(2.1F)
+                provider.get<Float>("floatProperty").should.be.equal(2.1F)
             }
 
             it("double properties") {
-                provider.get("doubleProperty", Double::class.java).should.be.equal(1.1)
+                provider.get<Double>("doubleProperty").should.be.equal(1.1)
             }
 
             it("byte properties") {
-                provider.get("byteProperty", Byte::class.java).should.be.equal(2)
+                provider.get<Byte>("byteProperty").should.be.equal(2)
             }
 
             it("boolean properties") {
-                provider.get("booleanProperty", Boolean::class.java).should.be.`true`
+                provider.get<Boolean>("booleanProperty").should.be.`true`
             }
 
             it("big integer properties") {
