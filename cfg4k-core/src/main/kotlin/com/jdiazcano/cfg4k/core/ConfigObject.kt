@@ -1,6 +1,7 @@
 package com.jdiazcano.cfg4k.core
 
 import com.jdiazcano.cfg4k.loaders.findNumbers
+import com.jdiazcano.cfg4k.providers.ConfigProvider
 import java.io.InvalidObjectException
 
 interface ConfigObject {
@@ -87,6 +88,11 @@ enum class ConfigObjectType {
     LIST,
     OBJECT
 }
+
+data class ConfigContext(
+        val provider: ConfigProvider,
+        val propertyName: String
+): ConfigProvider by provider
 
 // Add converters for primitive types
 fun String.toConfig() = StringConfigObject(this)

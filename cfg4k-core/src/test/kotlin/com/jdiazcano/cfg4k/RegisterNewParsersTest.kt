@@ -16,6 +16,7 @@
 
 package com.jdiazcano.cfg4k
 
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.parsers.Parser
@@ -24,6 +25,7 @@ import com.jdiazcano.cfg4k.providers.CachedConfigProvider
 import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
 import com.jdiazcano.cfg4k.sources.URLConfigSource
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
+import com.jdiazcano.cfg4k.utils.TypeStructure
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -59,7 +61,7 @@ class RegisterNewParsersTest : Spek({
 
 data class Book(val id: Long, val title: String)
 object BookParser : Parser<Book> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): Book {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): Book {
         val obj = value.asObject()
         return Book(obj["id"]!!.asString().toLong(), obj["title"]!!.asString())
     }

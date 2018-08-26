@@ -35,6 +35,7 @@ private fun parseArray(array: JsonArray<*>): ConfigObject {
     return ListConfigObject(array.map { item ->
         when (item) {
             is JsonObject -> parseObject(item)
+            is JsonArray<*> -> parseArray(item)
             else -> StringConfigObject(item.toString())
         }
     })

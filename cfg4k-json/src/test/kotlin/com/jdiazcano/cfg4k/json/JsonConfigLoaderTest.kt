@@ -24,6 +24,9 @@ class JsonConfigLoaderTest : Spek({
     it("Simple property test") {
         val testBinder: List<Int> = provider.get("list", typeOf<List<Int>>())
         testBinder.should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
+        val listOfIntegers: List<Int>? = provider.getOrNull("list", typeOf<List<Int>?>())
+        listOfIntegers.should.not.be.`null`
+        listOfIntegers.should.be.equal(listOf(1, 2, 3, 4, 5, 6, 7))
         val betterIntList: List<Int> = provider.get("betterIntList", typeOf<List<Int>>())
         betterIntList.should.be.equal(listOf(1, 2, 100))
         val betterStringList: List<String> = provider.get("betterStringList", typeOf<List<String>>())

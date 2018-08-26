@@ -5,6 +5,7 @@ dependencies {
     compile libraries.jetbrains.kotlin.stdlib
     compile libraries.bytebuddy
 
+    testCompile project(":cfg4k-json")
     testCompile libraries.jetbrains.spek.api
     testCompile libraries.junitrunner
     testCompile libraries.expekt

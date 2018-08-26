@@ -1,6 +1,8 @@
 package com.jdiazcano.cfg4k.parsers
 
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.utils.TypeStructure
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -14,7 +16,7 @@ import java.util.Date
 import java.util.Locale
 
 class DateParser(private val format: String, private val locale: Locale = Locale.getDefault()) : Parser<Date> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): Date {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): Date {
         return SimpleDateFormat(format, locale).parse(value.asString())
     }
 }
@@ -42,7 +44,7 @@ class LocalDateTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): LocalDateTime {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): LocalDateTime {
         if (formatter != null) {
             return LocalDateTime.parse(value.asString(), formatter)
         } else {
@@ -74,7 +76,7 @@ class LocalDateParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): LocalDate {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): LocalDate {
         if (formatter != null) {
             return LocalDate.parse(value.asString(), formatter)
         } else {
@@ -106,7 +108,7 @@ class ZonedDateTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): ZonedDateTime {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): ZonedDateTime {
         if (formatter != null) {
             return ZonedDateTime.parse(value.asString(), formatter)
         } else {
@@ -138,7 +140,7 @@ class OffsetDateTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): OffsetDateTime {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): OffsetDateTime {
         if (formatter != null) {
             return OffsetDateTime.parse(value.asString(), formatter)
         } else {
@@ -170,7 +172,7 @@ class OffsetTimeParser private constructor(
         this.formatter = formatter
     }
 
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): OffsetTime {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): OffsetTime {
         if (formatter != null) {
             return OffsetTime.parse(value.asString(), formatter)
         } else {
@@ -180,7 +182,7 @@ class OffsetTimeParser private constructor(
 }
 
 class CalendarParser(private val format: String, private val locale: Locale = Locale.getDefault()) : Parser<Calendar> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): Calendar {
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): Calendar {
         val calendar = Calendar.getInstance(locale)
         calendar.time = SimpleDateFormat(format, locale).parse(value.asString())
         return calendar

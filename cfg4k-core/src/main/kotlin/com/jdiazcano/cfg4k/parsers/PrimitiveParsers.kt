@@ -16,40 +16,42 @@
 
 package com.jdiazcano.cfg4k.parsers
 
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.utils.TypeStructure
 
 object IntParser : Parser<Int> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toInt()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString().toInt()
 }
 
 object LongParser : Parser<Long> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toLong()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString().toLong()
 }
 
 object ShortParser : Parser<Short> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toShort()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString().toShort()
 }
 
 object BooleanParser : Parser<Boolean> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toBoolean()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString().toBoolean()
 }
 
 object FloatParser : Parser<Float> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toFloat()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString().toFloat()
 }
 
 object DoubleParser : Parser<Double> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toDouble()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString().toDouble()
 }
 
 object ByteParser : Parser<Byte> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString().toByte()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString().toByte()
 }
 
 object StringParser : Parser<String> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = value.asString()
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = value.asString()
 }
 
 object ClassParser : Parser<Class<*>> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?) = Class.forName(value.asString())
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure) = Class.forName(value.asString())
 }

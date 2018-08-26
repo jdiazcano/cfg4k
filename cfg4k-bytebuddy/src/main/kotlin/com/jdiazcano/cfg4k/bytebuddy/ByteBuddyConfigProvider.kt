@@ -18,21 +18,20 @@ package com.jdiazcano.cfg4k.bytebuddy
 
 import com.jdiazcano.cfg4k.binders.Binder
 import com.jdiazcano.cfg4k.binders.concatPrefix
-import com.jdiazcano.cfg4k.binders.createCollection
+import com.jdiazcano.cfg4k.binders.convert
 import com.jdiazcano.cfg4k.binders.getDefaultMethod
 import com.jdiazcano.cfg4k.binders.getPropertyName
 import com.jdiazcano.cfg4k.binders.isMethodNullable
 import com.jdiazcano.cfg4k.binders.objectMethods
 import com.jdiazcano.cfg4k.binders.overridableAnyMethods
-import com.jdiazcano.cfg4k.binders.toMutableCollection
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
-import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
 import com.jdiazcano.cfg4k.providers.Providers
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.SettingNotFound
-import com.jdiazcano.cfg4k.utils.TargetType
+import com.jdiazcano.cfg4k.utils.convert
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.description.modifier.Visibility
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy
@@ -46,9 +45,7 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType
 import net.bytebuddy.implementation.bind.annotation.This
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
-import java.lang.reflect.Type
 import java.util.WeakHashMap
-import kotlin.reflect.KClass
 
 open class ByteBuddyConfigProvider(
         configLoader: ConfigLoader,
@@ -122,13 +119,13 @@ class ConfigurationHandler {
             }
 
             val method = interfaze.getMethod(classMethod.name)
-            val kotlinClass: KClass<*> = method.declaringClass.kotlin
-            val name: String = getPropertyName(method.name)
-            val returnType: Type = method.genericReturnType
-            val isNullable = kotlinClass.isMethodNullable(method, name)
+            val kotlinClass = method.declaringClass.kotlin
+            val propertyName = getPropertyName(method.name)
+            val type = method.genericReturnType
+            val isNullable = kotlinClass.isMethodNullable(method, propertyName)
             var returning: Any?
 
-            val configObject = provider.load(concatPrefix(prefix, name))
+            val configObject = provider.load(concatPrefix(prefix, propertyName))
             if (configObject == null) {
                 try {
                     returning = kotlinClass.getDefaultMethod(method.name)?.invoke(that, that)
@@ -136,25 +133,13 @@ class ConfigurationHandler {
                     if (isNullable) {
                         returning = null
                     } else {
-                        throw SettingNotFound(name)
+                        throw SettingNotFound(propertyName)
                     }
                 }
             } else {
-                if (configObject.isList()) {
-                    val targetType = TargetType(returnType)
-                    val rawType = targetType.rawTargetType()
-                    val collection = createCollection(rawType)
-                    toMutableCollection(configObject, targetType, collection, name, provider, prefix)
-                    returning = collection
-                } else if (configObject.isString()) {
-                    val targetType = TargetType(returnType)
-                    val rawType = targetType.rawTargetType()
-                    val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                    val classType = superType ?: rawType
-                    returning = classType.findParser().parse(configObject, classType, superType?.findParser())
-                } else { // it is an object
-                    returning = provider.bind(concatPrefix(prefix, name), method.returnType)
-                }
+                val structure = type.convert()
+                val context = ConfigContext(provider, concatPrefix(prefix, propertyName))
+                returning = convert(context, configObject, structure)
             }
             return returning as T?
         }

@@ -69,15 +69,15 @@ object Parsers {
             java.lang.Boolean::class.java to BooleanParser
     )
 
-    fun Class<*>.isParseable(): Boolean {
-        return this in parsers || (superclass != null && superclass in parsers)
-    }
+    fun Class<*>.isParseable() = this in parsers || isEnum
+
+    fun Class<*>.isExtendedParseable() = isParseable() || Collection::class.java.isAssignableFrom(this) || Map::class.java.isAssignableFrom(this)
 
     fun Class<*>.findParser(): Parser<*> {
-        if (this in parsers) {
+        if (isEnum) {
+            return parsers[Enum::class.java] as Parser<*>
+        } else if (isParseable()) {
             return parsers[this] as Parser<*>
-        } else if (superclass != null && superclass in parsers) {
-            return parsers[superclass!!] as Parser<*>
         }
 
         throw ParserClassNotFound("Parser not found for class $this")

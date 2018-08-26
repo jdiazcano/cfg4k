@@ -16,7 +16,9 @@
 
 package com.jdiazcano.cfg4k.parsers
 
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.utils.TypeStructure
 
 /**
  * Base Parser interface, not all the implementations will use all the parameters but they will be there in case they
@@ -27,9 +29,9 @@ interface Parser<out T> {
     /**
      * Parses a string into a Type
      *
+     * @param context The configuration context with the current provider
      * @param value The string that comes from the source
-     * @param type The class of the supertype of the class that we want to parse
-     * @param parser When it is a list, then a parser is passed to parse the items of the list/set/inside
+     * @param typeStructure The structure of the types and generic types
      */
-    fun parse(value: ConfigObject, type: Class<*> = Any::class.java, parser: Parser<*>? = null): T
+    fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure = TypeStructure(Any::class.java)): T
 }

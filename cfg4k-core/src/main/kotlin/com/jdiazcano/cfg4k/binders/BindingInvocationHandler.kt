@@ -16,15 +16,13 @@
 
 package com.jdiazcano.cfg4k.binders
 
-import com.jdiazcano.cfg4k.core.ConfigObject
-import com.jdiazcano.cfg4k.parsers.Parsers.findParser
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import com.jdiazcano.cfg4k.utils.SettingNotFound
-import com.jdiazcano.cfg4k.utils.TargetType
+import com.jdiazcano.cfg4k.utils.convert
 import java.io.InvalidObjectException
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
-import java.lang.reflect.Type
 import java.util.LinkedList
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
@@ -50,36 +48,26 @@ class BindingInvocationHandler(
             in objectMethods -> return method.invoke(this, *(args ?: arrayOf()))
         }
 
-        val name = getPropertyName(method.name)
+        val propertyName = getPropertyName(method.name)
         val kotlinClass = method.declaringClass.kotlin
-        val isNullable = kotlinClass.isMethodNullable(method, name)
+        val isNullable = kotlinClass.isMethodNullable(method, propertyName)
 
         val type = method.genericReturnType
-        val configObject = provider.load(concatPrefix(prefix, name))
-        if (configObject == null) {
+        val configObject = provider.load(concatPrefix(prefix, propertyName))
+        return if (configObject == null) {
             try {
-                return kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
+                kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
             } catch (e: Exception) { // There's no default
                 if (isNullable) {
-                    return null
+                    null
                 } else {
-                    throw SettingNotFound(name)
+                    throw SettingNotFound(propertyName)
                 }
             }
         } else {
-            val targetType = TargetType(type)
-            val rawType = targetType.rawTargetType()
-            if (configObject.isList()) {
-                val collection = createCollection(rawType)
-                toMutableCollection(configObject, targetType, collection, name, provider, prefix)
-                return collection
-            } else if (configObject.isString()) {
-                val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                val classType = superType ?: rawType
-                return classType.findParser().parse(configObject, classType, superType?.findParser())
-            } else { // it is an object
-                return provider.bind(concatPrefix(prefix, name), method.returnType)
-            }
+            val structure = type.convert()
+            val context = ConfigContext(provider, concatPrefix(prefix, propertyName))
+            convert(context, configObject, structure)
         }
 
     }
@@ -102,20 +90,6 @@ fun createCollection(rawType: Class<*>): MutableCollection<Any?> {
     }
 }
 
-fun toMutableCollection(configObject: ConfigObject, targetType: TargetType, list: MutableCollection<Any?>, name: String, provider: ConfigProvider, prefix: String) {
-    configObject.asList().forEachIndexed { index, innerObject ->
-        if (innerObject.isObject()) {
-            val superType = targetType.getParameterizedClassArguments().firstOrNull()
-            list.add(provider.bind(concatPrefix(prefix, "$name[$index]"), superType as Class<Any>))
-        } else if (innerObject.isString()) {
-            val rawType = targetType.rawTargetType()
-            val superType = targetType.getParameterizedClassArguments().firstOrNull()
-            val classType = superType ?: rawType
-            list.add(classType.findParser().parse(innerObject, classType, superType?.findParser()))
-        }
-    }
-}
-
 fun KClass<*>.getDefaultMethod(methodName: String): Method? {
     return Class.forName("$jvmName\$DefaultImpls").methods.firstOrNull { it.name == methodName }
 }
@@ -124,13 +98,9 @@ fun KClass<*>.isMethodNullable(method: Method, propertyName: String = ""): Boole
     val properties = memberProperties.filter {
         it.name == propertyName || it.name == method.name
     }
-    return if (properties.isNotEmpty()) {
-        // we have a property
-        properties.first().returnType.isMarkedNullable
-    } else {
-        // this is a method
-        method.kotlinFunction?.returnType?.isMarkedNullable ?: false
-    }
+    return properties.firstOrNull()?.returnType?.isMarkedNullable
+            ?: method.kotlinFunction?.returnType?.isMarkedNullable
+            ?: false
 }
 
 private val METHOD_NAME_REGEX = "^(get|is|has)?(.*)".toRegex()

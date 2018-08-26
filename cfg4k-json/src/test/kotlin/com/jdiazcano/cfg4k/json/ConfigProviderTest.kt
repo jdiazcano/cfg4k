@@ -45,6 +45,8 @@ class ConfigProviderTest : Spek({
 
     providers.forEachIndexed { i, provider ->
         describe("provider[$i]") {
+            val testBinder = provider.bind<TestBinder>("")
+
             it("default values") {
                 provider.get("this.does.not.exist", 1).should.be.equal(1)
             }
@@ -230,7 +232,6 @@ class ConfigProviderTest : Spek({
             }
 
             it("binding test") {
-                val testBinder = provider.bind<TestBinder>("")
                 testBinder.booleanProperty().should.be.`true`
                 testBinder.integerProperty().should.be.equal(1)
                 testBinder.longProperty().should.be.equal(2)
@@ -255,6 +256,20 @@ class ConfigProviderTest : Spek({
                 testBinder.url().should.be.equal(URL("https://www.amazon.com"))
                 testBinder.file().should.be.equal(File("myfile.txt"))
                 testBinder.path().should.be.equal(Paths.get("mypath.txt"))
+            }
+
+            it("can retrieve list of lists") {
+                testBinder.listOfLists.should.be.equal(listOf(listOf(1, 2), listOf(3, 4)))
+            }
+
+            it("can retrieve a map") {
+                testBinder.myCoolMap.should.be.equal(mapOf("one" to 1, "two" to 2))
+            }
+
+            it("can retrieve a map with maps and lists") {
+                testBinder.myCoolComplexMap.should.be.equal(mapOf(
+                        "one" to mapOf(1 to listOf("one", "uno"), 10 to listOf("diez", "ten")),
+                        "two" to mapOf(2 to listOf("dos", "two"), 20 to listOf("veinte", "twenty"))))
             }
         }
     }

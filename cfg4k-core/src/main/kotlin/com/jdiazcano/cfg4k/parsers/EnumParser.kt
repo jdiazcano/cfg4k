@@ -16,10 +16,12 @@
 
 package com.jdiazcano.cfg4k.parsers
 
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
+import com.jdiazcano.cfg4k.utils.TypeStructure
 
 class EnumParser<T : Enum<T>> : Parser<T> {
-    override fun parse(value: ConfigObject, type: Class<*>, parser: Parser<*>?): T {
-        return java.lang.Enum.valueOf(type as Class<T>, value.asString())
+    override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): T {
+        return java.lang.Enum.valueOf(typeStructure.type as Class<T>, value.asString())
     }
 }

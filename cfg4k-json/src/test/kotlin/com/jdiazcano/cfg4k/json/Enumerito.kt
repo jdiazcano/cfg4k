@@ -26,6 +26,9 @@ interface TestBinder {
     fun url(): URL
     fun file(): File
     fun path(): Path
+    val listOfLists: List<List<Int>>
+    val myCoolMap: Map<String, Int>
+    val myCoolComplexMap: Map<String, Map<Int, List<String>>>
 }
 
 enum class TestEnum {

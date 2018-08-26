@@ -19,74 +19,41 @@ package com.jdiazcano.cfg4k.utils
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import java.util.ArrayList
 
-class TargetType(private val targetType: Type) {
-    private var rawTargetType: Class<*>? = null
-    private var parameterizedClassArguments: List<Class<*>>? = null
+fun Type.convert(): TypeStructure {
+    val structure = TypeStructure(this)
 
-    val isTargetTypeParameterized: Boolean
-        get() = targetType is ParameterizedType
+    val dewildcarded = dewildcard(this) as? ParameterizedType ?: return structure
 
-    fun rawTargetType(): Class<*> {
-        if (rawTargetType == null) {
-            rawTargetType = extractRawTargetType()
+    structure.generics.addAll(dewildcarded.actualTypeArguments.map { convertType(it) })
+
+    return structure
+}
+
+private fun convertType(typeProvided: Type): TypeStructure {
+    val type = dewildcard(typeProvided)
+    return when (type) {
+        is Class<*> -> TypeStructure(type)
+
+        is ParameterizedType -> {
+            TypeStructure(type, type.actualTypeArguments.map { convertType(it) }.toMutableList())
         }
-        return rawTargetType!!
+
+        else -> {
+            throw UnsupportedOperationException(
+                    "That type contains illegal type argument: '$type' [${type.javaClass}]")
+        }
     }
+}
 
-    private fun extractRawTargetType(): Class<*> {
-        if (targetType is Class<*>) {
-            return targetType
-        }
-        if (isTargetTypeParameterized) {
-            val type = targetType as ParameterizedType
-            return type.rawType as Class<*>
-        }
-        return targetType.javaClass
-    }
+private fun dewildcard(type: Type) =
+        if (type is WildcardType) type.upperBounds[0] else type
 
-    fun getParameterizedClassArguments(): List<Class<*>> {
-        if (parameterizedClassArguments == null) {
-            parameterizedClassArguments = extractParameterizedClassArguments()
-        }
-        return parameterizedClassArguments!!
-    }
+data class TypeStructure(
+        val type: Type,
+        val generics: MutableList<TypeStructure> = arrayListOf()
+) {
+    val raw = if (type is ParameterizedType) type.rawType as Class<*> else type as Class<*>
 
-    fun extractParameterizedClassArguments(): List<Class<*>> {
-        if (!isTargetTypeParameterized) {
-            return emptyList()
-        }
-
-        val pt = targetType as ParameterizedType
-        val result = ArrayList<Class<*>>()
-        for (typeArgument in pt.actualTypeArguments) {
-            when (typeArgument) {
-                is Class<*> -> result.add(typeArgument)
-
-                is ParameterizedType -> {
-                    val rawType = typeArgument.rawType
-                    if (rawType is Class<*>) {
-                        result.add(rawType)
-                    }
-                }
-
-                is WildcardType -> {
-                    val rawType = typeArgument.upperBounds[0]
-                    if (rawType is Class<*>) {
-                        result.add(rawType)
-                    }
-                }
-
-                else -> {
-                    throw UnsupportedOperationException(
-                            "That type contains illegal type argument: '$typeArgument' [${typeArgument.javaClass}]")
-                }
-            }
-        }
-        return result
-    }
-
-    override fun toString() = targetType.toString()
-
+    fun isMap() = type is ParameterizedType && type.rawType is Class<*> && (type.rawType as Class<*>).isAssignableFrom(Map::class.java)
 }

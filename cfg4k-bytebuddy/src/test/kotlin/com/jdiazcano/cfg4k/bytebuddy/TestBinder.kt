@@ -13,4 +13,7 @@ interface TestBinder {
     fun byteProperty(): Byte
     fun list(): List<Int>
     fun floatList(): List<Float>
+    val listOfLists: List<List<Int>>
+    val myCoolMap: Map<String, Int>
+    val myCoolComplexMap: Map<String, Map<Int, List<String>>>
 }

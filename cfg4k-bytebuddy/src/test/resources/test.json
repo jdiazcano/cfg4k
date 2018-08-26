@@ -16,32 +16,6 @@
     6,
     7
   ],
-  "myCoolMap": {
-    "one": 1,
-    "two": 2
-  },
-  "myCoolComplexMap": {
-    "one": {
-      "1": [
-        "one",
-        "uno"
-      ],
-      "10": [
-        "diez",
-        "ten"
-      ]
-    },
-    "two": {
-      "2": [
-        "dos",
-        "two"
-      ],
-      "20": [
-        "veinte",
-        "twenty"
-      ]
-    }
-  },
   "floatList": [
     1.2,
     2.2,
@@ -99,6 +73,10 @@
     "A",
     "B"
   ],
+  "enumList": [
+    "A",
+    "B"
+  ],
   "url": "https://www.amazon.com",
   "uri": "https://www.amazon.com",
   "path": "mypath.txt",
@@ -113,5 +91,31 @@
       3,
       4
     ]
-  ]
+  ],
+  "myCoolMap": {
+    "one": 1,
+    "two": 2
+  },
+  "myCoolComplexMap": {
+    "one": {
+      "1": [
+        "one",
+        "uno"
+      ],
+      "10": [
+        "diez",
+        "ten"
+      ]
+    },
+    "two": {
+      "2": [
+        "dos",
+        "two"
+      ],
+      "20": [
+        "veinte",
+        "twenty"
+      ]
+    }
+  }
 }

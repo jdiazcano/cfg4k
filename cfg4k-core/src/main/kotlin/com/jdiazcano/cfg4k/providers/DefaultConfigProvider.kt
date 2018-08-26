@@ -18,16 +18,17 @@ package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.Binder
 import com.jdiazcano.cfg4k.binders.ProxyBinder
-import com.jdiazcano.cfg4k.binders.createCollection
-import com.jdiazcano.cfg4k.binders.toMutableCollection
+import com.jdiazcano.cfg4k.binders.convertGet
+import com.jdiazcano.cfg4k.binders.convertGetOrNull
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.ConfigLoader
-import com.jdiazcano.cfg4k.parsers.Parsers.findParser
 import com.jdiazcano.cfg4k.parsers.Parsers.isParseable
+import com.jdiazcano.cfg4k.parsers.Parsers.isExtendedParseable
 import com.jdiazcano.cfg4k.reloadstrategies.ReloadStrategy
 import com.jdiazcano.cfg4k.utils.ParserClassNotFound
 import com.jdiazcano.cfg4k.utils.SettingNotFound
-import com.jdiazcano.cfg4k.utils.TargetType
+import com.jdiazcano.cfg4k.utils.convert
 import com.jdiazcano.cfg4k.utils.typeOf
 import java.lang.reflect.Type
 
@@ -47,37 +48,28 @@ open class DefaultConfigProvider(
     }
 
     override fun <T : Any> get(name: String, type: Class<T>, default: T?): T {
-        // There is no way that this has a generic parsers because the class actually removes that possibility
-        return if (type.isParseable()) {
-            val value = configLoader.get(name)
-            if (value != null) {
-                type.findParser().parse(value) as T
-            } else {
-                default ?: throw SettingNotFound(name)
-            }
+
+        val value = configLoader.get(name)
+        return if (value != null) {
+            val context = ConfigContext(this, name)
+            val structure = type.convert()
+
+            convertGet(context, value, structure) as T
         } else {
-            throw ParserClassNotFound("Parser for class ${type.name} was not found")
+            default ?: throw SettingNotFound(name)
         }
     }
 
     override fun <T : Any> get(name: String, type: Type, default: T?): T {
-        val targetType = TargetType(type)
-        val rawType = targetType.rawTargetType()
 
         val value = configLoader.get(name)
-        if (value != null) {
-            if (rawType.isParseable()) {
-                val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                val classType = superType ?: rawType
-                return rawType.findParser().parse(value, classType, superType?.findParser()) as T
-            } else if (value.isList()) {
-                val collection = createCollection(rawType)
-                toMutableCollection(value, targetType, collection, name, this, name)
-                return collection as T
-            }
-            throw ParserClassNotFound("Parser for class $type was not found")
+        return if (value != null) {
+            val structure = type.convert()
+            val context = ConfigContext(this, name)
+
+            convertGet(context, value, structure) as T
         } else {
-            return default ?: throw SettingNotFound(name)
+            default ?: throw SettingNotFound(name)
         }
     }
 
@@ -88,9 +80,11 @@ open class DefaultConfigProvider(
     override fun <T> getOrNull(name: String, type: Class<T>, default: T?): T? {
         // There is no way that this has a generic parsers because the class actually removes that possibility
         return if (type.isParseable()) {
+            val context = ConfigContext(this, name)
+
             val value = configLoader.get(name)
             if (value != null) {
-                type.findParser().parse(value) as T
+                convertGetOrNull(context, value, type.convert()) as T
             } else {
                 default
             }
@@ -100,21 +94,18 @@ open class DefaultConfigProvider(
     }
 
     override fun <T> getOrNull(name: String, type: Type, default: T?): T? {
-        val targetType = TargetType(type)
-        val rawType = targetType.rawTargetType()
-
         val value = configLoader.get(name)
-        if (value != null) {
-            if (rawType.isParseable()) {
-                val superType = targetType.getParameterizedClassArguments().firstOrNull()
-                val classType = superType ?: rawType
-                return rawType.findParser().parse(value, classType, superType?.findParser()) as T
-            } else if (rawType.isInterface) {
-                return bind(name, rawType) as T
+        return if (value != null) {
+            val structure = type.convert()
+            val context = ConfigContext(this, name)
+
+            when {
+                structure.raw.isExtendedParseable() -> convertGetOrNull(context, value, structure) as T
+                structure.raw.isInterface -> bind(name, structure.raw) as T
+                else -> throw ParserClassNotFound("Parser for class $type was not found")
             }
-            throw ParserClassNotFound("Parser for class $type was not found")
         } else {
-            return default
+            default
         }
     }
 
