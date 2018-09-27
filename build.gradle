@@ -43,11 +43,6 @@ repositories {
     mavenCentral()
 }
 
-// Generate Gradle wrapper
-task wrapper(type: Wrapper) {
-    gradleVersion = "4.0.1"
-}
-
 subprojects { p ->
     apply plugin: 'java'
     apply plugin: 'kotlin'

@@ -1,6 +1,6 @@
 ext.versions = [
         jetbrains: [
-                kotlin: '1.2.60',
+                kotlin: '1.2.71',
                 spek: '1.1.2',
                 engine: '1.2.0'
         ],
