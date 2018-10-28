@@ -125,7 +125,8 @@ class ConfigurationHandler {
             val isNullable = kotlinClass.isMethodNullable(method, propertyName)
             var returning: Any?
 
-            val configObject = provider.load(concatPrefix(prefix, propertyName))
+            val qualifiedPropertyName = concatPrefix(prefix, propertyName)
+            val configObject = provider.load(qualifiedPropertyName)
             if (configObject == null) {
                 try {
                     returning = kotlinClass.getDefaultMethod(method.name)?.invoke(that, that)
@@ -133,12 +134,12 @@ class ConfigurationHandler {
                     if (isNullable) {
                         returning = null
                     } else {
-                        throw SettingNotFound(propertyName)
+                        throw SettingNotFound(qualifiedPropertyName)
                     }
                 }
             } else {
                 val structure = type.convert()
-                val context = ConfigContext(provider, concatPrefix(prefix, propertyName))
+                val context = ConfigContext(provider, qualifiedPropertyName)
                 returning = convert(context, configObject, structure)
             }
             return returning as T?
