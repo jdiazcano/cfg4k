@@ -53,7 +53,8 @@ class BindingInvocationHandler(
         val isNullable = kotlinClass.isMethodNullable(method, propertyName)
 
         val type = method.genericReturnType
-        val configObject = provider.load(concatPrefix(prefix, propertyName))
+        val qualifiedPropertyName = concatPrefix(prefix, propertyName)
+        val configObject = provider.load(qualifiedPropertyName)
         return if (configObject == null) {
             try {
                 kotlinClass.getDefaultMethod(method.name)?.invoke(this, proxy)
@@ -61,12 +62,12 @@ class BindingInvocationHandler(
                 if (isNullable) {
                     null
                 } else {
-                    throw SettingNotFound(propertyName)
+                    throw SettingNotFound(qualifiedPropertyName)
                 }
             }
         } else {
             val structure = type.convert()
-            val context = ConfigContext(provider, concatPrefix(prefix, propertyName))
+            val context = ConfigContext(provider, qualifiedPropertyName)
             convert(context, configObject, structure)
         }
 
