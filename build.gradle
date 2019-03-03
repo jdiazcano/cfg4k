@@ -36,7 +36,7 @@ idea {
 
 project.ext {
     artifactGroup = "com.jdiazcano.cfg4k"
-    artifactVersion = "0.9.0"
+    artifactVersion = "0.9.1"
 }
 
 repositories {
