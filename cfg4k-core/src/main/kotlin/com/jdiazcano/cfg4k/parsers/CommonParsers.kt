@@ -51,7 +51,7 @@ object MapParser {
     fun parse(configContext: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): Map<*, *> {
         return value.asObject().map {
             convert(configContext, it.key.toConfig(), typeStructure.generics[0]) to
-                    convert(configContext, it.value, typeStructure.generics[1])
+                    convert(configContext.copy(propertyName = "${configContext.propertyName}.${it.key}"), it.value, typeStructure.generics[1])
         }.toMap()
     }
 

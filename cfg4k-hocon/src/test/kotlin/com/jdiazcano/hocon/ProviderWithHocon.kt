@@ -40,6 +40,11 @@ interface KtorConfig {
     fun deployment(): KtorDeploymentConfig
     val users: List<User>
     val application: KtorModules
+    val commands: Map<String, CommandConfiguration>
+}
+
+interface CommandConfiguration {
+    val isgoodcommand: Boolean
 }
 
 interface KtorModules {
