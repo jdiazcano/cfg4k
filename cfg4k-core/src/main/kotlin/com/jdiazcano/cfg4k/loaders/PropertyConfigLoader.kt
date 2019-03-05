@@ -21,7 +21,7 @@ import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.sources.ConfigSource
 import mu.KotlinLogging
 import java.net.URL
-import java.util.Properties
+import java.util.*
 
 private val logger = KotlinLogging.logger {}
 

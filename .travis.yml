@@ -1,5 +1,15 @@
 languaje: kotlin
-jdk: oraclejdk8
+jdk:
+  - openjdk8
+  - openjdk9
+  - openjdk10
+  - openjdk11
+  - openjdk-ea
+
+matrix:
+  allow_failures:
+    - jdk: openjdk-ea
+
 sudo: false
 
 notifications:
