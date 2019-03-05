@@ -31,3 +31,8 @@ class SettingsNotInitialisedException(message: String) : Exception(message)
  * call the methods "addParser" of the Provider
  */
 class ParserClassNotFound(message: String) : Exception(message)
+
+/**
+ * Exception thrown when trying to bind a data class and there is no matching constructor with the parameters
+ */
+class ConstructorNotFound(message: String) : Exception(message)

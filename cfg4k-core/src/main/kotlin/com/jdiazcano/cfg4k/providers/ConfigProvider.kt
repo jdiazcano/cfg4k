@@ -17,6 +17,8 @@
 package com.jdiazcano.cfg4k.providers
 
 import com.jdiazcano.cfg4k.binders.Binder
+import com.jdiazcano.cfg4k.binders.DataClassBinder
+import com.jdiazcano.cfg4k.core.ConfigContext
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.utils.typeOf
 import java.lang.reflect.Type
@@ -86,10 +88,14 @@ interface ConfigProvider {
      * @param type The interface that will be implemented and it will be returned
      */
     fun <T : Any> bind(prefix: String, type: Class<T>): T {
-        return binder.bind(this, prefix, type)
+        return when {
+            type.kotlin.isData -> DataClassBinder.bind(this, prefix, type.kotlin)
+            else -> binder.bind(this, prefix, type)
+        }
     }
 }
 
+fun ConfigProvider.load(configContext: ConfigContext) = load(configContext.propertyName)
 inline fun <reified T : Any> ConfigProvider.bind(name: String = "") = bind(name, T::class.java)
 inline fun <reified T : Any> ConfigProvider.get(name: String = "", default: T? = null) = get(name, typeOf<T>(), default)
 inline fun <reified T : Any?> ConfigProvider.getOrNull(name: String = "", default: T? = null) = getOrNull(name, typeOf<T>(), default)

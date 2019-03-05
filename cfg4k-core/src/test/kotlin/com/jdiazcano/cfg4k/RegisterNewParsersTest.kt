@@ -60,7 +60,26 @@ class RegisterNewParsersTest : Spek({
     }
 })
 
-data class Book(val id: Long, val title: String)
+class Book(val id: Long, val title: String) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Book
+
+        if (id != other.id) return false
+        if (title != other.title) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + title.hashCode()
+        return result
+    }
+}
+
 object BookParser : Parser<Book> {
     override fun parse(context: ConfigContext, value: ConfigObject, typeStructure: TypeStructure): Book {
         val obj = value.asObject()

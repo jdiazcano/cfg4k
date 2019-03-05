@@ -6,6 +6,8 @@ Cfg4k is a configuration library made for Kotlin in Kotlin!
 Features
 * Automatic reload
 * Interface binding
+* Ability to handle data classes automatically
+* All the complex types and generics are supported
 * Huge flexibility, custom sources
 * Easy to use
 * Bytebuddy provider will be able to compile your bindings at runtime (You will need to add the cfg4k-bytebuddy to your dependencies.)

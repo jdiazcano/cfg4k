@@ -34,6 +34,7 @@ fun convertBase(context: ConfigContext, configObject: ConfigObject, structure: T
         configObject.isList() -> ListParser.parse(context, configObject, structure)
         structure.raw.isParseable() -> structure.raw.findParser().parse(context, configObject, structure)
         structure.raw.isInterface -> getter()
+        structure.raw.kotlin.isData -> DataClassBinder.bind(context.provider, context.propertyName, structure.raw.kotlin)
         else -> throw ParserClassNotFound("Couldn't parse class ${structure.raw}")
     }
 }
