@@ -10,5 +10,6 @@ dependencies {
     testCompile libraries.junitrunner
     testCompile libraries.expekt
     testCompile libraries.mockwebserver
+    testCompile libraries.mockk
     testRuntime libraries.jetbrains.spek.engine
 }

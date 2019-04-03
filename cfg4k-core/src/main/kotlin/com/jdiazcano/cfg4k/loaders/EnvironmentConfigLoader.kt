@@ -1,19 +1,19 @@
 package com.jdiazcano.cfg4k.loaders
 
 import com.jdiazcano.cfg4k.core.ConfigObject
-import com.jdiazcano.cfg4k.core.toConfig
+
+private val DEFAULT_TRANSFORMERS = mutableListOf<(String) -> String>(
+        { key -> key.replace('_', '.') },
+        { key -> key.replace('-', '.') }
+)
 
 /**
  * EnvironmentConfigLoader will try to match the key to an environment variable. This will apply a series of
  * transformations before matching.
  */
-open class EnvironmentConfigLoader : DefaultConfigLoader(System.getenv().toConfig()) {
-    protected val transformations: MutableList<(String) -> String> = mutableListOf()
-
-    init {
-        addTransformer { key -> key.replace('.', '_') }
-        addTransformer { key -> key.replace('.', '-') }
-    }
+open class EnvironmentConfigLoader(
+        protected val transformations: MutableList<(String) -> String> = DEFAULT_TRANSFORMERS
+) : DefaultConfigLoader(System.getenv().transformice(transformations).toProperties().toConfig()) {
 
     override fun get(key: String): ConfigObject? {
         transformations.forEach {
@@ -28,17 +28,10 @@ open class EnvironmentConfigLoader : DefaultConfigLoader(System.getenv().toConfi
     }
 
     override fun reload() {
-        root = System.getenv().toConfig()
-    }
-
-    /**
-     * Adds a transformer that will be performed once the get() method is called. This will transform the key to the
-     * environment variable form (UPPER_CASE_FORM) and by default there are three transformers.
-     *
-     * 1- foo.bar to FOO-BAR
-     * 2- foo.bar to FOO_BAR
-     */
-    fun addTransformer(transformer: (String) -> String) {
-        transformations.add(transformer)
+        root = System.getenv().transformice(transformations).toProperties().toConfig()
     }
 }
+
+private fun Map<String, String>.transformice(transformations: MutableList<(String) -> String>) = map { (key, value) ->
+    transformations.fold(key) { transformedKey, transformer -> transformer(transformedKey) } to value
+}.toMap()
