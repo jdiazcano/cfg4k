@@ -15,7 +15,9 @@ ext.versions = [
         mockwebserver: '3.13.1',
         aws: '1.11.510',
         logging: '1.6.25',
-        mockk: '1.9.3'
+        mockk: '1.9.3',
+        kotlintest: '3.3.1',
+        assertk: '0.13'
 ]
 
 ext.libraries = [
@@ -26,13 +28,16 @@ ext.libraries = [
                 kotlin: [
                         stdlib: "org.jetbrains.kotlin:kotlin-stdlib:$versions.jetbrains.kotlin",
                         reflect: "org.jetbrains.kotlin:kotlin-reflect:$versions.jetbrains.kotlin",
-                        test: "org.jetbrains.kotlin:kotlin-test:$versions.jetbrains.kotlin"
+                        test: "org.jetbrains.kotlin:kotlin-test:$versions.jetbrains.kotlin",
+                        testannotations: "org.jetbrains.kotlin:kotlin-test-annotations:$versions.jetbrains.kotlin",
+                        testjunit: "org.jetbrains.kotlin:kotlin-test-junit5:$versions.jetbrains.kotlin"
                 ],
                 spek: [
                         api: "org.jetbrains.spek:spek-api:$versions.jetbrains.engine",
                         engine: "org.jetbrains.spek:spek-junit-platform-engine:$versions.jetbrains.engine"
                 ]
         ],
+        kotlintest: "io.kotlintest:kotlintest-runner-junit5:$versions.kotlintest",
         junitrunner: "org.junit.platform:junit-platform-runner:$versions.junitrunner",
         expekt: "com.winterbe:expekt:$versions.expekt",
         bytebuddy: "net.bytebuddy:byte-buddy:$versions.bytebuddy",
@@ -45,5 +50,6 @@ ext.libraries = [
                 s3: "com.amazonaws:aws-java-sdk-s3:$versions.aws"
         ],
         logging: "io.github.microutils:kotlin-logging:$versions.logging",
-        mockk: "io.mockk:mockk:$versions.mockk"
+        mockk: "io.mockk:mockk:$versions.mockk",
+        assertk: "com.willowtreeapps.assertk:assertk-jvm:$versions.assertk"
 ]

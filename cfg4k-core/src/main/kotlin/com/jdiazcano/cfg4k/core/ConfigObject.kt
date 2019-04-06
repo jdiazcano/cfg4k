@@ -39,16 +39,12 @@ abstract class AbstractConfigObject(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        return true
+        return value == (other as ConfigObject).value
     }
 
-    override fun hashCode(): Int {
-        return value.hashCode()
-    }
+    override fun hashCode() = value.hashCode()
 
-    override fun toString(): String {
-        return "ConfigObject(value=$value)"
-    }
+    override fun toString() = "ConfigObject(value=$value)"
 }
 
 class ListConfigObject(value: Collection<ConfigObject>) : AbstractConfigObject(value.toList(), ConfigObjectType.LIST) {
@@ -59,17 +55,20 @@ class ListConfigObject(value: Collection<ConfigObject>) : AbstractConfigObject(v
 
 class MapConfigObject(value: Map<String, ConfigObject?>) : AbstractConfigObject(value.toMap(), ConfigObjectType.OBJECT) {
     override fun merge(configObject: ConfigObject): ConfigObject {
-        val thisMap = value as Map<String, ConfigObject>
-        val thatMap = configObject.value as Map<String, ConfigObject>
+        val thisMap = (value as Map<String, ConfigObject>).toMutableMap()
+        val thatMap = (configObject.value as Map<String, ConfigObject>).toMutableMap()
 
-        val theList = thisMap.keys.toMutableList()
+        val commonKeysList = thisMap.keys.toMutableList().apply {
+            retainAll(thatMap.keys)
+        }
         val commonKeysMergedMap = hashMapOf<String, ConfigObject>()
-        val commonKeys = theList.retainAll(thatMap.keys)
 
-        // Check for primitive common keys
-        if (commonKeys) {
-            theList.forEach {
-                commonKeysMergedMap[it] = thisMap[it]!!.merge(thatMap[it]!!)
+        if (commonKeysList.isNotEmpty()) {
+            commonKeysList.forEach {
+                commonKeysMergedMap[it] = thisMap.getValue(it).merge(thatMap.getValue(it))
+
+                thisMap.remove(it)
+                thatMap.remove(it)
             }
         }
 
@@ -98,8 +97,11 @@ data class ConfigContext(
 fun String.toConfig() = StringConfigObject(this)
 
 fun Int.toConfig() = StringConfigObject(this.toString())
+fun Short.toConfig() = StringConfigObject(this.toString())
+fun Byte.toConfig() = StringConfigObject(this.toString())
 fun Long.toConfig() = StringConfigObject(this.toString())
 fun Double.toConfig() = StringConfigObject(this.toString())
+fun Boolean.toConfig() = StringConfigObject(this.toString())
 fun Float.toConfig() = StringConfigObject(this.toString())
 fun Map<String, Any>.toConfig() = parseObject(this)
 fun List<*>.toConfig() = parseArray(this)

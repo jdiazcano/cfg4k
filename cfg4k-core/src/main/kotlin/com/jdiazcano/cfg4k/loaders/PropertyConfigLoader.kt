@@ -43,14 +43,6 @@ open class PropertyConfigLoader(
 
 }
 
-fun URL.asProperties(): Properties {
-    val properties = Properties()
-    openStream().use {
-        properties.load(it)
-    }
-    return properties
-}
-
 fun Properties.toConfig(): ConfigObject {
     val map = mutableMapOf<String, Any>()
     map { (key, value) ->
@@ -76,7 +68,12 @@ fun Properties.toConfig(): ConfigObject {
                     else -> error("Value can only be Map or String")
                 }
             }
-            valueMap[keys.last()] = value
+
+            if (valueMap[keys.last()] == null) {
+                valueMap[keys.last()] = value
+            } else {
+                logger.warn { "Key '$key' was ignored as it was going to override another value." }
+            }
         }
     }
     return map.toConfig()

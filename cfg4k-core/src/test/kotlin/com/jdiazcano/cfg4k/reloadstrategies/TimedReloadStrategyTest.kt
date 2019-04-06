@@ -1,38 +1,16 @@
-/*
- * Copyright 2015-2016 Javier Díaz-Cano Martín-Albo (javierdiazcanom@gmail.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.jdiazcano.cfg4k
+package com.jdiazcano.cfg4k.reloadstrategies
 
 import com.jdiazcano.cfg4k.binders.Binder
 import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
-import com.jdiazcano.cfg4k.providers.CachedConfigProvider
-import com.jdiazcano.cfg4k.providers.ConfigProvider
-import com.jdiazcano.cfg4k.providers.DefaultConfigProvider
-import com.jdiazcano.cfg4k.providers.OverrideConfigProvider
-import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
-import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.providers.get
-import com.jdiazcano.cfg4k.reloadstrategies.TimedReloadStrategy
+import com.jdiazcano.cfg4k.providers.*
 import com.jdiazcano.cfg4k.sources.FunctionConfigSource
 import com.jdiazcano.cfg4k.sources.StringFunctionConfigSource
-import com.winterbe.expekt.should
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import io.kotlintest.TestCase
+import io.kotlintest.matchers.numerics.shouldBeGreaterThan
+import io.kotlintest.matchers.numerics.shouldBeLessThan
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.StringSpec
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
@@ -43,18 +21,18 @@ nested.a=reloaded nestedb
 """
 }
 
-class TimedReloadStrategyTest : Spek({
+class TimedReloadStrategyTest : StringSpec() {
 
-    val strategy = TimedReloadStrategy(50, TimeUnit.MILLISECONDS)
-    val overridenSource = StringFunctionConfigSource({ createText(lastReload, true) })
-    val source = FunctionConfigSource({ createText(lastReload, false).toByteArray() })
+    override fun beforeTest(testCase: TestCase) {
+        lastReload = 1
+    }
 
-    describe("a timed reloadable properties config loader") {
-        beforeEachTest {
-            lastReload = 1
-        }
+    init {
+        val strategy = TimedReloadStrategy(50, TimeUnit.MILLISECONDS)
+        val overridenSource = StringFunctionConfigSource { createText(lastReload, true) }
+        val source = FunctionConfigSource { createText(lastReload, false).toByteArray() }
 
-        it("defaultconfigprovider test") {
+        "defaultconfigprovider test" {
             val provider = ProxyConfigProvider(
                     PropertyConfigLoader(source),
                     strategy
@@ -62,15 +40,15 @@ class TimedReloadStrategyTest : Spek({
             checkProvider(provider)
         }
 
-        it("cacheddefaultconfigprovider test") {
+        "cacheddefaultconfigprovider test" {
             val cachedProvider = CachedConfigProvider(
                     ProxyConfigProvider(PropertyConfigLoader(source),
-                    strategy)
+                            strategy)
             )
             checkProvider(cachedProvider)
         }
 
-        it("overrideconfigprovider test") {
+        "overrideconfigprovider test" {
             val provider = OverrideConfigProvider(
                     DefaultConfigProvider(PropertyConfigLoader(overridenSource), strategy),
                     DefaultConfigProvider(PropertyConfigLoader(source), strategy)
@@ -78,7 +56,7 @@ class TimedReloadStrategyTest : Spek({
             checkProvider(provider, true)
         }
 
-        it("reload strategy can be reused by multiple providers") {
+        "reload strategy can be reused by multiple providers" {
             var reloadCounter1 = 0
             val provider1 = reloadTestProvider { reloadCounter1++ }
             var reloadCounter2 = 0
@@ -96,12 +74,12 @@ class TimedReloadStrategyTest : Spek({
 
             // provider1 must've been unregistered just before lastSeenReloadCounter1 was observed,
             // and at most one running reload might've increased reloadCounter1 since then
-            reloadCounter1.should.be.most(lastSeenReloadCounter1 + 1)
+            reloadCounter1.shouldBeLessThan(lastSeenReloadCounter1 + 1)
             // provider2 has not been unregistered, so its counter must've been running
-            reloadCounter2.should.be.least(lastSeenReloadCounter2 + 2)
+            reloadCounter2.shouldBeGreaterThan(lastSeenReloadCounter2 + 2)
         }
     }
-})
+}
 
 private var lastReload = 1
 private const val lastIteration = 3
@@ -109,15 +87,15 @@ private const val lastIteration = 3
 private fun checkProvider(provider: ConfigProvider, overriden: Boolean = false) {
     val binded = provider.bind<Normal>()
     if (overriden) {
-        provider.get<String>("a").should.be.equal("overrideb1")
-        binded.a().should.be.equal("overrideb1")
-        provider.get<String>("c").should.be.equal("d")
-        binded.c().should.be.equal("d")
+        provider.get<String>("a").shouldBe("overrideb1")
+        binded.a().shouldBe("overrideb1")
+        provider.get<String>("c").shouldBe("d")
+        binded.c().shouldBe("d")
     } else {
-        provider.get<String>("a").should.be.equal("b1")
-        binded.a().should.be.equal("b1")
-        provider.get<String>("c").should.be.equal("d1")
-        binded.c().should.be.equal("d1")
+        provider.get<String>("a").shouldBe("b1")
+        binded.a().shouldBe("b1")
+        provider.get<String>("c").shouldBe("d1")
+        binded.c().shouldBe("d1")
     }
 
     for (i in 1..5) {
@@ -127,15 +105,15 @@ private fun checkProvider(provider: ConfigProvider, overriden: Boolean = false) 
         }
         Thread.sleep(60)
         if (overriden) {
-            provider.get<String>("a").should.be.equal("overrideb$lastReload")
-            provider.get<String>("c").should.be.equal("d")
-            binded.a().should.be.equal("overrideb$lastReload")
-            binded.c().should.be.equal("d")
+            provider.get<String>("a").shouldBe("overrideb$lastReload")
+            provider.get<String>("c").shouldBe("d")
+            binded.a().shouldBe("overrideb$lastReload")
+            binded.c().shouldBe("d")
         } else {
-            provider.get<String>("a").should.be.equal("b$lastReload")
-            provider.get<String>("c").should.be.equal("d$lastReload")
-            binded.a().should.be.equal("b$lastReload")
-            binded.c().should.be.equal("d$lastReload")
+            provider.get<String>("a").shouldBe("b$lastReload")
+            provider.get<String>("c").shouldBe("d$lastReload")
+            binded.a().shouldBe("b$lastReload")
+            binded.c().shouldBe("d$lastReload")
         }
         lastReload++
     }
@@ -174,12 +152,7 @@ private fun reloadTestProvider(onReload: () -> Unit): ConfigProvider = object : 
             throw UnsupportedOperationException("not used in the test")
 }
 
-interface Nested {
-    fun a(): String
-}
-
 interface Normal {
-    fun nested(): Nested
     fun a(): String
     fun c(): String
 }
