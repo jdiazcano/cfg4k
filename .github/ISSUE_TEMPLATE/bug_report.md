@@ -13,6 +13,7 @@ A clear and concise description of what the bug is.
 **To Reproduce**
 In order for me to reproduce this behavior I need:
 
+1. Version of Cfg4k
 1. ConfigProvider
 1. ConfigLoader
 1. ConfigSource
