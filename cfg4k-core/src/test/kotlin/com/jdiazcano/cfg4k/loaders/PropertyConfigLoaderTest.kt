@@ -38,12 +38,6 @@ class PropertyConfigLoaderTest : StringSpec({
         }
     }
 
-    "exception thrown if a key is defined twice" {
-        shouldThrow<IllegalArgumentException> {
-            loader.reload()
-        }
-    }
-
     "simple map is converted to properties and config" {
         val config = mapOf(
                 "a" to "1",
