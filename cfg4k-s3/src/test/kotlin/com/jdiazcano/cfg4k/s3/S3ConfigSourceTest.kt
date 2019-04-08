@@ -12,7 +12,7 @@ import org.jetbrains.spek.api.dsl.describe
 
 class S3ConfigSourceTest : Spek({
     describe("a config source that can fetch data") {
-        val client = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_1).build()
+        val client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build()
         val source = S3ConfigSource(client, "mtln-public-data", "Samples/airports.json")
         val loader = JsonConfigLoader(source)
         val provider = DefaultConfigProvider(loader).cache()

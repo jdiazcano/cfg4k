@@ -51,7 +51,7 @@ fun Properties.toConfig(): ConfigObject {
 
         if (keys.size == 1) {
             if (map[keyAsString] != null) {
-                throw IllegalArgumentException("$key is defined twice")
+                logger.warn { "$key will be overridden as it is defined twice." }
             }
 
             map[keyAsString] = value
