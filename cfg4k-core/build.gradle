@@ -7,8 +7,8 @@ dependencies {
     compile libraries.logging
 
     testCompile libraries.kotlintest
-    testCompile libraries.mockwebserver
     testCompile libraries.mockk
+    testCompile libraries.mockwebserver
     testCompile project(":cfg4k-json")
     testCompile project(":cfg4k-yaml")
     testCompile project(":cfg4k-hocon")

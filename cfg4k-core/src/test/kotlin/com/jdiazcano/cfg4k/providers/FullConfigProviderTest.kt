@@ -9,6 +9,7 @@ import com.jdiazcano.cfg4k.core.MapConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.hocon.HoconConfigLoader
 import com.jdiazcano.cfg4k.json.JsonConfigLoader
+import com.jdiazcano.cfg4k.loaders.PropertyConfigLoader
 import com.jdiazcano.cfg4k.sources.StringConfigSource
 import com.jdiazcano.cfg4k.utils.SettingNotFound
 import com.jdiazcano.cfg4k.yaml.YamlConfigLoader
@@ -23,7 +24,7 @@ import io.kotlintest.tables.headers
 import io.kotlintest.tables.row
 import io.kotlintest.tables.table
 
-private val providers = jsonProviders() + hoconProviders() + yamlProviders()
+private val providers = propertyConfigProviders() + jsonProviders() + hoconProviders() + yamlProviders()
 
 class FullConfigProviderTest: StringSpec({
     testProviders("get int") { provider ->
@@ -174,6 +175,7 @@ class FullConfigProviderTest: StringSpec({
             potatoMap shouldBe mapOf("1" to Potato("PotatoName1", 1), "2" to Potato("PotatoName2", 2))
             randomThing shouldBe null
             nullableString shouldBe "a"
+            stringWithDefault shouldBe "def"
         }
     }
 
@@ -205,6 +207,34 @@ private fun AbstractStringSpec.testProviders(testName: String, method: (ConfigPr
             method(provider)
         }
     }
+}
+
+fun propertyConfigProviders(): List<ConfigProvider> {
+    val source = StringConfigSource("""
+        intProperty=1
+        stringProperty=a
+        longProperty=1
+        shortProperty=1
+        byteProperty=1
+        doubleProperty=1.1
+        floatProperty=1.1
+        nullableString=a
+        potato.name=PotatoName
+        potato.size=1
+        potatoList[0].name=PotatoName
+        potatoList[0].size=1
+        potatoMap.1.name=PotatoName1
+        potatoMap.1.size=1
+        potatoMap.2.name=PotatoName2
+        potatoMap.2.size=2
+    """.trimIndent())
+    val loader = PropertyConfigLoader(source)
+    val provider = DefaultConfigProvider(loader)
+    val cached = DefaultConfigProvider(loader).cache()
+    val bytebuddy = ByteBuddyConfigProvider(loader)
+    val bytebuddyCached = ByteBuddyConfigProvider(loader).cache()
+
+    return listOf(provider, cached, bytebuddy, bytebuddyCached)
 }
 
 fun jsonProviders(): List<ConfigProvider> {

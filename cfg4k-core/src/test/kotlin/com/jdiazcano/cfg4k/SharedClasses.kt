@@ -31,6 +31,7 @@ interface InterfacePropertyWithAllTheThings {
     val potatoMap: Map<String, Potato>
     val randomThing: String?
     val nullableString: String?
+    val stringWithDefault: String get() = "def"
 }
 
 interface InterfaceMethodWithAllTheThings {

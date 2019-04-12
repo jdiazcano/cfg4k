@@ -20,8 +20,8 @@ import com.jdiazcano.cfg4k.core.ConfigObject
 import com.jdiazcano.cfg4k.core.toConfig
 import com.jdiazcano.cfg4k.sources.ConfigSource
 import mu.KotlinLogging
-import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayList
 
 private val logger = KotlinLogging.logger {}
 
@@ -50,31 +50,65 @@ fun Properties.toConfig(): ConfigObject {
         val keys = keyAsString.split('.')
 
         if (keys.size == 1) {
-            if (map[keyAsString] != null) {
-                logger.warn { "$key will be overridden as it is defined twice." }
-            }
+            val (number, cleanKey) = findNumbers(keyAsString)
 
-            map[keyAsString] = value
+            if (number == null) {
+                if (map[cleanKey] != null) {
+                    logger.warn { "$key will be overridden as it is defined twice." }
+                }
+
+                map[cleanKey] = value
+            } else {
+                val list = map.getOrPut(cleanKey) { arrayListOf<Any>() } as MutableList<Any>
+                list += value
+            }
         } else {
-            val valueMap = keys.dropLast(1).fold(map) { m, k ->
-                val innerValue = m.getOrPut(k) { mutableMapOf<String, Any>() }
-                when (innerValue) {
-                    is Map<*, *> -> innerValue as MutableMap<String, Any>
-                    // This will only happen when we try to add root value to an object
-                    is String -> {
-                        logger.warn { "Key ($key=$innerValue) has overridden another value used as root" }
-                        mutableMapOf()
+            val parentValue = keys.dropLast(1).fold(map as Any) { m, k ->
+                m as MutableMap<String, Any>
+
+                val (number, cleanKey) = findNumbers(k)
+                val innerValue = m.getOrPut(cleanKey) {
+                    if (number == null) {
+                        mutableMapOf<String, Any>()
+                    } else {
+                        arrayListOf<Any>(mutableMapOf<String, Any>())
                     }
-                    else -> error("Value can only be Map or String")
+                }
+
+                if (number == null) {
+                    if (innerValue is String) {
+                        logger.warn { "Key ($key=$innerValue) has overridden another value used as root" }
+                        mutableMapOf<String, Any>()
+                    } else {
+                        innerValue
+                    }
+                } else {
+                    innerValue as ArrayList<Any>
+                    (innerValue.size..number).forEach { _ ->
+                        innerValue.add(mutableMapOf<String, Any>())
+                    }
+                    innerValue[number]
                 }
             }
 
-            if (valueMap[keys.last()] == null) {
-                valueMap[keys.last()] = value
-            } else {
-                logger.warn { "Key '$key' was ignored as it was going to override another value." }
-            }
+            setValue(parentValue, keys, value)
         }
     }
+
     return map.toConfig()
+}
+
+private fun setValue(parentValue: Any, keys: List<String>, value: Any) {
+    val (number, key) = findNumbers(keys.last())
+    parentValue as MutableMap<String, Any>
+    if (number == null) {
+        if (parentValue[key] == null) {
+            parentValue[key] = value
+        } else {
+            logger.warn { "Key '${keys.joinToString(".")}' was ignored as it was going to override another value." }
+        }
+    } else {
+        val list = parentValue.getOrPut(key) { mutableListOf<Any>() } as MutableList<Any>
+        list.add(value)
+    }
 }
