@@ -13,30 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jdiazcano.cfg4k.json
 
-import com.beust.klaxon.Parser
-import com.jdiazcano.cfg4k.loaders.DefaultConfigLoader
-import com.jdiazcano.cfg4k.sources.ConfigSource
+package com.jdiazcano.cfg4k.utils
 
-open class JsonConfigLoader(
-        private val configSource: ConfigSource
-) : DefaultConfigLoader() {
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.StringSpec
 
-    protected val parser = Parser.default()
-
-    init {
-        loadProperties()
+class TypableTests : StringSpec({
+    "Testing the toString of Typable" {
+        typeOf<List<String>>().toString().shouldBe("java.util.List<? extends java.lang.String>")
+        typeOf<List<Int>>().toString().shouldBe("java.util.List<? extends java.lang.Integer>")
+        typeOf<Int>().toString().shouldBe("class java.lang.Integer")
+        typeOf<Map<String, List<Int>>>().toString().shouldBe("java.util.Map<java.lang.String, ? extends java.util.List<? extends java.lang.Integer>>")
     }
-
-    override fun reload() {
-        loadProperties()
-    }
-
-    protected fun loadProperties() {
-        configSource.read().use {
-            root = parser.asConfigObjectFromJson(it)
-        }
-    }
-
-}
+})

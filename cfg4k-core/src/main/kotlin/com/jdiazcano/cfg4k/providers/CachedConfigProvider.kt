@@ -45,7 +45,9 @@ class CachedConfigProvider(private val configProvider: ConfigProvider) : ConfigP
             cache[name] as T?
         } else {
             val property: T? = configProvider.getOrNull(name, type, default)
-            cache[name] = property
+            if (property != null) {
+                cache[name] = property
+            }
             property
         }
     }

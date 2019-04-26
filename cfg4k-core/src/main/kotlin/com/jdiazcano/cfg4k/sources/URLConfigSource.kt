@@ -5,7 +5,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Base64
 
-class URLConfigSource(private val url: URL,
+class URLConfigSource(val url: URL,
                       private val authHeader: String? = null) : ConfigSource {
     override fun read(): InputStream {
         val connection = url.openConnection()
@@ -39,7 +39,7 @@ fun BitbucketConfigSource(repoOwner: String,
         )
 }
 
-fun BitbucketConfigSource(username: String,
+fun BitbucketUserConfigSource(username: String,
                           password: String,
                           repoOwner: String,
                           repoSlug: String,

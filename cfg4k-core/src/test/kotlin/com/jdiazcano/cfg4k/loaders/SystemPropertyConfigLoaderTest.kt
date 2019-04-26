@@ -1,28 +1,25 @@
 package com.jdiazcano.cfg4k.loaders
 
 import com.jdiazcano.cfg4k.core.toConfig
-import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
-import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.providers.get
 import io.kotlintest.Spec
 import io.kotlintest.TestCase
 import io.kotlintest.TestResult
 import io.kotlintest.extensions.TopLevelTest
 import io.kotlintest.matchers.types.shouldBeNull
-import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
+import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 
-class EnvironmentConfigLoaderTest: StringSpec() {
+class SystemPropertyConfigLoaderTest : StringSpec() {
 
     override fun beforeSpecClass(spec: Spec, tests: List<TopLevelTest>) {
         mockkStatic(System::class)
-        every { System.getenv() } returns mapOf(
-                "PROPERTIES_GROUPONE_KEYONE" to "1",
-                "PROPERTIES_GROUPONE_KEYTWO" to "2"
-        )
+        every { System.getProperties() } returns mapOf(
+                "properties.groupone.keyone" to "1",
+                "properties.groupone.keytwo" to "2"
+        ).toProperties()
     }
 
     override fun afterSpecClass(spec: Spec, results: Map<TestCase, TestResult>) {
@@ -30,7 +27,7 @@ class EnvironmentConfigLoaderTest: StringSpec() {
     }
 
     init {
-        val loader by lazy { EnvironmentConfigLoader() }
+        val loader by lazy { SystemPropertyConfigLoader() }
 
         "it should be good in the loader" {
             loader.get("properties.groupone.keyone").shouldBe("1".toConfig())
@@ -42,10 +39,10 @@ class EnvironmentConfigLoaderTest: StringSpec() {
 
         "updated when reloading" {
             loader.get("properties.groupone.keyone") shouldBe "1".toConfig()
-            every { System.getenv() } returns mapOf(
-                    "PROPERTIES_GROUPONE_KEYONE" to "11",
-                    "PROPERTIES_GROUPONE_KEYTWO" to "22"
-            )
+            every { System.getProperties() } returns mapOf(
+                    "properties.groupone.keyone" to "11",
+                    "properties.groupone.keytwo" to "22"
+            ).toProperties()
             loader.reload()
             loader.get("properties.groupone.keyone") shouldBe "11".toConfig()
         }

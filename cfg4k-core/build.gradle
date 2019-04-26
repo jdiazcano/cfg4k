@@ -6,10 +6,12 @@ dependencies {
     compile libraries.jetbrains.kotlin.reflect
     compile libraries.logging
 
-    testCompile libraries.jetbrains.spek.api
-    testCompile libraries.junitrunner
-    testCompile libraries.expekt
-    testCompile libraries.mockwebserver
+    testCompile libraries.kotlintest
     testCompile libraries.mockk
-    testRuntime libraries.jetbrains.spek.engine
+    testCompile libraries.mockwebserver
+    testCompile project(":cfg4k-json")
+    testCompile project(":cfg4k-yaml")
+    testCompile project(":cfg4k-hocon")
+    testCompile project(":cfg4k-cli")
+    testCompile project(":cfg4k-bytebuddy")
 }
