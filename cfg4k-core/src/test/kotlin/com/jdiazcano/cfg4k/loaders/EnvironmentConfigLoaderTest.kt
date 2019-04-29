@@ -1,9 +1,6 @@
 package com.jdiazcano.cfg4k.loaders
 
 import com.jdiazcano.cfg4k.core.toConfig
-import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
-import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.providers.get
 import io.kotlintest.Spec
 import io.kotlintest.TestCase
 import io.kotlintest.TestResult
@@ -33,7 +30,7 @@ class EnvironmentConfigLoaderTest: StringSpec() {
         val loader by lazy { EnvironmentConfigLoader() }
 
         "it should be good in the loader" {
-            loader.get("properties.groupone.keyone").shouldBe("1".toConfig())
+            loader.get("properties.groupone.keyone") shouldBe "1".toConfig()
         }
 
         "null if not found" {
