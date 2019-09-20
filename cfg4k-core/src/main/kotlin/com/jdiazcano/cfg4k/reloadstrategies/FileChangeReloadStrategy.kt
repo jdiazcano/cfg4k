@@ -19,6 +19,7 @@ package com.jdiazcano.cfg4k.reloadstrategies
 import com.jdiazcano.cfg4k.providers.ConfigProvider
 import java.io.File
 import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds
@@ -45,17 +46,33 @@ class FileChangeReloadStrategy(val file: Path) : ReloadStrategy {
     }
 
     override fun register(configProvider: ConfigProvider) {
-        val fileWatcher = file.toRealPath().parent.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY)
-        val parent = file.toRealPath().parent
-        val fileAbsolute = file.toRealPath()
+        // if its a symlink, then we should also watch symlinks for changes, this supports Kubernetes-style ConfigMap resources e.g.
+        //   configfile -> ..data/configfile
+        //   ..data -> ..2019_09_20_05_25_13.543205648
+        //   ..2019_09_20_05_25_13.543205648/configfile
+        // Here, Kubernetes creates a new timestamped directory when the configmap changes, and just modifies the ..data symlink to point to it
+        // FileWatcher raises symlink changes (e.g. overwrite an existing link target on Linux via `ln -sfn`) as ENTRY_CREATE
+        // we don't use toRealPath() here, because we *want* the parent the file appears to be in, not the file's real parent
+        val fileWatcher = file.toAbsolutePath().parent.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY)
+
         watching = true
         thread = thread(start = true, isDaemon = true) {
             while (watching) {
                 try {
                     val key = watcher.take()
                     fileWatcher.pollEvents().forEach { event ->
+                        if(event.kind() == StandardWatchEventKinds.OVERFLOW) return@forEach
+
                         val fileName = event.context() as Path
-                        if (parent.resolve(fileName) == fileAbsolute) {
+                        // if any entry in the chain of symbolic links leading to the actual file, including the actual
+                        // file itself, has been created/modified, reload
+                        val linkChain = generateSequence(file) {
+                            if (Files.isSymbolicLink(it)) {
+                                it.parent.resolve(Files.readSymbolicLink(it).first())
+                            } else null
+                        }.toList()
+
+                        if (linkChain.contains(file.parent.resolve(fileName))) {
                             configProvider.reload()
                         }
                     }
