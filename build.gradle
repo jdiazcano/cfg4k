@@ -17,8 +17,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.kt3k.coveralls' version '2.8.2'
-    id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'com.github.kt3k.coveralls' version '2.10.1'
+    id 'com.github.ben-manes.versions' version '0.28.0'
     id "com.jfrog.bintray" version "1.8.4"
 }
 
@@ -34,7 +34,7 @@ idea {
 
 project.ext {
     artifactGroup = "com.jdiazcano.cfg4k"
-    artifactVersion = "0.9.4"
+    artifactVersion = "0.9.41"
 }
 
 repositories {
