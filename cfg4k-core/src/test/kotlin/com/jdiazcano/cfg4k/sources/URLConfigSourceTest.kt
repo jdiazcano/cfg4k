@@ -28,7 +28,7 @@ class URLConfigSourceTest: FeatureSpec({
         val configSource = "a: b"
         val configPath = "/path"
         val server = MockWebServer().apply { start() }
-        val configUrl = server.url(configPath).url()
+        val configUrl = server.url(configPath).toUrl()
 
         scenario("should fetch config") {
             val source = URLConfigSource(configUrl)
@@ -38,7 +38,7 @@ class URLConfigSourceTest: FeatureSpec({
                 val fetchedConfigSource = it.toList().single()
                 fetchedConfigSource.shouldBe(configSource)
 
-                val request = server.takeRequest(1, TimeUnit.MILLISECONDS)
+                val request = server.takeRequest(1, TimeUnit.MILLISECONDS)!!
                 request.method shouldBe "GET"
                 request.path shouldBe configPath
             }
@@ -49,7 +49,7 @@ class URLConfigSourceTest: FeatureSpec({
             server.enqueue(MockResponse().setBody(configSource))
             // Calling use to auto-close the stream
             source.read().use {
-                val request = server.takeRequest(1, TimeUnit.MILLISECONDS)
+                val request = server.takeRequest(1, TimeUnit.MILLISECONDS)!!
                 request.getHeader(AUTH_HEADER).shouldBeNull()
             }
         }
@@ -60,7 +60,7 @@ class URLConfigSourceTest: FeatureSpec({
             server.enqueue(MockResponse().setBody(configSource))
             // Calling use to auto-close the stream
             source.read().use {
-                val request = server.takeRequest(1, TimeUnit.MILLISECONDS)
+                val request = server.takeRequest(1, TimeUnit.MILLISECONDS)!!
                 request.getHeader(AUTH_HEADER).shouldBe(authHeader)
             }
         }
