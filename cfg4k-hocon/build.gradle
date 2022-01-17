@@ -1,12 +1,12 @@
 apply from: '../gradle/versions.gradle'
 
 dependencies {
-    compile project(":cfg4k-core")
-    compile libraries.jetbrains.kotlin.stdlib
-    compile libraries.typesafe
+    implementation project(":cfg4k-core")
+    implementation libraries.jetbrains.kotlin.stdlib
+    implementation libraries.typesafe
 
-    testCompile libraries.jetbrains.spek.api
-    testCompile libraries.junitrunner
-    testCompile libraries.expekt
-    testRuntime libraries.jetbrains.spek.engine
+    testImplementation  libraries.jetbrains.spek.api
+    testImplementation  libraries.junitrunner
+    testImplementation  libraries.expekt
+    testRuntimeOnly libraries.jetbrains.spek.engine
 }

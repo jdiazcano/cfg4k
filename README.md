@@ -24,7 +24,7 @@ repositories {
 
 2. Add the dependency for the module(s) that you are going to use
 ```
-compile 'com.jdiazcano.cfg4k:cfg4k-core:$VERSION'
+implementation 'com.jdiazcano.cfg4k:cfg4k-core:$VERSION'
 ```
 
 ```kotlin
