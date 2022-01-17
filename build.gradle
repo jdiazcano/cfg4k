@@ -3,9 +3,7 @@ buildscript {
     apply from: 'gradle/versions.gradle'
 
     repositories {
-        mavenLocal()
         mavenCentral()
-        jcenter()
         maven { url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots' }
     }
 
@@ -17,9 +15,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.kt3k.coveralls' version '2.10.1'
-    id 'com.github.ben-manes.versions' version '0.28.0'
-    id "com.jfrog.bintray" version "1.8.4"
+    id 'com.github.kt3k.coveralls' version '2.12.0'
+    id 'com.github.ben-manes.versions' version '0.41.0'
 }
 
 apply plugin: 'jacoco'
@@ -47,7 +44,6 @@ subprojects { p ->
     apply plugin: 'jacoco'
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: "maven-publish"
-    apply plugin: "com.jfrog.bintray"
 
     sourceCompatibility = 1.8
 
@@ -56,29 +52,6 @@ subprojects { p ->
         mavenCentral()
         jcenter()
         maven { url 'https://jetbrains.jfrog.io/jetbrains/spek-snapshots' }
-    }
-
-    bintray {
-        user = 'jdiazcano'
-        key = System.getenv("BINTRAY_KEY")
-        publications = ["kotlinPublish"]
-        //configurations = ["archives"]
-        publish = true
-        override = true
-        pkg {
-            repo = 'cfg4k'
-            name = p.name
-            userOrg = 'jdiazcano'
-            licenses = ['Apache-2.0']
-            vcsUrl = 'https://github.com/jdiazcano/cfg4k.git'
-            publicDownloadNumbers = true
-            version {
-                name = project.artifactVersion
-                desc = 'Cfg4k is a configuration library made for Kotlin in Kotlin!'
-                released  = new Date()
-                vcsTag = project.artifactVersion
-            }
-        }
     }
 
     // custom tasks for creating source/javadoc jars
@@ -126,5 +99,4 @@ subprojects { p ->
 def activeSubprojects = subprojects.findAll { it.name.startsWith("cfg4k") }
 def subprojectsExecFiles = files( activeSubprojects.collect { "${it.name}/build/jacoco/junitPlatformTest.exec" } )
 
-task publish(dependsOn: activeSubprojects.collect { it.tasks.findByPath("bintrayUpload") }) {}
 task publishLocal(dependsOn: activeSubprojects.collect { it.tasks.findByPath("publishToMavenLocal") }) {}
