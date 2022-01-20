@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/jdiazcano/cfg4k.svg?branch=master)](https://travis-ci.org/jdiazcano/cfg4k) [![Coverage Status](https://coveralls.io/repos/github/jdiazcano/cfg4k/badge.svg?branch=master)](https://coveralls.io/github/jdiazcano/cfg4k?branch=master) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [ ![Download](https://api.bintray.com/packages/jdiazcano/cfg4k/cfg4k-core/images/download.svg) ](https://bintray.com/jdiazcano/cfg4k/)
 
+# News
+This repository is (will) be archived as I can no longer maintain it! But @rocketraman has forked it and published to mavencentral: https://github.com/rocketraman/cfg4k please continue using his repo!
+
 # Overview 
 Cfg4k is a configuration library made for Kotlin in Kotlin!
 
